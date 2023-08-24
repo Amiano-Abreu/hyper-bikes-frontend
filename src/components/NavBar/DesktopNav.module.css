@@ -1,0 +1,11 @@
+.navActive {
+    border-bottom: 2px solid #bc1024;
+    font-weight: 700;
+}
+
+.nav a {
+    padding: 0px 10px;
+    margin-left: 10px;
+    padding-bottom: 10px;
+    font-size: .8rem;
+}

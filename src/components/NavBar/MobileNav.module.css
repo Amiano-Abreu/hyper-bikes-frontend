@@ -1,0 +1,13 @@
+.navActive {
+    border-bottom: 3px solid #bc1024;
+    font-weight: 700;
+}
+
+.nav {
+    display: block;
+    color: #2a2727;
+    margin: 0 auto 25px auto;
+    padding: 10px 0;
+    text-align: center;
+    width: 100px
+}

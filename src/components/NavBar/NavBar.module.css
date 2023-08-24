@@ -1,0 +1,16 @@
+.margin {
+    margin-left: 5%;
+}
+
+.logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: .9rem;
+    font-weight: 900;
+}
+
+.logoMedium {
+    font-size: .75rem;
+}

@@ -1,0 +1,8 @@
+.formClass {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: '300px';
+    width: auto;
+    margin-bottom: 10px;
+}
