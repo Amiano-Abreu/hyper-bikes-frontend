@@ -78,7 +78,7 @@ const FeaturedBikesSection = () => {
                                     })
                                 }}
                             >
-                                <BikeCard />
+                                <BikeCard path={'bikes/123'} />
                             </Grid>
                         )
                     })}

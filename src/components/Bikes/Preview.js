@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 
 import ArrowRightAltRoundedIcon from '@mui/icons-material/ArrowRightAltRounded';
 
+import { Link } from 'react-router-dom'
 import { useMediaQuery } from '@mui/material';
 
 import BikeCard from "../Home/BikeCard";
@@ -55,7 +56,7 @@ const Preview = () => {
                                 })
                             }}
                         >
-                            <BikeCard />
+                            <BikeCard path={'123'} />
                         </Grid>
                     )
                 })}
@@ -77,6 +78,8 @@ const Preview = () => {
                             fontSize: '0.75rem'
                         })
                     }}
+                    component={Link}
+                    to={'all'}
                 >
                     view all
                 </Button>

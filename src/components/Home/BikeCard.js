@@ -10,12 +10,12 @@ import { Link } from 'react-router-dom'
 
 import Honda from '../../assets/Home-Page/hero/Honda-Cbr-Fireblade-1000rr.png';
 
-export default function BikeCard() {
+export default function BikeCard({ path }) {
     const isMobile = useMediaQuery('(max-width:1023px)')
     const isLaptop = useMediaQuery('(min-width:1024px)')
     const is640 = useMediaQuery('(max-width:640px)')
 
-
+    console.log('Path ',path)
   return (
     <Card 
       sx={{ 
@@ -35,7 +35,7 @@ export default function BikeCard() {
       }}
       elevation={6}
       component={Link}
-      to='bikes/123'
+      to={path}
     >
       <Typography
         variant='h6'

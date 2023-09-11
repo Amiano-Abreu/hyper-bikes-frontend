@@ -6,6 +6,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
+import { Link } from 'react-router-dom'
 import ArrowRightAltRoundedIcon from '@mui/icons-material/ArrowRightAltRounded';
 
 const SelectCategory = ({ grid }) => {
@@ -148,6 +149,8 @@ const SelectCategory = ({ grid }) => {
                             fontSize: '0.75rem'
                         })
                     }}
+                    component={Link}
+                    to={'all'}
                 >
                     view all
             </Button>
