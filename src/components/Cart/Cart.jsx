@@ -2,6 +2,8 @@ import { Paper, useMediaQuery, Typography, Box} from "@mui/material";
 import Button from "@mui/material/Button";
 import ArrowRightAltRoundedIcon from '@mui/icons-material/ArrowRightAltRounded';
 
+import bikeImg from '../../assets/Bikes/Honda cbr 1000rr-r/BMW M 1000 RR(1).png'
+
 import PaperHeader from '../Bikes/PaperHeader'
 
 import { Link } from "react-router-dom";
@@ -13,9 +15,34 @@ const arr = [
         brand: "Ducati",
         model: "panigale v2 bayliss",
         quantity: 1,
-        price: 7000000
+        price: 7
+    },
+    {
+        brand: "Ducati",
+        model: "panigale v2 bayliss",
+        quantity: 1,
+        price: 7
+    },
+    {
+        brand: "Ducati",
+        model: "panigale v2 bayliss",
+        quantity: 1,
+        price: 7
     }
 ];
+
+const getTotal = () => {
+    let total = 0;
+
+    arr.map(item => {
+        const itemTotal = Number(item.quantity) * Number(item.price);
+
+        total += itemTotal;
+    })
+
+    return total;
+}
+
 const Cart = () => {
     const isMedium = useMediaQuery('(max-width:990px)');
     const isMobile = useMediaQuery('(max-width:640px)')
@@ -102,19 +129,54 @@ const Cart = () => {
                                                     cartItem.brand + i
                                                 }
                                                 sx={{
-                                                    height: "100px",
+                                                    height: "300px",
                                                     px: "1rem",
                                                     pt: ".5rem",
-                                                    pb: "1rem"
+                                                    pb: "1rem",
+                                                    ...(
+                                                        arr.length > 1 &&
+                                                        i !== arr.length -1 && {
+                                                            mb: 5
+                                                        }
+                                                    )
                                                 }}
                                             >
                                                 <PaperHeader    text={`${cartItem.brand} : ${cartItem.model}`} 
                                                     cart={true}
                                                 />
                                                 
-                                                <Typography>
-                                                    {cartItem.quantity} * {cartItem.price}
-                                                </Typography>
+                                                <Box
+                                                    sx={{
+                                                        height: "250px",
+                                                        width: "100%",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent: "space-around"
+                                                    }}
+                                                >
+                                                    <img
+                                                        style={{
+                                                            height: "100%",
+                                                            width: "400px"
+                                                        }}
+                                                        src={bikeImg}
+                                                        alt={'BMW-m1000RR'}
+                                                    />
+                                                    <Typography
+                                                        sx={{
+                                                            fontWeight: "700"
+                                                        }}
+                                                    >
+                                                       QUANTITY: {cartItem.quantity}
+                                                    </Typography>
+                                                    <Typography
+                                                        sx={{
+                                                            fontWeight: "700"
+                                                        }}
+                                                    >
+                                                        PRICE: ₹{cartItem.price}
+                                                    </Typography>
+                                                </Box>
                                             </Paper>
                                         )
                                     }
@@ -142,6 +204,18 @@ const Cart = () => {
                                     Buy Now
                                 </Button>
 
+                    }
+                    {
+                        arr.length > 0 ? 
+                            (
+                                <Typography>
+                                    TOTAL: ₹{getTotal()}
+                                </Typography>
+                            )
+
+                            :
+
+                            <></>
                     }
                 </Box>
             </Paper>
