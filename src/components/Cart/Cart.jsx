@@ -8,7 +8,8 @@ import PaperHeader from '../Bikes/PaperHeader'
 
 import { Link } from "react-router-dom";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Toaster from "../Utility/Toaster";
 
 const arr = [
     {
@@ -34,7 +35,7 @@ const arr = [
 const getTotal = () => {
     let total = 0;
 
-    arr.map(item => {
+    arr.forEach(item => {
         const itemTotal = Number(item.quantity) * Number(item.price);
 
         total += itemTotal;
@@ -47,8 +48,25 @@ const Cart = () => {
     const isMedium = useMediaQuery('(max-width:990px)');
     const isMobile = useMediaQuery('(max-width:640px)')
 
+    const [buyToaster, setBuyToaster] = useState(false);
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+    const handleToasterState = (bool, close = false) => {
+        setBuyToaster(bool);
+
+        if(close) {
+            setTimeout(() => {
+                setBuyToaster(false)
+            }, 3200);
+        }
+    }
+
+    const handleButtonDisable = () => {
+      setIsButtonDisabled(true);
+    };
+
     useEffect(() => {
-        window.scrollTo(0,0)
+        window.scrollTo(0,0);
     }, [])
 
     return (
@@ -58,7 +76,7 @@ const Cart = () => {
                 sx={{
                     display: 'flex',
                     justifyContent: 'center',
-                    width: { mobile: '320px', tablet: '620px' , laptop: '1000px'},
+                    width: { mobile: '100%', tablet: '550px' , laptop: '1000px'},
                     mx: 'auto',
                     alignItems: 'center',
                     p: 5,
@@ -150,6 +168,10 @@ const Cart = () => {
                                                         height: "250px",
                                                         width: "100%",
                                                         display: "flex",
+                                                        flexDirection: {
+                                                            mobile: 'column',
+                                                            laptop: 'row'
+                                                        },
                                                         alignItems: "center",
                                                         justifyContent: "space-around"
                                                     }}
@@ -162,20 +184,30 @@ const Cart = () => {
                                                         src={bikeImg}
                                                         alt={'BMW-m1000RR'}
                                                     />
-                                                    <Typography
+                                                    <Box
                                                         sx={{
-                                                            fontWeight: "700"
+                                                            width: '300px',
+                                                            display: 'flex',
+                                                            alignItem: 'center',
+                                                            justifyContent: 'space-between',
+                                                            pb: { mobile: 5, laptop: 'none'}
                                                         }}
                                                     >
-                                                       QUANTITY: {cartItem.quantity}
-                                                    </Typography>
-                                                    <Typography
-                                                        sx={{
-                                                            fontWeight: "700"
-                                                        }}
-                                                    >
-                                                        PRICE: ₹{cartItem.price}
-                                                    </Typography>
+                                                        <Typography
+                                                            sx={{
+                                                                fontWeight: "700"
+                                                            }}
+                                                        >
+                                                        QUANTITY: {cartItem.quantity}
+                                                        </Typography>
+                                                        <Typography
+                                                            sx={{
+                                                                fontWeight: "700"
+                                                            }}
+                                                        >
+                                                            PRICE: ₹{cartItem.price}
+                                                        </Typography>
+                                                    </Box>
                                                 </Box>
                                             </Paper>
                                         )
@@ -208,9 +240,57 @@ const Cart = () => {
                     {
                         arr.length > 0 ? 
                             (
-                                <Typography>
-                                    TOTAL: ₹{getTotal()}
-                                </Typography>
+                                // <Typography>
+                                //     TOTAL: ₹{getTotal()}
+                                // </Typography>
+                                <div
+                                    style={{
+                                        width: '100%'
+                                    }}
+                                >
+                                    <Typography
+                                        sx={{
+                                            color: 'customWhite.main',
+                                            width: '280px',
+                                            textTransform: 'uppercase',
+                                            fontWeight: '700',
+                                            textAlign: 'center',
+                                            mt: 5,
+                                            mx: 'auto'
+                                        }}
+                                    >
+                                        Total: ₹{getTotal()}
+                                    </Typography>
+                                    <Button 
+                                        variant='contained'
+                                        color='customRed'
+                                        disabled={isButtonDisabled}
+                                        sx={{
+                                            color: 'customWhite.main',
+                                            display: 'block',
+                                            width: '280px',
+                                            px: 4,
+                                            fontWeight: '600',
+                                            py: 1,
+                                            mx: 'auto',
+                                            textTransform: 'uppercase',
+                                            mt: 5,
+                                            ...(isMobile && {
+                                                fontSize: '0.75rem'
+                                            })
+                                        }}
+                                        onClick={
+                                            () => {
+                                                handleButtonDisable();
+                                                setTimeout(() => {
+                                                    handleToasterState(true, true)
+                                                }, [1500])
+                                            }
+                                        }
+                                    >
+                                        buy now
+                                    </Button>
+                                </div>
                             )
 
                             :
@@ -219,6 +299,12 @@ const Cart = () => {
                     }
                 </Box>
             </Paper>
+            {
+                buyToaster ? 
+                    <Toaster />
+                        :
+                    <></>
+            }
         </>
     )
 }
