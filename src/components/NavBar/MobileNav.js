@@ -24,14 +24,22 @@ const MobileNav = ({ navLinks }) => {
 
     const closeDrawer = (e) => {
         
-        console.log(e)
+        console.log(e, "NAVLINKS ", navLinks)
         setIsOpen(false);
+
         if(e !== undefined && e.target) {
             const link = String(e.target.textContent).toLowerCase();
             if(link === "sign up"){
+                // setIsOpen(false);
                 return
             }
-            navigate(link);
+            if(link !== 'logout') {
+                // setIsOpen(false);
+                navigate(link);
+            } else {
+                alert('logout')
+                navigate('/')
+            }
         }
         
     }

@@ -41,10 +41,10 @@ const App = () => {
           <Route path={'/'} element={<Home />} />
           <Route path={'/bikes'} element={<Bikes />} />
           <Route path={'/bikes/all'} element={<p>all bikes</p>} />
-          <Route path={'/bikes/:bikeId'} element={<BikeDetails />} />
+          <Route path={'/bike/:bikeId'} element={<BikeDetails />} />
             <Route path={'/cart'} element={<Cart />} />
           <Route element={<PrivateRoutes />}>
-            <Route path={'/bikes/:bikeId/review'} element={<Review />} />
+            <Route path={'/bike/:bikeId/review'} element={<Review />} />
             <Route path={'/profile'} element={<p>profile</p>} />
             <Route path={'/account'} element={<p>account</p>} />
           </Route>

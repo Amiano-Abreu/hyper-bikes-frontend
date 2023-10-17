@@ -78,6 +78,9 @@ const NewsListMobile = () => {
                                 px: 4,
                                 py: 1
                             }}
+                            onClick={() => {
+                                navigate('/news')
+                            }}
                         >
                             View More
                         </Button>

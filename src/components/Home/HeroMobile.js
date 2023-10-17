@@ -55,7 +55,7 @@ const HeroMobile = () => {
                 </Typography>
                 <Button
                     component={Link}
-                    to='/bikes/abc'
+                    to='/bike/abc'
                     variant='contained'
                     color='customRed'
                     size={is700 ? 'small' : 'medium'}

@@ -32,7 +32,6 @@ const Toaster = () => {
                 vertical: "bottom", 
                 horizontal: "center" 
             }}
-            // message="This is a Snackbar with a slide transition."
             TransitionComponent={SlideTransition}
         >
             <Alert 

@@ -68,7 +68,7 @@ const HeroDesktop = () => {
                     Troy Bayliss, Claudio Domenicali and Davide Tardozzi present a new chapter in a highly successful story.
                 </Typography>
                 <Button
-                    to='/bikes/abc'
+                    to='/bike/abc'
                     component={Link}
                     variant='contained'
                     color='customRed'

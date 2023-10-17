@@ -61,7 +61,8 @@ const DesktopNav = ({ navLinks }) => {
             >
               {
                 true ?
-                  <AccountMenu />
+                  <AccountMenu navLinks={navLinks}/>
+                  // <></>
                 :
               
                   <Button 

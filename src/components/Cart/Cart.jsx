@@ -195,14 +195,16 @@ const Cart = () => {
                                                     >
                                                         <Typography
                                                             sx={{
-                                                                fontWeight: "700"
+                                                                fontWeight: "700",
+                                                                fontSize: { mobile: '0.85rem' , tablet: '1rem'}
                                                             }}
                                                         >
                                                         QUANTITY: {cartItem.quantity}
                                                         </Typography>
                                                         <Typography
                                                             sx={{
-                                                                fontWeight: "700"
+                                                                fontWeight: "700",
+                                                                fontSize: { mobile: '0.85rem' , tablet: '1rem'}
                                                             }}
                                                         >
                                                             PRICE: ₹{cartItem.price}
@@ -254,6 +256,7 @@ const Cart = () => {
                                             width: '280px',
                                             textTransform: 'uppercase',
                                             fontWeight: '700',
+                                            fontSize: { mobile: '0.85rem' , tablet: '1rem'},
                                             textAlign: 'center',
                                             mt: 5,
                                             mx: 'auto'
