@@ -56,7 +56,7 @@ const Preview = () => {
                                 })
                             }}
                         >
-                            <BikeCard path={'123'} />
+                            <BikeCard path={'bike/123'} />
                         </Grid>
                     )
                 })}

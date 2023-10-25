@@ -39,7 +39,7 @@ const App = () => {
       <main className={styles.mainBody}>
         <Routes>
           <Route path={'/'} element={<Home />} />
-          <Route path={'/bikes'} element={<Bikes />} />
+          <Route exact path={'/bikes'} element={<Bikes />} />
           <Route path={'/bikes/all'} element={<p>all bikes</p>} />
           <Route path={'/bike/:bikeId'} element={<BikeDetails />} />
             <Route path={'/cart'} element={<Cart />} />

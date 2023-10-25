@@ -6,16 +6,27 @@ import Stack from '@mui/material/Stack';
 import { CardActionArea } from '@mui/material';
 import { useMediaQuery } from '@mui/material';
 
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import Honda from '../../assets/Home-Page/hero/Honda-Cbr-Fireblade-1000rr.png';
 
 export default function BikeCard({ path }) {
+    // const [bikePath, setBikePath] = useState(path);
+
     const isMobile = useMediaQuery('(max-width:1023px)')
     const isLaptop = useMediaQuery('(min-width:1024px)')
     const is640 = useMediaQuery('(max-width:640px)')
 
+    const navigate = useNavigate();
+
     console.log('Path ',path)
+    console.log('bikecard Location ', window.location, 'origin ',window.location.origin)
+
+    // useEffect(() => {
+    //   if(window.location.pathname === '/bikes') {
+    //     setBikePath(window.location.origin + '/' + path);
+    //   }
+    // }, [path])
   return (
     <Card 
       sx={{ 
@@ -34,8 +45,25 @@ export default function BikeCard({ path }) {
           display: 'inline-block'
       }}
       elevation={6}
-      component={Link}
-      to={path}
+      // to={ window.location.pathname === '/bikes' ? window.location.origin + '/' + path : path }
+      {
+        ...(
+              window.location.pathname === '/bikes' ?
+              {
+                onClick: (e) => {
+                  console.log("event ", window.location, "eventtt ", e)
+                  navigate({pathname: `/${path}`})
+                }
+              }
+
+              :
+              
+              {
+                component: Link,
+                to: path
+              }
+            )
+      }
     >
       <Typography
         variant='h6'

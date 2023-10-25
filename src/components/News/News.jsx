@@ -54,7 +54,7 @@ const News = () => {
                                 })
                             }}
                         >
-                            <NewsCard />
+                            <NewsCard path={'123'} />
                         </Grid>
                     )
                 })}

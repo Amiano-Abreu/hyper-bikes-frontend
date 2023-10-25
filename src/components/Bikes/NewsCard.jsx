@@ -8,7 +8,9 @@ import Box from "@mui/material/Box";
 
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 
-export default function ActionAreaCard({ newsImg , newsImgAlt , newsTitle , newsDesc , newsUploader , newsDate }) {
+import { Link } from 'react-router-dom';
+
+export default function ActionAreaCard({ path, newsImg , newsImgAlt , newsTitle , newsDesc , newsUploader , newsDate }) {
   const d = new Date()
   return (
     <Card 
@@ -24,6 +26,8 @@ export default function ActionAreaCard({ newsImg , newsImgAlt , newsTitle , news
                 height: '100%',
                 position: 'relative'
             }}
+            component={Link}
+            to={path}
         >
             <CardMedia
                 component="img"

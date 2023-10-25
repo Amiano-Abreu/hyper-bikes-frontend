@@ -22,8 +22,10 @@ import PaperHeader from './PaperHeader'
 import FeaturesGrid from './FeaturesGrid'
 import CustomDivider from './CustomDivider'
 import NewsCard from './NewsCard'
+import Toaster from '../Utility/Toaster'
 
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const bikeData = [
     {
@@ -233,6 +235,26 @@ const BikeDetails = () => {
     const isMobile = useMediaQuery('(max-width:640px)')
     const isTablet = useMediaQuery('(max-width:1024px)')
 
+    const [buyToaster, setBuyToaster] = useState(false);
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+    const navigate = useNavigate();
+    
+    const handleToasterState = (bool, close = false) => {
+        setBuyToaster(bool);
+
+        if(close) {
+            setTimeout(() => {
+                setBuyToaster(false)
+                navigate('/bikes')
+            }, 3200);
+        }
+    }
+
+    const handleButtonDisable = () => {
+        setIsButtonDisabled(true);
+    };
+
     useEffect(() => {
         window.scrollTo(0,0)
     }, [])
@@ -301,6 +323,7 @@ const BikeDetails = () => {
                 <Button
                     variant='contained'
                     color='customRed'
+                    disabled={isButtonDisabled}
                     size={ isMobile ? 'small' : 'medium'}
                     endIcon={isMobile ? <></> : <ArrowRightAltRoundedIcon />}
                     sx={{
@@ -311,6 +334,14 @@ const BikeDetails = () => {
                         textTransform: 'uppercase',
                         fontSize: { mobile: '0.5rem' , tablet: '0.65rem' , laptop: '0.75rem' }
                     }}
+                    onClick={
+                        () => {
+                            handleButtonDisable();
+                            setTimeout(() => {
+                                handleToasterState(true, true)
+                            }, [1500])
+                        }
+                    }
                 >
                     Buy Now
                 </Button>
@@ -687,6 +718,7 @@ const BikeDetails = () => {
                         return (
                             <NewsCard
                                 key={newsItem.description.slice(0,20)+ i}
+                                path={'/news/123'}
                                 newsTitle={newsItem.newsTitle}
                                 newsImg={newsItem.newsImage.src}
                                 newsImgAlt={newsItem.newsImage.alt}
@@ -701,6 +733,12 @@ const BikeDetails = () => {
                 :
 
                 <></>
+            }
+            {
+                buyToaster ? 
+                    <Toaster />
+                        :
+                    <></>
             }
             
         </Box>

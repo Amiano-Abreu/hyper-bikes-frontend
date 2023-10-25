@@ -9,8 +9,9 @@ import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 import { useMediaQuery } from '@mui/material';
 
 import classes from '../Home/NewsCard.module.css';
+import { Link } from 'react-router-dom';
 
-export default function NewsCard() {
+export default function NewsCard({ path }) {
   const isLaptop = useMediaQuery('(min-width:1024px)');
 
   return (
@@ -25,6 +26,8 @@ export default function NewsCard() {
         }}
     >
       <CardActionArea
+        component={Link}
+        to={path}
         sx={{
           height: '100%'
         }}
