@@ -459,6 +459,11 @@ const BikeDetails = () => {
                                     textTransform: 'uppercase',
                                     fontSize: { mobile: '0.5rem' , tablet: '0.65rem' , laptop: '0.75rem' }
                                 }}
+                                onClick={
+                                    () => {
+                                        navigate({pathname: 'review'})
+                                    }
+                                }
                             >
                                 rate this bike
                             </Button>
@@ -553,6 +558,11 @@ const BikeDetails = () => {
                                 textTransform: 'uppercase',
                                 fontSize: { mobile: '0.5rem' , tablet: '0.65rem' , laptop: '0.75rem' }
                             }}
+                            onClick={
+                                () => {
+                                    navigate({pathname: 'review'})
+                                }
+                            }
                         >
                             rate this bike
                         </Button>

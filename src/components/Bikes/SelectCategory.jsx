@@ -9,7 +9,7 @@ import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom'
 import ArrowRightAltRoundedIcon from '@mui/icons-material/ArrowRightAltRounded';
 
-const SelectCategory = ({ grid }) => {
+const SelectCategory = ({ grid, onFilterChange }) => {
     const isMobile = useMediaQuery('(max-width:1024px)')
 
     return (
@@ -68,9 +68,22 @@ const SelectCategory = ({ grid }) => {
                                     justifyContent: 'center',
                                     '&:hover': {
                                         cursor: 'pointer'
-                                    }
+                                    },
+                                    ...( !item.property && {
+                                        justifyContent: 'space-evenly'
+                                    })
                                 }}
                                 elevation={6}
+                                onClick={() => {
+                                    // if(item.property) {
+                                        onFilterChange({ 
+                                            filterParam: item.property ? 
+                                                            item.filter
+                                                                :
+                                                            item.name
+                                        })
+                                    // }
+                                }}
                             >
                                 {item.property ? 
                                     <Typography
@@ -106,7 +119,7 @@ const SelectCategory = ({ grid }) => {
                                                     height: '100%',
                                                     width: '100%'
                                                 },
-                                                mb: { mobile: 5 , laptop: 5 }
+                                                // mb: { mobile: 5 , laptop: 5 }
                                             }}
                                         >
                                             <img src={item.imgLogo} alt={item.imgAlt} />
@@ -118,10 +131,40 @@ const SelectCategory = ({ grid }) => {
                                                 textTransform: 'uppercase',
                                                 color: 'customBlack.light',
                                                 fontWeight: { mobile: '800' , laptop: '600'},
-                                                fontSize: { mobile: '.7rem' , laptop: '1rem'}
+                                                fontSize: { mobile: '.7rem' , laptop: '1rem'},
+                                                height: '40px',
+                                                ...(
+                                                    !item.name.trim().includes(" ") && {
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center'
+                                                    }
+                                                )
                                             }}
                                         >
-                                            {item.bikeBrand}
+                                            {
+                                                item.name.trim().includes(" ") ?
+                                                    <>
+                                                        {
+                                                            item.name.trim().split(" ").map(
+                                                                (textContent, i) => {
+                                                                    return (
+                                                                        <span
+                                                                            key={textContent + i}
+                                                                            style={{
+                                                                                display: 'block',
+                                                                                textAlign: 'center'
+                                                                            }}
+                                                                        >{textContent}</span>
+                                                                    )
+                                                                }
+                                                            )
+                                                        }
+                                                    </>
+                                                : 
+                                                
+                                                item.name
+                                            }
                                         </Typography>
                                     </>
                                     
@@ -149,8 +192,9 @@ const SelectCategory = ({ grid }) => {
                             fontSize: '0.75rem'
                         })
                     }}
-                    component={Link}
-                    to={'all'}
+                    onClick={() => {
+                        onFilterChange({ filterParam:'all' });
+                    }}
                 >
                     view all
             </Button>

@@ -42,12 +42,12 @@ const App = () => {
           <Route exact path={'/bikes'} element={<Bikes />} />
           <Route path={'/bikes/all'} element={<p>all bikes</p>} />
           <Route path={'/bike/:bikeId'} element={<BikeDetails />} />
+          {/* <Route element={<PrivateRoutes />}> */}
             <Route path={'/cart'} element={<Cart />} />
-          <Route element={<PrivateRoutes />}>
             <Route path={'/bike/:bikeId/review'} element={<Review />} />
             <Route path={'/profile'} element={<p>profile</p>} />
             <Route path={'/account'} element={<p>account</p>} />
-          </Route>
+          {/* </Route> */}
           <Route path={'/news'} element={<News />} />
           <Route path={'/news/:newsId'} element={<NewsDetails />} />
           <Route path={'/signup'} element={<SignUp />} />

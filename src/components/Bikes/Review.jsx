@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -29,6 +30,8 @@ const Review = () => {
     const [openSuccess, setOpenSuccess] = useState(false);
     const [openLoader, setOpenLoader] = useState(false);
 
+    const navigate = useNavigate();
+
     const handleOpen = () => {
         setOpenBackdrop(true);
     };
@@ -43,6 +46,7 @@ const Review = () => {
 
     const handleSuccessClose = () => {
         setOpenSuccess(false)
+        navigate({pathname: '/bikes'})
     }
 
     const handleLoaderOpen = () => {
