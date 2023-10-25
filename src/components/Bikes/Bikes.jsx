@@ -183,15 +183,15 @@ const Bikes = () => {
     const [sortDialogValue, setSortDialogValue] = useState(sortValue);
 
 
-    const handleFilterChange = ({filterParam = undefined, sortParam = undefined}) => {
+    const handleFilterChange = ({filterParam = null, sortParam = null}) => {
 
-        if (filterParam !== undefined && sortParam !== undefined) {
+        if (filterParam !== null && sortParam !== null) {
             setSearchParams({ filter: filterParam, sort: sortParam });
         }
-        else if (filterParam !== undefined && sortParam  === undefined) {
+        else if (filterParam !== null && sortParam  === null) {
             setSearchParams({ filter: filterParam });
         }
-        else if (filterParam === undefined && sortParam !== undefined) {
+        else if (filterParam === null && sortParam !== null) {
             setSearchParams({ sort: sortParam });
         }
 

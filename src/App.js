@@ -13,6 +13,9 @@ import Login from './components/Authentication/Login';
 import SignUp from './components/Authentication/SignUp';
 import Review from './components/Bikes/Review';
 import Cart from './components/Cart/Cart'
+import Profile from './components/User/Profile'
+import Account from './components/User/Account'
+
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getUser } from './features/userSlice';
@@ -40,13 +43,12 @@ const App = () => {
         <Routes>
           <Route path={'/'} element={<Home />} />
           <Route exact path={'/bikes'} element={<Bikes />} />
-          <Route path={'/bikes/all'} element={<p>all bikes</p>} />
           <Route path={'/bike/:bikeId'} element={<BikeDetails />} />
           {/* <Route element={<PrivateRoutes />}> */}
             <Route path={'/cart'} element={<Cart />} />
             <Route path={'/bike/:bikeId/review'} element={<Review />} />
-            <Route path={'/profile'} element={<p>profile</p>} />
-            <Route path={'/account'} element={<p>account</p>} />
+            <Route path={'/profile'} element={<Profile />} />
+            {/* <Route path={'/account'} element={<Account />} /> */}
           {/* </Route> */}
           <Route path={'/news'} element={<News />} />
           <Route path={'/news/:newsId'} element={<NewsDetails />} />
