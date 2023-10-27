@@ -100,7 +100,7 @@ const FeaturedBikesSection = () => {
                             })
                         }}
                         onClick={() => {
-                            navigate('/bikes/all')
+                            navigate('/bikes')
                         }}
                     >
                         view all

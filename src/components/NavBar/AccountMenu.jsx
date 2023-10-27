@@ -91,7 +91,7 @@ export default function BasicMenu({closeFunction, mobile}) {
       >
         {
           ["profile",
-          //  "account",
+           "account",
            "logout"].map(
             item => {
               return (

@@ -1,6 +1,7 @@
 import { Paper, useMediaQuery, Typography, Box} from "@mui/material";
 import Button from "@mui/material/Button";
 import ArrowRightAltRoundedIcon from '@mui/icons-material/ArrowRightAltRounded';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import bikeImg from '../../assets/Bikes/Honda cbr 1000rr-r/BMW M 1000 RR(1).png'
 
@@ -125,7 +126,10 @@ const Cart = () => {
                             ...(
                                 arr.length > 0 && {
                                     textAlign: 'left',
-                                    fontWeight: "600"
+                                    fontWeight: "600",
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center'
                                 }
                             ),
                             mb: ".5rem",
@@ -134,6 +138,35 @@ const Cart = () => {
                         }}
                     >                    
                         { arr.length === 0 ? 'Start adding bikes to your cart !' : `You have ${arr.length} cart item${arr.length > 1 ? "s" : "" }.` }
+                        <Button 
+                            variant='contained'
+                            color='customWhite'
+                            sx={{
+                                color: 'customRed.main',
+                                width: '170px',
+                                px: 4,
+                                fontWeight: '600',
+                                py: 1,
+                                display: 'flex',
+                                justifyContent: 'space-around',
+                                alignItems: 'center',
+                                textTransform: 'uppercase',
+                                ...(isMobile && {
+                                    fontSize: '0.75rem'
+                                })
+                            }}
+                            startIcon={<DeleteIcon />}
+                            onClick={
+                                () => {
+                                    // handleButtonDisable();
+                                    // setTimeout(() => {
+                                    //     handleToasterState(true, true)
+                                    // }, [1500])
+                                }
+                            }
+                        >
+                            delete all
+                        </Button>
                     </Typography>
                     {
                         arr.length > 0 ?
@@ -199,7 +232,38 @@ const Cart = () => {
                                                                 fontSize: { mobile: '0.85rem' , tablet: '1rem'}
                                                             }}
                                                         >
-                                                        QUANTITY: {cartItem.quantity}
+                                                            QUANTITY: 
+                                                                <span
+                                                                    style={{
+                                                                        cursor: 'pointer',
+                                                                        marginRight: '5px',
+                                                                        padding: '5px',
+                                                                        paddingTop: '2.5px',
+                                                                        paddingBottom: '2.5px',
+                                                                        marginLeft: '5px',
+                                                                        borderWidth: '2px',
+                                                                        borderStyle: 'solid',
+                                                                        borderColor: '#2a2727c4'
+                                                                    }}
+                                                                >
+                                                                    +
+                                                                </span>
+                                                                {cartItem.quantity}
+                                                                <span
+                                                                    style={{
+                                                                        cursor: 'pointer',
+                                                                        marginRight: '5px',
+                                                                        padding: '5px',
+                                                                        paddingTop: '2.5px',
+                                                                        paddingBottom: '2.5px',
+                                                                        marginLeft: '5px',
+                                                                        borderWidth: '2px',
+                                                                        borderStyle: 'solid',
+                                                                        borderColor: '#2a2727c4'
+                                                                    }}
+                                                                >
+                                                                    -
+                                                                </span>
                                                         </Typography>
                                                         <Typography
                                                             sx={{
@@ -209,6 +273,13 @@ const Cart = () => {
                                                         >
                                                             PRICE: ₹{cartItem.price}
                                                         </Typography>
+                                                        <DeleteIcon 
+                                                            sx={{
+                                                                fontSize: { mobile: '1.25rem' , tablet: '1.5rem'},
+                                                                color: 'customRed.main',
+                                                                cursor: 'pointer'
+                                                            }}
+                                                        />
                                                     </Box>
                                                 </Box>
                                             </Paper>
