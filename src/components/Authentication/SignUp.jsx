@@ -11,6 +11,9 @@ import AlertTitle from '@mui/material/AlertTitle';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useMediaQuery } from '@mui/material';
 
+import { useDispatch, useSelector } from "react-redux";
+import { signUpHandler } from "../../features/userSlice";
+
 import { Link, useNavigate } from 'react-router-dom';
 
 import desktopImg from '../../assets/Authentication/signup.jpg'
@@ -22,6 +25,9 @@ import * as yup from 'yup';
 const SignUp = () => {
     const is700 = useMediaQuery('(max-width:700px)');
     const navigate = useNavigate();
+
+    const dispatch = useDispatch();
+    const { error, loading } = useSelector(state => state.user);
 
     const [openBackdrop, setOpenBackdrop] = useState(false); // for displaying alert
     const [openSuccess, setOpenSuccess] = useState(false);
@@ -42,7 +48,7 @@ const SignUp = () => {
     const handleSuccessClose = () => {
         setOpenSuccess(false)
         
-        navigate('/home')
+        navigate('/')
     }
 
     const handleLoaderOpen = () => {
@@ -100,12 +106,18 @@ const SignUp = () => {
         onSubmit: (values, {setSubmitting}) => {
             handleLoaderOpen()
 
-            setTimeout(() => {
+            // setTimeout(() => {
+                dispatch(signUpHandler(values));
                 console.log(values)
+                if(!loading && error) {
+                    // handleSuccessOpen()
+                    console.log('form ',error)
+                } 
+                else if(!loading && !error) {
+                    formik.resetForm()
+                }
                 handleLoaderClose()
-                handleSuccessOpen()
-                formik.resetForm()
-            }, 5000)
+            // }, 5000)
 
             setSubmitting(false)
         }

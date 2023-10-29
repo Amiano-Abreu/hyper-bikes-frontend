@@ -48,7 +48,7 @@ const Login = () => {
     const handleSuccessClose = () => {
         setOpenSuccess(false)
         
-        navigate('/home')
+        navigate('/')
     }
 
     const handleLoaderOpen = () => {

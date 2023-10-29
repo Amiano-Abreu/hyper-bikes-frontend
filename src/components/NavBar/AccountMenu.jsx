@@ -7,10 +7,14 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 
+import { useDispatch } from 'react-redux';
+import { logoutHandler } from '../../features/userSlice';
+
 export default function BasicMenu({closeFunction, mobile}) {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const open = Boolean(anchorEl);
 
@@ -27,6 +31,7 @@ export default function BasicMenu({closeFunction, mobile}) {
       navigate(link)
     } else if (link && link === 'logout') {
       alert('logout')
+      dispatch(logoutHandler());
       navigate('/')
     }
     setAnchorEl(null);

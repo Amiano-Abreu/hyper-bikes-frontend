@@ -139,7 +139,7 @@ const MobileNav = ({ navLinks }) => {
                     }
                 </List>
                 {
-                    true ?
+                    false ?
                         <AccountMenu
                             closeFunction={closeDrawer}
                             mobile={true}
