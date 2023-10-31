@@ -31,7 +31,7 @@ const SignUp = () => {
 
     const [openBackdrop, setOpenBackdrop] = useState(false); // for displaying alert
     const [openSuccess, setOpenSuccess] = useState(false);
-    const [openLoader, setOpenLoader] = useState(false);
+    // const [openLoader, setOpenLoader] = useState(false);
 
     const handleOpen = () => {
         setOpenBackdrop(true);
@@ -51,13 +51,13 @@ const SignUp = () => {
         navigate('/')
     }
 
-    const handleLoaderOpen = () => {
-        setOpenLoader(true)
-    }
+    // const handleLoaderOpen = () => {
+    //     setOpenLoader(true)
+    // }
 
-    const handleLoaderClose = () => {
-        setOpenLoader(false)
-    }
+    // const handleLoaderClose = () => {
+    //     setOpenLoader(false)
+    // }
 
     const schema = yup.object().shape({
         firstName: yup
@@ -103,20 +103,23 @@ const SignUp = () => {
             country: ''
         },
         validationSchema: schema,
-        onSubmit: (values, {setSubmitting}) => {
-            handleLoaderOpen()
+        onSubmit: (values, {setSubmitting, setErrors}) => {
+            // handleLoaderOpen()
 
             // setTimeout(() => {
                 dispatch(signUpHandler(values));
                 console.log(values)
-                if(!loading && error) {
-                    // handleSuccessOpen()
-                    console.log('form ',error)
-                } 
-                else if(!loading && !error) {
-                    formik.resetForm()
-                }
-                handleLoaderClose()
+                // if(!loading && error) {
+                //     // handleSuccessOpen()
+                //     console.log('form ',error)
+                // } 
+                // else if(!loading && !error) {
+                    // setErrors({ email: 'this email exists'})
+                    if(error) {
+                    }
+                    // formik.resetForm()
+                // }
+                // handleLoaderClose()
             // }, 5000)
 
             setSubmitting(false)
@@ -127,11 +130,30 @@ const SignUp = () => {
         window.scrollTo(0,0)
     }, [])
     
+    // useEffect(() => {
+    //     if(error !== '') {
+    //         console.log('useEffect error ',error)
+    //         formik.setErrors(error)
+    //     } else {
+    //         formik.resetForm()
+    //     }
+    // }, [error])
+
     useEffect(() => {
-        if(formik.submitCount > 0 && !formik.isValid){
+        // if(error) {
+            console.log('useEffect error ',error)
+        //     formik.setErrors(error)
+        // }
+
+        if(formik.submitCount > 0 && error){
+            formik.setErrors(error)
             handleOpen()
         }
-    }, [formik.submitCount, formik.isValid])
+        else if (formik.submitCount > 0 && error === '') {
+            formik.resetForm()
+            handleSuccessOpen()
+        }
+    }, [error, formik.submitCount])
 
     return (
         <>
@@ -378,7 +400,7 @@ const SignUp = () => {
             </Backdrop>
             <Backdrop
               sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-              open={openLoader}
+              open={loading}
             >
               <CircularProgress color="inherit" />
             </Backdrop>

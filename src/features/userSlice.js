@@ -185,6 +185,7 @@ const userSlice = createSlice({
         })
         builder.addCase(signUpHandler.fulfilled, (state, action) => {
             state.loading = false;
+            state.error = '';
             state.uid = action.payload.uid;
             state.userName = action.payload.name;
             state.email = action.payload.email;
