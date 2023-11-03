@@ -9,8 +9,10 @@ import IconButton from '@mui/material/IconButton';
 import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded';
 
 import AccountMenu from './AccountMenu';
+import { useSelector } from 'react-redux';
 
 const DesktopNav = ({ navLinks }) => {
+    const { isLoggedIn } = useSelector(state => state.user);
     
     return (
         <>
@@ -60,7 +62,7 @@ const DesktopNav = ({ navLinks }) => {
               }}
             >
               {
-                true ?
+                isLoggedIn ?
                   <AccountMenu navLinks={navLinks}/>
                   // <></>
                 :

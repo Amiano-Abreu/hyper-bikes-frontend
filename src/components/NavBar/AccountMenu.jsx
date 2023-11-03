@@ -7,10 +7,11 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { logoutHandler } from '../../features/userSlice';
 
 export default function BasicMenu({closeFunction, mobile}) {
+  const {userName} = useSelector(state => state.user)
 
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
@@ -65,7 +66,7 @@ export default function BasicMenu({closeFunction, mobile}) {
           }
         }}
       >
-        <Avatar>d</Avatar>
+        <Avatar>{userName[0]}</Avatar>
           <Typography
            sx={{
              fontSize: '1rem',
@@ -77,7 +78,7 @@ export default function BasicMenu({closeFunction, mobile}) {
                color: 'customWhite.main'
              })
            }}
-          >David Burgeradjfsa</Typography>
+          >{userName}</Typography>
       </Button>
       <Menu
         id="basic-menu"

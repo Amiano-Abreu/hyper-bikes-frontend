@@ -14,8 +14,11 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import styles from './MobileNav.module.css';
 
 import AccountMenu from './AccountMenu'
+import { useSelector } from "react-redux";
 
 const MobileNav = ({ navLinks }) => {
+    const isLoggedIn = useSelector(state => state.isLoggedIn);
+
     const navigate = useNavigate();
 
     const [isOpen, setIsOpen] = useState(false);
@@ -139,7 +142,7 @@ const MobileNav = ({ navLinks }) => {
                     }
                 </List>
                 {
-                    false ?
+                    isLoggedIn ?
                         <AccountMenu
                             closeFunction={closeDrawer}
                             mobile={true}
@@ -149,7 +152,7 @@ const MobileNav = ({ navLinks }) => {
 
                     <Button
                         component={Link}
-                        to='/signup'
+                        to='/login'
                         variant='contained'
                         size='small'
                         color='customRed'
@@ -162,7 +165,7 @@ const MobileNav = ({ navLinks }) => {
                             py: 2
                         }}
                     >
-                        Sign up
+                        login
                     </Button>
                 }
             </Drawer>

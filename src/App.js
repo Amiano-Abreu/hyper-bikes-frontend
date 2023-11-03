@@ -15,21 +15,23 @@ import Review from './components/Bikes/Review';
 import Cart from './components/Cart/Cart'
 import Profile from './components/User/Profile'
 import Account from './components/User/Account'
+import NotFound from './NotFound';
 
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getUser } from './features/userSlice';
 
 
 const PrivateRoutes = () => {
-  let auth = { token: false};
+  const {isLoggedIn} = useSelector(state => state.user);
 
   return (
-    auth.token ? <Outlet/> : <Navigate to='/login'/>
+    isLoggedIn ? <Outlet/> : <Navigate to='/login'/>
   )
 }
 
 const App = () => {
+  const {isLoggedIn} = useSelector(state => state.user);
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -44,16 +46,28 @@ const App = () => {
           <Route path={'/'} element={<Home />} />
           <Route exact path={'/bikes'} element={<Bikes />} />
           <Route path={'/bike/:bikeId'} element={<BikeDetails />} />
-          {/* <Route element={<PrivateRoutes />}> */}
+          <Route element={<PrivateRoutes />}>
             <Route path={'/cart'} element={<Cart />} />
             <Route path={'/bike/:bikeId/review'} element={<Review />} />
             <Route path={'/profile'} element={<Profile />} />
             <Route path={'/account'} element={<Account />} />
-          {/* </Route> */}
+          </Route>
           <Route path={'/news'} element={<News />} />
           <Route path={'/news/:newsId'} element={<NewsDetails />} />
-          <Route path={'/signup'} element={<SignUp />} />
-          <Route path={'/login'} element={<Login />} />
+          {
+            !isLoggedIn ? 
+            (
+              <>
+                <Route path={'/signup'} element={<SignUp />} />
+                <Route path={'/login'} element={<Login />} />
+              </>
+            )
+
+            :
+
+            <></>
+          }
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
     </>

@@ -3,7 +3,9 @@ import axios from 'axios';
 
 const initialState = {
     loading: false,
+    success: false,
     error: '',
+    isLoggedIn: false,
     uid: '',
     userName: '',
     email: '',
@@ -55,10 +57,12 @@ export const loginHandler = createAsyncThunk('user/loginHandler', async( login ,
                                 })
         const { user } = loginResponse.data;
         return user;
-    } catch (error) {
-        const { data } = error.response;
-        const { message } = data;
-        return rejectWithValue(message || error.message);
+        //     token: csrfToken
+        // };
+    } catch (e) {
+        const { data } = e.response;
+        const { error, message } = data;
+        return rejectWithValue(error || message || e.message);
     }
 
 })
@@ -66,10 +70,10 @@ export const loginHandler = createAsyncThunk('user/loginHandler', async( login ,
 export const signUpHandler = createAsyncThunk('user/signUpHandler', async( signUp , { rejectWithValue }) => {
 
     try {
-        const response = await axios.get('http://localhost:5000/api/csrf', {withCredentials: true});
-        const csrfToken = response.data.csrfToken;
+        // const response = await axios.get('http://localhost:5000/api/csrf', {withCredentials: true});
+        // const csrfToken = response.data.csrfToken;
         
-        console.log(csrfToken);
+        // console.log(csrfToken);
         const signUpResponse = await axios.post('http://localhost:5000/api/signup', {
                                     firstName: signUp.firstName,
                                     lastName: signUp.lastName,
@@ -82,16 +86,13 @@ export const signUpHandler = createAsyncThunk('user/signUpHandler', async( signU
                                     headers: {
                                         'Accept': "application/json",
                                         'Content-Type': "application/json",
-                                        'X-CSRF-Token': csrfToken
+                                        // 'X-CSRF-Token': csrfToken
                                     },
                                     withCredentials: true,
                                     mode: 'cors'
                                 })
         const { user } = signUpResponse.data;
-        return {
-            token: csrfToken,
-            ...user
-        };
+        return user;
     } catch (e) {
         const { data } = e.response;
         console.log('data ', data)
@@ -104,15 +105,20 @@ export const signUpHandler = createAsyncThunk('user/signUpHandler', async( signU
 
 export const logoutHandler = createAsyncThunk('user/logoutHandler', async( _ , { rejectWithValue, getState }) => {
 
-    // const state = getState();
+    // const state = getState().userSlice;
     // const { token: csrfToken } = state;
-
+    const response = await axios.get('http://localhost:5000/api/csrf', {withCredentials: true});
+    const csrfToken = response.data.csrfToken;
+    
+    // console.log('logout csrf ',csrfToken);
     try {
         const logoutResponse = await axios.post('http://localhost:5000/api/logout', {
+                                    _csrf: csrfToken
+                                },
+                                {
                                     headers: {
                                         'Accept': "application/json",
-                                        // 'Content-Type': "application/json",
-                                        // 'X-CSRF-Token': csrfToken
+                                        'Content-Type': "application/json"
                                     },
                                     withCredentials: true,
                                     mode: 'cors'
@@ -129,7 +135,7 @@ export const logoutHandler = createAsyncThunk('user/logoutHandler', async( _ , {
 })
 
 const userSlice = createSlice({
-    name: 'user',
+    name: 'userSlice',
     initialState,
     reducers: {
         setUser: (state, action) => {
@@ -138,83 +144,106 @@ const userSlice = createSlice({
             state.email = action.payload.email;
             state.state = action.payload.state;
             state.country = action.payload.country;
+            state.isLoggedIn = true;
         },
-        resetUser: (state) => {
-            state = initialState;
+        setLoading: (state) => {
+            state.loading = true;
+            state.success = false;
+            state.error = "";
+        },
+        resetUser: (storeState) => {
+            const { 
+                uid,
+                userName,
+                email,
+                state,
+                country,
+                isLoggedIn
+            } = initialState;
+
+            storeState.uid = uid;
+            storeState.userName = userName;
+            storeState.email = email;
+            storeState.state = state;
+            storeState.country = country;
+            storeState.isLoggedIn = isLoggedIn;
+        },
+        resetError: (state) => {
+            state.error = '';
+            state.success = false;
         }
     },
     extraReducers: (builder) => {
         // GET USER CASES
         builder.addCase(getUser.pending, (state) => {
-            state.loading = true;
+            userSlice.caseReducers.setLoading(state)
         })
         builder.addCase(getUser.fulfilled, (state, action) => {
+            userSlice.caseReducers.setUser(state, action)
             state.loading = false;
-            state.uid = action.payload.uid;
-            state.userName = action.payload.name;
-            state.email = action.payload.email;
-            state.state = action.payload.state;
-            state.country = action.payload.country;
-            state.token = action.payload.token;
+            state.success = true;
         })
         builder.addCase(getUser.rejected, (state, action) => {
             state.loading = false;
+            state.success = true;
         })
 
         // LOGIN CASES
         builder.addCase(loginHandler.pending, (state, action) => {
-            state.loading = true;
+            userSlice.caseReducers.setLoading(state)
         })
         builder.addCase(loginHandler.fulfilled, (state, action) => {
+            userSlice.caseReducers.setUser(state, action)
+
             state.loading = false;
-            state.uid = action.payload.uid;
-            state.userName = action.payload.name;
-            state.email = action.payload.email;
-            state.state = action.payload.state;
-            state.country = action.payload.country;
-            state.token = action.payload.token;
+            state.success = true;
         })
         builder.addCase(loginHandler.rejected, (state, action) => {
-            state.loading = false;
             state.error = action.payload;
+            state.loading = false;
+            state.success = true;
         })
 
         // SIGN UP CASES
         builder.addCase(signUpHandler.pending, (state, action) => {
-            state.loading = true;
+            userSlice.caseReducers.setLoading(state)
         })
         builder.addCase(signUpHandler.fulfilled, (state, action) => {
+            userSlice.caseReducers.setUser(state, action)
+
             state.loading = false;
-            state.error = '';
-            state.uid = action.payload.uid;
-            state.userName = action.payload.name;
-            state.email = action.payload.email;
-            state.state = action.payload.state;
-            state.country = action.payload.country;
-            state.token = action.payload.token;
+            state.success = true;
         })
         builder.addCase(signUpHandler.rejected, (state, action) => {
-            state.loading = false;
             state.error = action.payload;
             if(action.payload.hasOwnProperty('message')) {
                 state.error = action.payload.message;
             }
+            state.loading = false;
+            state.success = true;
         })
 
         // LOGOUT CASES
         builder.addCase(logoutHandler.pending, (state, action) => {
-            state.loading = true;
+            userSlice.caseReducers.setLoading(state)
         })
         builder.addCase(logoutHandler.fulfilled, (state, action) => {
-            userSlice.caseReducers.resetUser();
+            userSlice.caseReducers.resetUser(state)
+            state.success = true;
+            state.loading = false;
         })
         builder.addCase(logoutHandler.rejected, (state, action) => {
-            state.loading = false;
             state.error = action.payload;
+            state.loading = false;
+            state.success = true;
         })
     }
 })
 
 export default userSlice.reducer;
 
-export const { addUser, resetUser } = userSlice.actions;
+export const { setUser, resetError, resetUser } = userSlice.actions;
+
+/**
+    CHECK LOGOUT, LOGIN CASE
+ */

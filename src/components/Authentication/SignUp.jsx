@@ -12,7 +12,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useMediaQuery } from '@mui/material';
 
 import { useDispatch, useSelector } from "react-redux";
-import { signUpHandler } from "../../features/userSlice";
+import { signUpHandler, resetError } from "../../features/userSlice";
 
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -27,7 +27,7 @@ const SignUp = () => {
     const navigate = useNavigate();
 
     const dispatch = useDispatch();
-    const { error, loading } = useSelector(state => state.user);
+    const { error, loading, success } = useSelector(state => state.user);
 
     const [openBackdrop, setOpenBackdrop] = useState(false); // for displaying alert
     const [openSuccess, setOpenSuccess] = useState(false);
@@ -38,6 +38,7 @@ const SignUp = () => {
     };
 
     const handleClose = () => {
+        dispatch(resetError())
         setOpenBackdrop(false);
     };
 
@@ -103,7 +104,7 @@ const SignUp = () => {
             country: ''
         },
         validationSchema: schema,
-        onSubmit: (values, {setSubmitting, setErrors}) => {
+        onSubmit: (values, {setSubmitting}) => {
             // handleLoaderOpen()
 
             // setTimeout(() => {
@@ -141,19 +142,19 @@ const SignUp = () => {
 
     useEffect(() => {
         // if(error) {
-            console.log('useEffect error ',error)
+            console.log('useEffect error ',error, 'loading ', !loading, 'submitCount ',formik.submitCount )
         //     formik.setErrors(error)
         // }
 
-        if(formik.submitCount > 0 && error){
+        if(!loading && success && formik.submitCount > 0 && error){
             formik.setErrors(error)
             handleOpen()
         }
-        else if (formik.submitCount > 0 && error === '') {
+        else if (!loading && success && formik.submitCount > 0 && error === '') {
             formik.resetForm()
             handleSuccessOpen()
         }
-    }, [error, formik.submitCount])
+    }, [loading, error, formik.submitCount, success])
 
     return (
         <>

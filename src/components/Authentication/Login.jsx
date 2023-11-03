@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { useDispatch } from "react-redux";
-import { loginHandler } from "../../features/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { loginHandler, resetError } from "../../features/userSlice";
 
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -25,19 +25,23 @@ import loginStyles from './loginStyles.module.css'
 
 const Login = () => {
     const navigate = useNavigate();
+
     const dispatch = useDispatch();
+    const { error, loading, success } = useSelector(state => state.user);
+    
     const isMedium = useMediaQuery('(max-width:990px)');
     const is700 = useMediaQuery('(max-width:700px)');
 
     const [openBackdrop, setOpenBackdrop] = useState(false); // for displaying alert
     const [openSuccess, setOpenSuccess] = useState(false);
-    const [openLoader, setOpenLoader] = useState(false);
+    // const [openLoader, setOpenLoader] = useState(false);
 
     const handleOpen = () => {
         setOpenBackdrop(true);
     };
 
     const handleClose = () => {
+        dispatch(resetError())
         setOpenBackdrop(false);
     };
 
@@ -51,13 +55,13 @@ const Login = () => {
         navigate('/')
     }
 
-    const handleLoaderOpen = () => {
-        setOpenLoader(true)
-    }
+    // const handleLoaderOpen = () => {
+    //     setOpenLoader(true)
+    // }
 
-    const handleLoaderClose = () => {
-        setOpenLoader(false)
-    }
+    // const handleLoaderClose = () => {
+    //     setOpenLoader(false)
+    // }
 
     const schema = yup.object().shape({
         email: yup
@@ -79,11 +83,11 @@ const Login = () => {
         },
         validationSchema: schema,
         onSubmit: (values, {setSubmitting}) => {
-            handleLoaderOpen()
+            // handleLoaderOpen()
             dispatch(loginHandler(values))
-            handleLoaderClose()
-            handleSuccessOpen()
-            formik.resetForm()
+            // handleLoaderClose()
+            // handleSuccessOpen()
+            // formik.resetForm()
             {/*setTimeout(() => {
                 console.log(values)
                 handleLoaderClose()
@@ -100,10 +104,22 @@ const Login = () => {
     }, [])
     
     useEffect(() => {
-        if(formik.submitCount > 0 && !formik.isValid){
-            handleOpen()
+        // if(formik.submitCount > 0 && !formik.isValid){
+        //     handleOpen()
+        // }
+        console.log('useEffect error ',error, 'loading ', !loading, 'submitCount ',formik.submitCount )
+
+        if (!loading && success && formik.submitCount > 0 && error) {
+            if (typeof error !== 'string') {
+                formik.setErrors(error)
+            }
+            handleOpen();
         }
-    }, [formik.submitCount, formik.isValid])
+        else if (!loading && success && formik.submitCount > 0 && error === '') {
+            formik.resetForm()
+            handleSuccessOpen()
+        }
+    }, [formik.submitCount, loading, error, success])
     
     return (
         <>
@@ -231,7 +247,14 @@ const Login = () => {
             >
                 <Alert onClose={handleClose} variant='filled' severity="error">
                   <AlertTitle>Error</AlertTitle>
-                    <strong>Please check form inputs !</strong>
+                    <strong>
+                        {
+                            typeof error === 'string' ? 
+                                error 
+                                    :
+                                "Please check form inputs !"
+                        }
+                    </strong>
                 </Alert>
             </Backdrop>
             <Backdrop
@@ -246,7 +269,7 @@ const Login = () => {
             </Backdrop>
             <Backdrop
               sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-              open={openLoader}
+              open={loading}
             >
               <CircularProgress color="inherit" />
             </Backdrop>
