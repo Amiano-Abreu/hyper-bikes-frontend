@@ -26,7 +26,8 @@ import Toaster from '../Utility/Toaster'
 
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getBikesByDisplacement, getAllBikes, getBikeDetails, getBikesByBrand, getSingleBikeSummary, getBikesByCategory } from '../../services/bikes'
+import { getBikesByPrice, getBikesByDisplacement, getAllBikes, getBikeDetails, getBikesByBrand, getSingleBikeSummary, getBikesByCategory } from '../../services/bikes'
+import { getAllNews, getNewsByID } from '../../services/news'
 
 const bikeData = [
     {
@@ -258,7 +259,7 @@ const BikeDetails = () => {
 
     useEffect(() => {
         window.scrollTo(0,0)
-        getBikesByDisplacement(100,150);
+        // getAllNews(true);
     }, [])
 
     return (

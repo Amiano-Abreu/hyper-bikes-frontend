@@ -177,6 +177,7 @@ const Bikes = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const filterValue = searchParams.get('filter');
     const sortValue = searchParams.get('sort');
+    console.log('filter ', filterValue)
 
     const [filterDialog, setFilterDialog] = useState(false);
     const [filterDialogValue, setFilterDialogValue] = useState(filterValue);
@@ -219,10 +220,10 @@ const Bikes = () => {
         // console.log('sijze ', searchParams.size)
     }, [])
 
-    useEffect(() => {
-        console.log('filter ', filterValue)
-        console.log('sortValue ', sortValue)
-    }, [filterValue, sortValue])
+    // useEffect(() => {
+    //     console.log('filter ', filterValue)
+    //     console.log('sortValue ', sortValue)
+    // }, [filterValue, sortValue])
 
     return (
         <Box

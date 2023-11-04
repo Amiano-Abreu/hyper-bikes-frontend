@@ -1,10 +1,8 @@
 import axios from 'axios';
 
-const BASEURL = "http://localhost:5000/api";
-
 export const getBikeDetails = async (id) => {
     try {
-        const response = await axios.get(`${BASEURL}/bike/${id}`);
+        const response = await axios.get(`http://localhost:5000/api/bike/${id}`);
 
         const data = response.data;
         return data;
@@ -26,9 +24,11 @@ export const getBikeDetails = async (id) => {
     }
 }
 
+const BASEURL = "http://localhost:5000/api/bikes";
+
 export const getSingleBikeSummary = async (id) => {
     try {
-        const response = await axios.get(`${BASEURL}/bikes/${id}`);
+        const response = await axios.get(`${BASEURL}/${id}`);
 
         const data = response.data;
         return data;
@@ -52,7 +52,7 @@ export const getSingleBikeSummary = async (id) => {
 
 export const getAllBikes = async ( limit = false ) => {
     try {
-        const response = await axios.get(`${BASEURL}/bikes${limit ? '?limit=true' : ''}`);
+        const response = await axios.get(`${BASEURL}${limit ? '?limit=true' : ''}`);
 
         const data = response.data;
         return data;
@@ -76,7 +76,7 @@ export const getAllBikes = async ( limit = false ) => {
 
 export const getBikesByBrand = async (brand) => {
     try {
-        const response = await axios.get(`${BASEURL}/bikes/brand/${brand}`);
+        const response = await axios.get(`${BASEURL}/brand/${brand}`);
 
         const data = response.data;
         return data;
@@ -100,7 +100,7 @@ export const getBikesByBrand = async (brand) => {
 
 export const getBikesByCategory = async (category) => {
     try {
-        const response = await axios.get(`${BASEURL}/bikes/category/${category}`);
+        const response = await axios.get(`${BASEURL}/category/${category}`);
 
         const data = response.data;
         return data;
@@ -124,7 +124,7 @@ export const getBikesByCategory = async (category) => {
 
 export const getBikesByDisplacement = async (start, end=false) => {
     try {
-        const response = await axios.get(`${BASEURL}/bikes/displacement?start=${start}${end ? `&end=${end}` : ''}`);
+        const response = await axios.get(`${BASEURL}/displacement?start=${start}${end ? `&end=${end}` : ''}`);
 
         const data = response.data;
         return data;
@@ -146,9 +146,24 @@ export const getBikesByDisplacement = async (start, end=false) => {
     }
 }
 
-export const getBikesByPrice = async (under, above) => {
+export const getBikesByPrice = async ({under, above}) => {
+    let query = '';
+
+    if (under) {
+        query = `under=${under}`
+    }
+    else if (above) {
+        query = `above=${above}`
+    }
+    else {
+        return {
+            status: 'Error',
+            message: 'Under or Above query not provided !'
+        }
+    }
+
     try {
-        const response = await axios.get(`${BASEURL}/bikes/price?start=${start}${end ? `&end=${end}` : ''}`);
+        const response = await axios.get(`${BASEURL}/price?${query}`);
 
         const data = response.data;
         return data;
