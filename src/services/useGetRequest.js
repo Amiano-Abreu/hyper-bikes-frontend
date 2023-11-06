@@ -1,19 +1,17 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 
-export default useHttpRequest = (method, url, body) => {
+const useGetRequest = (method, url) => {
     const [isLoading, setIsLoading] = useState(false);
     const [apiData, setApiData] = useState(null);
     const [serverError, setServerError] = useState(null);
   
     useEffect(() => {
-      setIsLoading(true);
       const fetchData = async () => {
         try {
           const resp = await axios({
             method: method,
-            url: url,
-            data: body
+            url: url
           });
           const data = await resp?.data;
   
@@ -36,8 +34,15 @@ export default useHttpRequest = (method, url, body) => {
         }
       };
   
-      fetchData();
-    }, [url, method, body]);
+      if( url !== "undefined" ) {
+        console.log("radio Url ", url)
+
+        setIsLoading(true);
+        fetchData();
+      }
+    }, [url, method]);
   
     return { isLoading, apiData, serverError };
 };
+
+export default useGetRequest;

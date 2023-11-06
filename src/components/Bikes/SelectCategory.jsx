@@ -9,7 +9,7 @@ import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom'
 import ArrowRightAltRoundedIcon from '@mui/icons-material/ArrowRightAltRounded';
 
-const SelectCategory = ({ grid, onFilterChange }) => {
+const SelectCategory = ({ grid, onFilterChange, onSave, onViewAll }) => {
     const isMobile = useMediaQuery('(max-width:1024px)')
 
     return (
@@ -74,15 +74,52 @@ const SelectCategory = ({ grid, onFilterChange }) => {
                                     })
                                 }}
                                 elevation={6}
-                                onClick={() => {
-                                    // if(item.property) {
-                                        onFilterChange({ 
-                                            filterParam: item.property ? 
-                                                            item.filter
-                                                                :
-                                                            item.name
-                                        })
-                                    // }
+                                onClick={ () => {
+                                    console.log('yo')
+                                    const selectFilterObj = {
+                                        target: {
+                                            name: 'selectedFilter',
+                                            value: ''
+                                        }
+                                    }
+
+                                    const obj = {
+                                        target: {
+                                            name: '',
+                                            value: ''
+                                        }
+                                    }
+
+                                    if( grid.title === "brand") {
+                                        obj.target.name = "selectedBrand"
+                                        obj.target.value = item.name
+                                        selectFilterObj.target.value = grid.title
+                                        onFilterChange(selectFilterObj);
+                                        onFilterChange(obj);
+                                    }
+                                    else if( grid.title === "cubic capacity (cc)") {
+                                        obj.target.name = "selectedDisplacement"
+                                        obj.target.value = item.filter
+                                        selectFilterObj.target.value = "displacement"
+                                        onFilterChange(selectFilterObj);
+                                        onFilterChange(obj);
+                                    }
+                                    else if( grid.title === "category") {
+                                        obj.target.name = "selectedCategory"
+                                        obj.target.value = item.name
+                                        selectFilterObj.target.value = grid.title
+                                        onFilterChange(selectFilterObj);
+                                        onFilterChange(obj);
+                                    }
+                                    else if( grid.title === "price") {
+                                        obj.target.name = "selectedPrice"
+                                        obj.target.value = item.filter
+                                        selectFilterObj.target.value = grid.title
+                                        onFilterChange(selectFilterObj);
+                                        onFilterChange(obj);
+                                    }
+
+                                    onSave()
                                 }}
                             >
                                 {item.property ? 
@@ -193,7 +230,7 @@ const SelectCategory = ({ grid, onFilterChange }) => {
                         })
                     }}
                     onClick={() => {
-                        onFilterChange({ filterParam:'all' });
+                        onViewAll();
                     }}
                 >
                     view all

@@ -9,7 +9,7 @@ import { useMediaQuery } from '@mui/material';
 
 import BikeCard from "../Home/BikeCard";
 
-const Preview = ({ onFilterChange }) => {
+const Preview = ({ onViewAll }) => {
     const isMobile = useMediaQuery('(max-width:1024px)')
     
     return (
@@ -81,7 +81,7 @@ const Preview = ({ onFilterChange }) => {
                     // component={Link}
                     // to={'all'}
                     onClick={() => {
-                        onFilterChange({ filterParam:'all' });
+                        onViewAll();
                     }}
                 >
                     view all

@@ -9,14 +9,16 @@ const SlideTransition = (props) => {
   return <Slide {...props} direction="up" />;
 };
   
-const Toaster = () => {
+const Toaster = ( link = false ) => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(true);
 
     const handleClose = () => {
         setOpen(false);
 
-        navigate('/')
+        if ( link ) {
+            navigate(link)
+        }
     }
 
     return (

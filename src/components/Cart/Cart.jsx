@@ -375,7 +375,7 @@ const Cart = () => {
             </Paper>
             {
                 buyToaster ? 
-                    <Toaster />
+                    <Toaster link='/' />
                         :
                     <></>
             }

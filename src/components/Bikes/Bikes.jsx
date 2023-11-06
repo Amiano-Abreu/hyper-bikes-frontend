@@ -26,10 +26,12 @@ import SelectCategory from "./SelectCategory"
 import Preview from './Preview'
 import BikeCard from '../Home/BikeCard'
 
-import { useEffect, useState } from "react"
-import { useSearchParams } from "react-router-dom"
+import { useEffect, useMemo, useState } from "react"
+import useGetRequest from "../../services/useGetRequest"
 
 import { useMediaQuery } from '@mui/material';
+
+const BASEURL = "http://localhost:5000/api/bikes";
 
 const grid = [
     {
@@ -72,27 +74,27 @@ const grid = [
         gridArr: [
             {
                 property: '100cc - 150cc',
-                filter: 'cc100-150'
+                filter: '100-150'
             },
             {
                 property: '150cc - 300cc',
-                filter: 'cc150-300'
+                filter: '150-300'
             },
             {
                 property: '300cc - 500cc',
-                filter: 'cc300-500'
+                filter: '300-500'
             },
             {
                 property: '500cc - 650cc',
-                filter: 'cc500-650'
+                filter: '500-650'
             },
             {
                 property: '650cc - 1000cc',
-                filter: 'cc650-1000'
+                filter: '650-1000'
             },
             {
                 property: '1000cc+',
-                filter: 'cc1000'
+                filter: '1000'
             }
         ]
     },
@@ -136,82 +138,164 @@ const grid = [
         gridArr: [
             {
                 property: 'Under ₹3lakh',
-                filter: 'priceB3'
+                filter: 'U300000'
             },
             {
                 property: 'Under ₹4lakh',
-                filter: 'priceB4'
+                filter: 'U400000'
             },
             {
                 property: 'Under ₹7lakh',
-                filter: 'priceB7'
+                filter: 'U700000'
             },
             {
                 property: 'Under ₹15lakh',
-                filter: 'priceB15'
+                filter: 'U1500000'
             },
             {
                 property: 'Under ₹20lakh',
-                filter: 'priceB20'
+                filter: 'U2000000'
             },
             {
                 property: 'Above ₹20lakh',
-                filter: 'priceA20'
+                filter: 'A2000000'
             }
         ]
     }
 ]
 
-const filterDialogOptions = grid.flatMap(
+let brandRadio;
+let categoryRadio;
+let priceRadio;
+let displacementRadio;
+
+const filterRadioSelect = grid.map(
     gridItem => {
-            return gridItem.gridArr;
+            const { title, gridArr } = gridItem;
+
+            if ( title === "brand" || title === "category" ) {
+                const valueArray = gridArr.map(
+                    item => item.name
+                )
+
+                if ( title === "brand" ) {
+                    brandRadio = valueArray;
+                }
+                else {
+                    categoryRadio = valueArray;
+                }
+            }
+            else {
+                const valueArray = gridArr.map(
+                    item => item.filter
+                )
+
+                if ( title === "price" ) {
+                    priceRadio = valueArray;
+                }
+                else {
+                    displacementRadio = valueArray;
+                }
+            }
+
+            if ( title === "cubic capacity (cc)" ) {
+                return "Displacement";
+            }
+            return title.charAt(0).toUpperCase() + title.slice(1);
     }
 )
 
-console.log('filterOptions ', filterDialogOptions)
+console.log('filterOptions ', filterRadioSelect)
+console.log('filterbrandRadio ', brandRadio)
+console.log('filtercategoryRadio ', categoryRadio)
+console.log('filterpriceRadio ', priceRadio)
+console.log('filterdisplacementRadio ', displacementRadio)
+
+const filterNames = ["selectedFilter", "selectedBrand", "selectedPrice", "selectedDisplacement", "selectedCategory"]
 
 
 const Bikes = () => {
+    console.log("start ")
     const isMobile = useMediaQuery('(max-width:1024px)')
 
-    const [searchParams, setSearchParams] = useSearchParams();
-    const filterValue = searchParams.get('filter');
-    const sortValue = searchParams.get('sort');
-    console.log('filter ', filterValue)
-
     const [filterDialog, setFilterDialog] = useState(false);
-    const [filterDialogValue, setFilterDialogValue] = useState(filterValue);
-    const [sortDialogValue, setSortDialogValue] = useState(sortValue);
+    const [saved, setSaved] = useState(false);
 
+    const [viewAll, setViewAll] = useState(false);
 
-    const handleFilterChange = ({filterParam = null, sortParam = null}) => {
-
-        if (filterParam !== null && sortParam !== null) {
-            setSearchParams({ filter: filterParam, sort: sortParam });
-        }
-        else if (filterParam !== null && sortParam  === null) {
-            setSearchParams({ filter: filterParam });
-        }
-        else if (filterParam === null && sortParam !== null) {
-            setSearchParams({ sort: sortParam });
-        }
-
-    };
+    const handleViewAll = () => {
+        setSaved(false);
+        setViewAll(true);
+    }
 
     const openFilterDialog = () => {
         setFilterDialog(true);
+        setSaved(false);
     }
 
     const closeFilterDialog = () => {
         setFilterDialog(false);
     }
 
-    const handleSortDialog = (e) => {
-        setSortDialogValue(e.target.value)
+    const [filters, setFilters] = useState({
+      selectedFilter: '',
+      selectedBrand: '',
+      selectedPrice: '',
+      selectedDisplacement: '',
+      selectedCategory: ''
+    });
+    const {
+        selectedFilter,
+        selectedBrand,
+        selectedPrice,
+        selectedDisplacement,
+        selectedCategory
+    } = filters;
+
+    
+    // const handleFilterChange = (event) => {
+    //   FOR HANDLING ALL FILTERS AT ONCE
+    //   SERVICE NOT IMPLEMENTED YET
+    // 
+    //   const { name, value } = event.target;
+    //   setFilters({ ...filters, [name]: value });
+    // };
+
+    const handleFilterChange = (event) => {
+        //   FOR HANDLING SINGLE FILTERS AT ONCE
+        console.log("filters event", event)
+        const { name, value } = event.target;
+        
+        let  otherFilters;
+        if ( name === "selectedFilter" ) {
+            otherFilters = filterNames.filter( fName => fName !== name );
+        }
+        else {
+            otherFilters = filterNames.filter( fName => fName !== name ).filter( i => i !== "selectedFilter" );
+        }
+        console.log('otherFilters ', otherFilters)
+        
+        setFilters((filters) => {
+            const updatedFilters = { ...filters, [name]: value };
+
+            otherFilters.map(
+                item => {
+                    updatedFilters[item] = "";
+                }
+            )
+
+            return {
+                ...updatedFilters
+            };
+        });
+        
+        // console.log('updatedFilters ', filters)
     }
     
-    const handleFilterDialog = (e) => {
-        setFilterDialogValue(e.target.value)
+    const [sortDialogValue, setSortDialogValue] = useState(null);
+
+    const handleSortDialog = (e) => {
+        setSortDialogValue(e.target.value)
     }
 
     useEffect(() => {
@@ -220,10 +304,68 @@ const Bikes = () => {
         // console.log('sijze ', searchParams.size)
     }, [])
 
+    // let url;
+    const url = useMemo(
+        () => {
+            if( 
+                saved && 
+                (
+                    selectedBrand ||
+                    selectedPrice ||
+                    selectedDisplacement ||
+                    selectedCategory
+                )
+            ) {
+                console.log('filter async')
+                if (selectedBrand) {
+                    return `${BASEURL}/brand/${selectedBrand}`;
+                }
+                else if (selectedPrice) {
+                    let query;
+        
+                    if( selectedPrice[0] === "U" ) {
+                        query = `under=${selectedPrice.slice(1)}`
+                    }
+                    else {
+                        query = `above=${selectedPrice.slice(1)}`
+                    }
+        
+                    return `${BASEURL}/price?${query}`;
+                }
+                else if (selectedDisplacement) {
+                    let start, end;
+        
+                    if( selectedDisplacement.includes("-") ) {
+                        const dispArr = selectedDisplacement.split("-");
+                        
+                        start = dispArr[0];
+                        end = dispArr[1];
+                    }
+                    else {
+                        start = selectedDisplacement;
+                    }
+        
+                    return `${BASEURL}/displacement?start=${start}${end ? `&end=${end}` : ''}`;
+                }
+                else if (selectedCategory) {
+                    return `${BASEURL}/category/${selectedCategory}`;
+                }
+            }
+            else if (
+                !saved &&
+                viewAll
+            ) {
+                console.log('view all filter async')
+                return `${BASEURL}`;
+            }
+        }, [saved, selectedBrand, selectedPrice, selectedDisplacement, selectedCategory, viewAll])
+
+        console.log("radio url ", url)
+    const { isLoading, apiData, serverError } = useGetRequest("GET", `${url}`)
+
     // useEffect(() => {
-    //     console.log('filter ', filterValue)
-    //     console.log('sortValue ', sortValue)
-    // }, [filterValue, sortValue])
+    //     console.log('filter ', saved, selectedFilter, selectedBrand, selectedPrice, selectedDisplacement, selectedCategory)
+    // }, [selectedFilter, selectedBrand, selectedPrice, selectedDisplacement, selectedCategory, saved])
 
     return (
         <Box
@@ -233,8 +375,27 @@ const Bikes = () => {
                 bgcolor: 'customWhite.main'
             }}
         >
+            {`'${String(url)}'`}
             {
-                (filterValue || sortValue) ?
+                // (filterValue || sortValue) 
+                (
+                    (
+                        saved && 
+                        (
+                            selectedBrand ||
+                            selectedCategory ||
+                            selectedPrice ||
+                            selectedDisplacement
+                        )
+                    )
+
+                    ||
+
+                    (
+                        !saved && viewAll
+                    )
+                )
+                ?
                 <>
                     <Grid
                         container
@@ -302,13 +463,15 @@ const Bikes = () => {
                 :
 
                 <>
-                    <Preview onFilterChange={handleFilterChange} />
+                    <Preview onViewAll={handleViewAll} />
                     {grid.map((item,i) => {
                         return (
                             <SelectCategory 
                                 key={item.title + i} 
                                 grid={item} 
-                                onFilterChange={handleFilterChange} 
+                                onFilterChange={handleFilterChange}
+                                onSave={() => {setSaved(true)}}
+                                onViewAll={handleViewAll}
                             />
                         )
                     })}
@@ -343,10 +506,8 @@ const Bikes = () => {
                             color="inherit" 
                             onClick={
                                 () => {
-                                    handleFilterChange({
-                                        filterParam: filterDialogValue,
-                                        sortParam: sortDialogValue
-                                    });
+                                    setViewAll(false);
+                                    setSaved(true);
                                     closeFilterDialog();
                                 }
                             }
@@ -367,7 +528,8 @@ const Bikes = () => {
                                 id="sort-radio-buttons-group"
                                 sx={{
                                     fontWeight: '700',
-                                    color: 'customBlack.main'
+                                    color: 'customBlack.main',
+                                    textTransform: 'uppercase'
                                 }}
                             >
                                 Sort
@@ -387,59 +549,202 @@ const Bikes = () => {
                     <ListItem
                         sx={{
                             px: 10,
-                            py: 5
+                            py: 5,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start'
                         }}
                     >
-                        <FormControl>
+                        <FormControl
+                            sx={{
+                                mb: 5
+                            }}
+                        >
                             <FormLabel 
                                 id="filter-radio-buttons-group"
                                 sx={{
                                     fontWeight: '700',
-                                    color: 'customBlack.main'
+                                    color: 'customBlack.main',
+                                    textTransform: 'uppercase'
                                 }}
                             >
                                 filter
                             </FormLabel>
                             <RadioGroup
                                 row
-                                aria-labelledby="filter-radio-buttons-group"
-                                name="filter-radio-buttons-group"
-                                value={filterDialogValue}
-                                onChange={handleFilterDialog}
+                                aria-labelledby="filter-type"
+                                name="selectedFilter"
+                                value={filters.selectedFilter}
+                                onChange={handleFilterChange}
                             >
                                 {
-                                    filterDialogOptions.map(
-                                        filterOption => {
+                                    filterRadioSelect.map(
+                                        radioItem => {
                                             return (
                                                 <FormControlLabel 
-                                                control={<Radio />} 
-                                                {
-                                                    ...(
-                                                        filterOption.name ?
-                                                            {
-                                                                key: filterOption.name + filterOption.imgAlt,
-                                                                value: filterOption.name,
-                                                                label: filterOption.name,
-                                                                sx: {
-                                                                    textTransform: 'capitalize'
-                                                                }
-                                                            }
-                                                                :
-
-                                                            {
-                                                                key: filterOption.filter + filterOption.property,
-                                                                value: filterOption.filter,
-                                                                label: filterOption.property
-                                                            }
-                                                        )
-                                                    }
+                                                    value={radioItem.toLowerCase()} 
+                                                    control={<Radio />} 
+                                                    label={radioItem}
                                                 />
                                             )
                                         }
                                     )
                                 }
+                                
                             </RadioGroup>
                         </FormControl>
+                        {
+                            selectedFilter === "brand" &&
+                            (
+                                <FormControl>
+                                    <FormLabel 
+                                    id="filter-radio-buttons-group"
+                                    sx={{
+                                        fontWeight: '700',
+                                        color: 'customBlack.main',
+                                        textTransform: 'uppercase'
+                                    }}
+                                >
+                                    select brand
+                                </FormLabel>
+                                <RadioGroup
+                                  row
+                                  aria-label="brand-filter"
+                                  name="selectedBrand"
+                                  value={filters.selectedBrand}
+                                  onChange={handleFilterChange}
+                                >
+                                  {
+                                    brandRadio.map(
+                                        brand => {
+                                            return (
+                                                <FormControlLabel 
+                                                    value={brand} 
+                                                    control={<Radio />} 
+                                                    label={brand} 
+                                                />
+                                            )
+                                        }
+                                    )
+                                  }
+                                </RadioGroup>
+                              </FormControl>
+                            )
+                        }
+                        {
+                            selectedFilter === "price" &&
+                            (
+                              <FormControl>
+                                <FormLabel 
+                                    id="filter-radio-buttons-group"
+                                    sx={{
+                                        fontWeight: '700',
+                                        color: 'customBlack.main',
+                                        textTransform: 'uppercase'
+                                    }}
+                                >
+                                    select price
+                                </FormLabel>
+                                <RadioGroup
+                                  row
+                                  aria-label="price-filter"
+                                  name="selectedPrice"
+                                  value={filters.selectedPrice}
+                                  onChange={handleFilterChange}
+                                >
+                                  {
+                                    priceRadio.map(
+                                        price => {
+                                            return (
+                                                <FormControlLabel 
+                                                    value={price} 
+                                                    control={<Radio />} 
+                                                    label={`${price.charAt(0) === "U" ? "Under" : "Above"} ${price.slice(1)}`} 
+                                                />
+                                            )
+                                        }
+                                    )
+                                  }
+                                </RadioGroup>
+                              </FormControl>
+                            )
+                        }
+                        {
+                            selectedFilter === "category" &&
+                            (
+                              <FormControl>
+                                <FormLabel 
+                                    id="filter-radio-buttons-group"
+                                    sx={{
+                                        fontWeight: '700',
+                                        color: 'customBlack.main',
+                                        textTransform: 'uppercase'
+                                    }}
+                                >
+                                    select category
+                                </FormLabel>
+                                <RadioGroup
+                                  row
+                                  aria-label="category-filter"
+                                  name="selectedCategory"
+                                  value={filters.selectedCategory}
+                                  onChange={handleFilterChange}
+                                >
+                                  {
+                                    categoryRadio.map(
+                                        category => {
+                                            return (
+                                                <FormControlLabel 
+                                                    value={category} 
+                                                    control={<Radio />} 
+                                                    label={category.charAt(0).toUpperCase() + category.slice(1)} 
+                                                />
+                                            )
+                                        }
+                                    )
+                                  }
+                                </RadioGroup>
+                              </FormControl>
+                            )
+                        }
+                        {
+                            selectedFilter === "displacement" &&
+                            (
+                              <FormControl>
+                                <FormLabel 
+                                    id="filter-radio-buttons-group"
+                                    sx={{
+                                        fontWeight: '700',
+                                        color: 'customBlack.main',
+                                        textTransform: 'uppercase'
+                                    }}
+                                >
+                                    select displacement
+                                </FormLabel>
+                                <RadioGroup
+                                  row
+                                  aria-label="displacement-filter"
+                                  name="selectedDisplacement"
+                                  value={filters.selectedDisplacement}
+                                  onChange={handleFilterChange}
+                                >
+                                  {
+                                    displacementRadio.map(
+                                        displacement => {
+                                            return (
+                                                <FormControlLabel 
+                                                    value={displacement} 
+                                                    control={<Radio />} 
+                                                    label={displacement.includes('-') ? displacement : `${displacement}+`} 
+                                                />
+                                            )
+                                        }
+                                    )
+                                  }
+                                </RadioGroup>
+                              </FormControl>
+                            )
+                        }
                     </ListItem>
                 </List>
             </Dialog>

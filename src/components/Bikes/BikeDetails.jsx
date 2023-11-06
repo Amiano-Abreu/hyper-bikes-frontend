@@ -749,7 +749,7 @@ const BikeDetails = () => {
             }
             {
                 buyToaster ? 
-                    <Toaster />
+                    <Toaster link='/' />
                         :
                     <></>
             }
