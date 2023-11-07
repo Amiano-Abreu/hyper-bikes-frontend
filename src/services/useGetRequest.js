@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 
-const useGetRequest = (method, url) => {
+const useGetRequest = (url) => {
     const [isLoading, setIsLoading] = useState(false);
     const [apiData, setApiData] = useState(null);
     const [serverError, setServerError] = useState(null);
@@ -10,12 +10,14 @@ const useGetRequest = (method, url) => {
       const fetchData = async () => {
         try {
           const resp = await axios({
-            method: method,
+            method: "GET",
             url: url
           });
           const data = await resp?.data;
   
+          console.log(data)
           setApiData(data);
+          setServerError(null);
           setIsLoading(false);
         } catch (error) {
           if (error.hasOwnProperty("response")) {
@@ -30,6 +32,7 @@ const useGetRequest = (method, url) => {
                 message: error.message
             })
           }
+          setApiData(null);
           setIsLoading(false);
         }
       };
@@ -40,7 +43,7 @@ const useGetRequest = (method, url) => {
         setIsLoading(true);
         fetchData();
       }
-    }, [url, method]);
+    }, [url]);
   
     return { isLoading, apiData, serverError };
 };

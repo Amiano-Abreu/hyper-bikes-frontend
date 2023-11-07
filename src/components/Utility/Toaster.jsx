@@ -9,7 +9,8 @@ const SlideTransition = (props) => {
   return <Slide {...props} direction="up" />;
 };
   
-const Toaster = ( link = false ) => {
+const Toaster = ( {link = false, message, type} ) => {
+    console.log("message ", message, "type ", type)
     const navigate = useNavigate();
     const [open, setOpen] = useState(true);
 
@@ -29,7 +30,7 @@ const Toaster = ( link = false ) => {
             }}
             open={open}
             onClose={handleClose}
-            autoHideDuration={3000} // Adjust as needed
+            autoHideDuration={5000} // Adjust as needed
             anchorOrigin={{ 
                 vertical: "bottom", 
                 horizontal: "center" 
@@ -39,10 +40,10 @@ const Toaster = ( link = false ) => {
             <Alert 
                 onClose={handleClose} 
                 variant="filled" 
-                severity="success" 
+                severity={ type ? type : "success"} 
                 sx={{ width: '100%' }}
             >
-                This is a success message!
+                { message ? message : "This is a success message!"}
             </Alert>
         </Snackbar>
         

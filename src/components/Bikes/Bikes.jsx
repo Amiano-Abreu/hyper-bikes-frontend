@@ -25,11 +25,13 @@ import ducatiLogo from '../../assets/Bikes/logo/ducati-logo.png'
 import SelectCategory from "./SelectCategory"
 import Preview from './Preview'
 import BikeCard from '../Home/BikeCard'
+import Loader from '../Utility/Loader'
 
 import { useEffect, useMemo, useState } from "react"
 import useGetRequest from "../../services/useGetRequest"
 
 import { useMediaQuery } from '@mui/material';
+import Toaster from "../Utility/Toaster";
 
 const BASEURL = "http://localhost:5000/api/bikes";
 
@@ -53,7 +55,7 @@ const grid = [
                 imgAlt: 'ducati-logo'
             },
             {
-                name: 'Ktm',
+                name: 'KTM',
                 imgLogo: ducatiLogo,
                 imgAlt: 'ducati-logo'
             },
@@ -230,7 +232,7 @@ const Bikes = () => {
 
     const openFilterDialog = () => {
         setFilterDialog(true);
-        setSaved(false);
+        // setSaved(false);
     }
 
     const closeFilterDialog = () => {
@@ -361,7 +363,7 @@ const Bikes = () => {
         }, [saved, selectedBrand, selectedPrice, selectedDisplacement, selectedCategory, viewAll])
 
         console.log("radio url ", url)
-    const { isLoading, apiData, serverError } = useGetRequest("GET", `${url}`)
+    const { isLoading, apiData, serverError } = useGetRequest(`${url}`)
 
     // useEffect(() => {
     //     console.log('filter ', saved, selectedFilter, selectedBrand, selectedPrice, selectedDisplacement, selectedCategory)
@@ -380,31 +382,44 @@ const Bikes = () => {
                 // (filterValue || sortValue) 
                 (
                     (
-                        saved && 
                         (
-                            selectedBrand ||
-                            selectedCategory ||
-                            selectedPrice ||
-                            selectedDisplacement
+                            saved && 
+                            (
+                                selectedBrand ||
+                                selectedCategory ||
+                                selectedPrice ||
+                                selectedDisplacement
+                            )
+                        )
+
+                        ||
+
+                        (
+                            !saved && viewAll
                         )
                     )
 
-                    ||
+                    &&
 
                     (
-                        !saved && viewAll
+                        !isLoading 
                     )
                 )
                 ?
                 <>
                     <Grid
                         container
-                        justifyContent='center'
+                        justifyContent='flexStart'
                         alignItems='center'
                         sx={{
                             maxWidth: '974px',
                             width: '80vw',
-                            mx: 'auto'
+                            mx: 'auto',
+                            ...(
+                                apiData?.data?.length === 0 && !serverError && {
+                                    flexDirection: 'column'
+                                }
+                            )
                         }}
                     >
                         <Button 
@@ -433,30 +448,106 @@ const Bikes = () => {
                         >
                            filter
                         </Button>
-                        {[1,2,3].map((item, i) => {
-                            return (
-                                <Grid
-                                    key={item**i}
-                                    item
-                                    laptop={4}
-                                    mobile={12}
-                                    sx={{
-                                        pr: 5,
-                                        ...(i===2 && {
-                                            pr: 0
-                                        }),
-                                        ...(isMobile && {
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            pb: 5,
-                                            pr: 0
-                                        })
-                                    }}
-                                >
-                                    <BikeCard path={'bike/123'} />
-                                </Grid>
+                        {
+                            apiData?.data?.length === 0 && !serverError && !isLoading ?
+
+                            <p
+                                style={{
+                                    textTransform: 'uppercase',
+                                    fontWeight: '700'
+                                }}
+                            >No Bikes Of Selected Filter Available Yet</p>
+
+                            :
+
+                            (
+                                serverError ? 
+
+                                (
+                                        serverError.hasOwnProperty("data") ?
+                                            (
+                                                <>
+                                                    <p
+                                                        style={{
+                                                            textTransform: 'uppercase',
+                                                            width: '100%',
+                                                            textAlign: 'center',
+                                                            fontWeight: '700'
+                                                        }}
+                                                    >Error On Selected Filter. Please select another filter !</p>
+
+                                                    {    
+                                                        serverError.data.map(
+                                                            obj => {
+                                                                const key = Object.keys(obj)[0];
+                                                                const message = obj[key]
+                                                                return (
+                                                                    <Toaster 
+                                                                        type='error'
+                                                                        message={message}
+                                                                    />
+                                                                    // <p>{message}</p>
+                                                                )
+                                                            }
+                                                        )
+                                                    }
+                                                </>
+                                            )
+
+                                            :
+
+                                            (
+                                                <>
+                                                    <p
+                                                        style={{
+                                                            textTransform: 'uppercase',
+                                                            width: '100%',
+                                                            textAlign: 'center',
+                                                            fontWeight: '700'
+                                                        }}
+                                                    >Error On Selected Filter. Please select another filter !</p>
+
+                                                    <Toaster
+                                                        type='error'
+                                                        message={serverError.message}
+                                                    />
+                                                </>
+                                            )
+                                            
+                                )
+
+                                :
+
+                                apiData?.data.map((item, i) => {
+                                    return (
+                                            <Grid
+                                                key={item.bikeID}
+                                                item
+                                                laptop={4}
+                                                mobile={12}
+                                                sx={{
+                                                    pr: 5,
+                                                    mb: 5,
+                                                    ...(i===2 && {
+                                                        pr: 0
+                                                    }),
+                                                    ...(isMobile && {
+                                                        display: 'flex',
+                                                        justifyContent: 'center',
+                                                        pb: 5,
+                                                        pr: 0
+                                                    })
+                                                }}
+                                            >
+                                                <BikeCard 
+                                                    path={`bike/${item.bikeID}`} 
+                                                    bike={item}
+                                                />
+                                            </Grid>
+                                    )
+                                })
                             )
-                        })}
+                        }
                     </Grid>
                 </>
 
@@ -748,6 +839,7 @@ const Bikes = () => {
                     </ListItem>
                 </List>
             </Dialog>
+            {isLoading ? <Loader loading={isLoading} /> : <></>}
         </Box>
     )
 }

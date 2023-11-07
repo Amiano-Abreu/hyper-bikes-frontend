@@ -10,7 +10,7 @@ import { Link, useNavigate } from 'react-router-dom'
 
 import Honda from '../../assets/Home-Page/hero/Honda-Cbr-Fireblade-1000rr.png';
 
-export default function BikeCard({ path }) {
+export default function BikeCard({ path, bike }) {
     // const [bikePath, setBikePath] = useState(path);
 
     const isMobile = useMediaQuery('(max-width:1023px)')
@@ -80,7 +80,7 @@ export default function BikeCard({ path }) {
             })
         }}
       >
-        Honda
+        { bike?.brand ? bike?.brand : 'Honda' }
       </Typography>
       <CardActionArea
         disableRipple
@@ -99,8 +99,8 @@ export default function BikeCard({ path }) {
         <CardMedia
           component="img"
           height="230"
-          image={Honda}
-          alt="green iguana"
+          image={ bike?.images[0].src ? bike?.images[0].src : Honda }
+          alt={bike?.images[0].alt ? bike?.images[0].alt : "Honda CBR 1000"}
           sx={{
               objectFit: 'scale-down',
               ...(is640 && {
@@ -130,7 +130,7 @@ export default function BikeCard({ path }) {
                 fontWeight: '600'
             }}
           >
-            Honda Cbr Fireblade 1000rr
+            { bike?.brand && bike?.model ? `${bike?.brand} ${bike?.model}` : "Honda Cbr Fireblade 1000rr"}
           </Typography>
           <Stack
             direction='row'
@@ -147,7 +147,7 @@ export default function BikeCard({ path }) {
                 })
             }}
           >
-            {['1000cc','100bhp','195kg'].map((spec, i) => {
+            {[`${bike?.displacement}cc`, bike?.power, bike?.kerbWeight].map((spec, i) => {
                 return (
                 <Typography
                     key={spec + i}

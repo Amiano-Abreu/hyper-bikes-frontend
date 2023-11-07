@@ -8,6 +8,11 @@ import BikeCard from './BikeCard';
 import { useMediaQuery } from '@mui/material';
 
 import { useNavigate } from 'react-router-dom'
+import useGetRequest from '../../services/useGetRequest';
+import Loader from '../Utility/Loader';
+import Toaster from '../Utility/Toaster';
+
+const url = "http://localhost:5000/api/bikes?limit=true"
 
 const FeaturedBikesSection = () => {
     const isMobile = useMediaQuery('(max-width:1023px)')
@@ -15,6 +20,7 @@ const FeaturedBikesSection = () => {
     const is640 = useMediaQuery('(max-width:640px)')
 
     const navigate = useNavigate()
+    const { isLoading, apiData, serverError } = useGetRequest(url);
 
     return (
         <>
@@ -57,31 +63,95 @@ const FeaturedBikesSection = () => {
                         mx: 'auto'
                     }}
                 >
-                    {[1,2,3].map((item, i) => {
-                        return (
-                            <Grid
-                                key={item}
-                                item
-                                laptop={4}
-                                mobile={12}
-                                sx={{
-                                    ...(isMobile && {
-                                        pl: 0,
-                                        pt: 5
-                                    }),
-                                    ...(isMobile && i === 0 && {
-                                        pl: 0,
-                                        pt: 0
-                                    }),
-                                    ...(isLaptop && i===2 && {
-                                        pr: 0
-                                    })
-                                }}
-                            >
-                                <BikeCard path={'bike/123'} />
-                            </Grid>
-                        )
-                    })}
+                    {
+                        !isLoading && !serverError ?
+
+                        apiData?.data.map((item, i) => {
+                            return (
+                                <Grid
+                                    key={item.bikeID}
+                                    item
+                                    laptop={4}
+                                    mobile={12}
+                                    sx={{
+                                        ...(isMobile && {
+                                            pl: 0,
+                                            pt: 5
+                                        }),
+                                        ...(isMobile && i === 0 && {
+                                            pl: 0,
+                                            pt: 0
+                                        }),
+                                        ...(isLaptop && i===2 && {
+                                            pr: 0
+                                        })
+                                    }}
+                                >
+                                    <BikeCard path={`bike/${item.bikeID}`} bike={item} />
+                                </Grid>
+                            )})
+
+                            :
+
+                            serverError ?
+                            (
+                                serverError.hasOwnProperty("data") ?
+                                    (
+                                        <>
+                                            <p
+                                                style={{
+                                                    textTransform: 'uppercase',
+                                                    width: '100%',
+                                                    textAlign: 'center',
+                                                    fontWeight: '700'
+                                                }}
+                                            >Error retrieving bikes !</p>
+
+                                            {    
+                                                serverError.data.map(
+                                                    obj => {
+                                                        const key = Object.keys(obj)[0];
+                                                        const message = obj[key]
+                                                        return (
+                                                            <Toaster 
+                                                                type='error'
+                                                                message={message}
+                                                            />
+                                                            // <p>{message}</p>
+                                                        )
+                                                    }
+                                                )
+                                            }
+                                        </>
+                                    )
+
+                                    :
+
+                                    (
+                                        <>
+                                            <p
+                                                style={{
+                                                    textTransform: 'uppercase',
+                                                    width: '100%',
+                                                    textAlign: 'center',
+                                                    fontWeight: '700'
+                                                }}
+                                            >Error retrieving bikes !</p>
+
+                                            <Toaster
+                                                type='error'
+                                                message={serverError.message}
+                                            />
+                                        </>
+                                    )
+                                    
+                            )
+
+                            :
+
+                            <></>
+                            
+                    }
                 </Grid>
                 <Button 
                         variant='contained'
@@ -105,6 +175,7 @@ const FeaturedBikesSection = () => {
                     >
                         view all
                 </Button>
+                { !isLoading ? <></> : <Loader loading={isLoading} />}
             </Box>
         </>
     )
