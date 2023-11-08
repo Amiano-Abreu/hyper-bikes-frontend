@@ -8,19 +8,14 @@ import BikeCard from './BikeCard';
 import { useMediaQuery } from '@mui/material';
 
 import { useNavigate } from 'react-router-dom'
-import useGetRequest from '../../services/useGetRequest';
-import Loader from '../Utility/Loader';
 import Toaster from '../Utility/Toaster';
 
-const url = "http://localhost:5000/api/bikes?limit=true"
-
-const FeaturedBikesSection = () => {
+const FeaturedBikesSection = ({ isLoading, apiData, serverError }) => {
     const isMobile = useMediaQuery('(max-width:1023px)')
     const isLaptop = useMediaQuery('(min-width:1024px)')
     const is640 = useMediaQuery('(max-width:640px)')
 
     const navigate = useNavigate()
-    const { isLoading, apiData, serverError } = useGetRequest(url);
 
     return (
         <>
@@ -175,7 +170,6 @@ const FeaturedBikesSection = () => {
                     >
                         view all
                 </Button>
-                { !isLoading ? <></> : <Loader loading={isLoading} />}
             </Box>
         </>
     )

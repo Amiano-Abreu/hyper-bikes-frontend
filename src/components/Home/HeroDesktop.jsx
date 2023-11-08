@@ -9,13 +9,15 @@ import DucatiBike from '../../assets/Home-Page/hero/Ducati-test.png';
 import { useMediaQuery } from '@mui/material';
 
 
-const HeroDesktop = () => {
+const HeroDesktop = ({ bikes }) => {
     const isMedium = useMediaQuery('(max-width:990px)');
 
     const is1250 = useMediaQuery('(max-width:1250px)');
 
     console.log(isMedium)
+    const panigale = bikes?.data.find(bike => bike.model === "Panigale V2 Bayliss");
 
+    console.log("panigale ", panigale)
     
     return (
         <>
@@ -68,7 +70,8 @@ const HeroDesktop = () => {
                     Troy Bayliss, Claudio Domenicali and Davide Tardozzi present a new chapter in a highly successful story.
                 </Typography>
                 <Button
-                    to='/bike/abc'
+                    to={`/bike/${panigale?.bikeID}`}
+                    state={{bike: panigale}}
                     component={Link}
                     variant='contained'
                     color='customRed'

@@ -25,9 +25,11 @@ import NewsCard from './NewsCard'
 import Toaster from '../Utility/Toaster'
 
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { getBikesByPrice, getBikesByDisplacement, getAllBikes, getBikeDetails, getBikesByBrand, getSingleBikeSummary, getBikesByCategory } from '../../services/bikes'
 import { getAllNews, getNewsByID } from '../../services/news'
+import useGetRequest from '../../services/useGetRequest'
+import Loader from '../Utility/Loader'
 
 const bikeData = [
     {
@@ -233,7 +235,36 @@ const features = [
     'Headlight Type' , 'Brake/Tail Light' , 'Turn Signal' , 'Pass Light' , 'Additional features'
 ]
 
+const BASEURL = "http://localhost:5000/api/bike";
+
 const BikeDetails = () => {
+    const location = useLocation();
+    const bike = location.state.bike;
+    console.log("state bikeDetails ", location.state.bike) // CHECK BOTH CASES ON HOME & BIKES PAGE
+
+    let url;
+    let bikeName;
+    let bikeSpecs;
+
+    url = `${BASEURL}/${bike?.bikeID}`;
+    bikeName = `${bike?.brand} ${bike?.model}`;
+    bikeSpecs = {
+        engineCapacity: `${bike?.displacement} cc`,
+        kerbWeight: bike?.kerbWeight,
+        maxPower: `${bike?.power.split("bhp")[0]} bhp`,
+        transmission: '6 Speed Manual',
+        fuelTankCapacity: '16.1 litres',
+        seatHeight: '830 mm',
+    }
+    
+    console.log("bikeUrl ", url,"bikeName ",bikeName, "bikeSpecs ",bikeSpecs)
+    const {
+        isLoading,
+        apiData,
+        serverError
+    } = useGetRequest(url);
+
+
     const isMobile = useMediaQuery('(max-width:640px)')
     const isTablet = useMediaQuery('(max-width:1024px)')
 
@@ -249,7 +280,7 @@ const BikeDetails = () => {
             setTimeout(() => {
                 setBuyToaster(false)
                 navigate('/bikes')
-            }, 3200);
+            }, 5100);
         }
     }
 
@@ -262,13 +293,62 @@ const BikeDetails = () => {
         // getAllNews(true);
     }, [])
 
+    // useEffect(() => {}, [location.state])
+
+    // useEffect(() => {
+    //     url.current = `${BASEURL}/${bike?.bikeID}`;
+    //     bikeName.current = `${bike?.brand} ${bike?.model}`;
+    //     bikeSpecs.current = {
+    //         engineCapacity: `${bike?.displacement} cc`,
+    //         kerbWeight: bike?.kerbWeight,
+    //         maxPower: `${bike?.power.split("bhp")[0]} bhp`,
+    //         transmission: '6 Speed Manual',
+    //         fuelTankCapacity: '16.1 litres',
+    //         seatHeight: '830 mm',
+    //     }
+
+    // }, [bike]);
+
     return (
+        isLoading ?
+
+        <Loader loading={isLoading} />
+
+        :
+
+        // serverError ?
+
+        // <p>
+        //     serverError: {String(serverError)}
+        // </p>
+
+        // :
+
+        // apiData &&
         <Box
             sx={{
                 py: 10
             }}
         >
-            
+        {
+            serverError ?
+
+            <p
+                style={{
+                    textTransform: 'uppercase',
+                    width: '100%',
+                    textAlign: 'center',
+                    fontWeight: '700'
+                }}
+            >
+                {serverError?.message}
+            </p>
+
+            :
+
+            apiData &&
+        (    
+            <>
             <Divider
                     variant='middle'
                     textAlign='center'
@@ -290,9 +370,9 @@ const BikeDetails = () => {
                         }                        
                     }}    
             >
-                {bikeData[0].bikeName}
+                {bikeName.trim() ? bikeName : bikeData[0].bikeName}
             </Divider>
-            <ReactCarousel images={bikeData[0].bikeImages} />
+            <ReactCarousel images={bike?.images ? bike.images : bikeData[0].bikeImages} />
             <CustomPaper>
                 <Box
                     sx={{
@@ -320,7 +400,7 @@ const BikeDetails = () => {
                             fontSize: { mobile: '0.85rem' , tablet: '1rem' , laptop: '1.5rem' }
                         }}
                     >
-                        ₹ {bikeData[0].price}
+                        ₹ {bike?.price ? bike.price : bikeData[0].price}
                     </Typography>
                 </Box>
                 <Button
@@ -352,13 +432,13 @@ const BikeDetails = () => {
             <CustomPaper
                 content={true}
             >
-                <PaperHeader text={`${bikeData[0].bikeName} Summary`} />
-                <FeaturesGrid arr={specs} obj={bikeData[0].keySpecs} />
+                <PaperHeader text={`${bikeName.trim() ? bikeName : bikeData[0].bikeName} Summary`} />
+                <FeaturesGrid arr={specs} obj={bikeSpecs ? bikeSpecs : bikeData[0].keySpecs} />
             </CustomPaper>
             <CustomPaper
                 content={true}
             >
-                <PaperHeader text={`About ${bikeData[0].bikeName}`} />
+                <PaperHeader text={`About ${bikeName.trim() ? bikeName : bikeData[0].bikeName}`} />
                 {bikeData[0].about.map((para, i) => {
                     return (
                         <Typography
@@ -414,7 +494,7 @@ const BikeDetails = () => {
             <CustomPaper
                 content={true}
             >
-                <PaperHeader text={`rating of ${bikeData[0].bikeName}`} />
+                <PaperHeader text={`rating of ${bikeName.trim() ? bikeName : bikeData[0].bikeName}`} />
                 {
                     parseInt(bikeData[0].numberOfReviews) < 1 ? 
                         <Box
@@ -582,7 +662,7 @@ const BikeDetails = () => {
                         <CustomPaper
                             content={true}
                         >
-                            <PaperHeader text={`${bikeData[0].bikeName} User Reviews`} />
+                            <PaperHeader text={`${bikeName.trim() ? bikeName : bikeData[0].bikeName} User Reviews`} />
                             {bikeData[0].reviews.map((review, i) => {
                                 return (
                                     <div
@@ -726,7 +806,7 @@ const BikeDetails = () => {
                 <CustomPaper
                     content={true}
                 >
-                    <PaperHeader text={`${bikeData[0].bikeName} News`} />
+                    <PaperHeader text={`${bikeName.trim() ? bikeName : bikeData[0].bikeName} News`} />
                     {bikeData[0].news.map((newsItem , i) => {
                         return (
                             <NewsCard
@@ -749,11 +829,14 @@ const BikeDetails = () => {
             }
             {
                 buyToaster ? 
-                    <Toaster link='/' />
+                    <Toaster link='/' type="success" message={`Successfully placed order for ${bikeName.trm() ? bikeName : bikeData[0].bikeName}`} />
                         :
                     <></>
             }
+            </>
+        )
             
+        }
         </Box>
     )
 }

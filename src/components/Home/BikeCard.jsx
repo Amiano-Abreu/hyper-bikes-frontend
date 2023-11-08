@@ -37,12 +37,13 @@ export default function BikeCard({ path, bike }) {
           bgcolor: 'customWhite.main',
           '&.MuiPaper-root': {
               height: 'auto',
+              width: '100%',
               ...(isLaptop && {
                 pb: 5
               })
           },
           textDecoration: 'none',
-          display: 'inline-block'
+          display: 'inline-block',
       }}
       elevation={6}
       // to={ window.location.pathname === '/bikes' ? window.location.origin + '/' + path : path }
@@ -52,7 +53,7 @@ export default function BikeCard({ path, bike }) {
               {
                 onClick: (e) => {
                   console.log("event ", window.location, "eventtt ", e)
-                  navigate({pathname: `/${path}`})
+                  navigate(`/${path}`, { state: { bike } })
                 }
               }
 
@@ -60,7 +61,10 @@ export default function BikeCard({ path, bike }) {
               
               {
                 component: Link,
-                to: path
+                to: path,
+                state: {
+                  bike
+                }
               }
             )
       }

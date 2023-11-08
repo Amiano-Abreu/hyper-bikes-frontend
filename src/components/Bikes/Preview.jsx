@@ -4,15 +4,59 @@ import Button from '@mui/material/Button';
 
 import ArrowRightAltRoundedIcon from '@mui/icons-material/ArrowRightAltRounded';
 
-import { Link } from 'react-router-dom'
 import { useMediaQuery } from '@mui/material';
 
 import BikeCard from "../Home/BikeCard";
 
+import useGetRequest from "../../services/useGetRequest";
+import Loader from "../Utility/Loader";
+
+const URL = "http://localhost:5000/api/bikes?limit=true";
+
 const Preview = ({ onViewAll }) => {
-    const isMobile = useMediaQuery('(max-width:1024px)')
+    const isMobile = useMediaQuery('(max-width:1024px)');
+
+    const {
+        isLoading,
+        apiData,
+        serverError
+    } = useGetRequest(URL);
     
     return (
+        isLoading ?
+        <Loader loading={isLoading} />
+
+        :
+
+        serverError ?
+
+        <p
+            style={{
+                textTransform: 'uppercase',
+                width: '100%',
+                textAlign: 'center',
+                fontWeight: '700',
+                marginBottom: '5rem',
+            }}
+        >
+            api Error 
+            {
+                serverError.hasOwnProperty("data") ?
+
+                serverError.data.map(err => {
+                    const key = Object.keys(err)[0];
+
+                    return ` | ${err[key]}`
+                })
+
+                :
+                
+                serverError?.message}
+        </p>
+
+        :
+
+        apiData &&
         <>
             <Typography
                 variant='h2'
@@ -36,10 +80,10 @@ const Preview = ({ onViewAll }) => {
                     mx: 'auto'
                 }}
             >
-                {[1,2,3].map((item, i) => {
+                {apiData.data.map((item, i) => {
                     return (
                         <Grid
-                            key={item**i}
+                            key={item.bikeID}
                             item
                             laptop={4}
                             mobile={12}
@@ -56,7 +100,7 @@ const Preview = ({ onViewAll }) => {
                                 })
                             }}
                         >
-                            <BikeCard path={'bike/123'} />
+                            <BikeCard path={'bike/123'} bike={item} />
                         </Grid>
                     )
                 })}

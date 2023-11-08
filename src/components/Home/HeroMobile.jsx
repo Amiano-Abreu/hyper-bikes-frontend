@@ -9,14 +9,15 @@ import DucatiBike from '../../assets/Home-Page/hero/Ducati-test.png';
 import { useMediaQuery } from '@mui/material';
 
 
-const HeroMobile = () => {
+const HeroMobile = ({ bikes }) => {
 
     const isMedium = useMediaQuery('(max-width:990px)');
     
     const is700 = useMediaQuery('(max-width:700px)');
 
     const is400 = useMediaQuery('(max-width:400px)');
-
+    const panigale = bikes?.data.find(bike => bike.model === "Panigale V2 Bayliss");
+    
     return (
         <>
             <Box
@@ -55,7 +56,8 @@ const HeroMobile = () => {
                 </Typography>
                 <Button
                     component={Link}
-                    to='/bike/abc'
+                    to={`/bike/${panigale?.bikeID}`}
+                    state={{bike: panigale}}
                     variant='contained'
                     color='customRed'
                     size={is700 ? 'small' : 'medium'}

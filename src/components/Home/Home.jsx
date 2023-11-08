@@ -9,11 +9,15 @@ import NewsSection from './NewsSection';
 import FeaturedBikesSection from './FeaturedBikesSection';
 
 import { useEffect } from 'react';
+import Loader from '../Utility/Loader';
+import useGetRequest from '../../services/useGetRequest';
 
-
+const url = "http://localhost:5000/api/bikes?limit=true";
 const Home = () => {
     const is1130 = useMediaQuery('(max-width:1130px)');
     console.log(is1130)
+
+    const { isLoading, apiData, serverError } = useGetRequest(url);
 
     useEffect(() => {
         window.scrollTo(0,0)
@@ -21,7 +25,7 @@ const Home = () => {
 
     return (
         <>
-            { is1130 ? <HeroMobile /> : <HeroDesktop /> }
+            { is1130 ? <HeroMobile bikes={apiData} /> : <HeroDesktop bikes={apiData} /> }
             <Box
                 sx={{
                     height: '90px',
@@ -47,7 +51,8 @@ const Home = () => {
                 </IconButton>
             </Box>
             <NewsSection />
-            <FeaturedBikesSection />
+            <FeaturedBikesSection isLoading={isLoading} apiData={apiData} serverError={serverError} />
+            { !isLoading ? <></> : <Loader loading={isLoading} />}
         </>
     )
 }
