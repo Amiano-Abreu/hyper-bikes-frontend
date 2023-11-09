@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom'
 
 import classes from './NewsCard.module.css';
 
-export default function NewsCard({ img, alt, title, desc, createdAt, small , mobile }) {
+export default function NewsCard({ news, small , mobile }) {
   return (
     <Card 
         sx={{ 
@@ -21,7 +21,8 @@ export default function NewsCard({ img, alt, title, desc, createdAt, small , mob
             width: '100%'
         }}
         component={Link}
-        to="news/123"
+        to={`news/${news?.newsID}`}
+        state={news}
     >
       <CardActionArea
         sx={{
@@ -32,8 +33,10 @@ export default function NewsCard({ img, alt, title, desc, createdAt, small , mob
           component="img"
           height='100%'
           width='100%'
-          image="https://img.etimg.com/thumb/msid-77761097,width-650,imgsize-355003,,resizemode-4,quality-100/the-front-headlight-assembly-is-extremely-compact-on-the-ducati-panigale-v2-.jpg"
-          alt="green iguana"
+          // image="https://img.etimg.com/thumb/msid-77761097,width-650,imgsize-355003,,resizemode-4,quality-100/the-front-headlight-assembly-is-extremely-compact-on-the-ducati-panigale-v2-.jpg"
+          // alt="green iguana"
+          image={news?.src}
+          alt={news?.alt}
         />
             <Box
                 sx={{
@@ -62,7 +65,7 @@ export default function NewsCard({ img, alt, title, desc, createdAt, small , mob
                       fontWeight: mobile ? 600 : 500
                     }}
                   >
-                    Lizard
+                    {news?.title}
                   </Typography>
                   <Typography 
                     sx={{
@@ -73,8 +76,7 @@ export default function NewsCard({ img, alt, title, desc, createdAt, small , mob
                     fontSize='0.75rem' 
                     color="#c9c2c2"
                   >
-                    Lizards are a widespread group of squamate reptiles, with over 6,000
-                    species, ranging across all continents except Antarctica
+                    {news?.body}
                   </Typography>
                   <div className={`${classes.content} ${classes.contentSpace}`}>
                     <div className={classes.content}>
@@ -100,7 +102,7 @@ export default function NewsCard({ img, alt, title, desc, createdAt, small , mob
                         }}
                         color="#c9c2c2"
                       >
-                        4 hours ago
+                        {news?.createdAt}
                       </Typography>
                     </div>
                   </div>

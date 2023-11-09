@@ -7,14 +7,41 @@ import ArrowRightAltRoundedIcon from '@mui/icons-material/ArrowRightAltRounded';
 
 import NewsCard from './NewsCard';
 import { useMediaQuery } from '@mui/material';
+import Loader from '../Utility/Loader';
 
-const NewsListMobile = () => {
+const NewsListMobile = ({ isLoading, apiData, serverError }) => {
    const is715 = useMediaQuery('(max-width: 715px)')
    const isMobile = useMediaQuery('(max-width: 640px)')
 
    const navigate = useNavigate()
 
     return (
+        <>
+
+            {
+                isLoading ?
+                isLoading && <Loader loading={isLoading} />
+                :
+                <></>
+            }
+
+           { serverError ?
+
+            <p
+                style={{
+                    textTransform: 'uppercase',
+                    width: '100%',
+                    textAlign: 'center',
+                    fontWeight: '700'
+                }}
+            >
+                {serverError?.message}
+            </p>
+
+            :
+
+            (
+                apiData &&
         <Grid  
             container
             mx='auto'
@@ -32,14 +59,14 @@ const NewsListMobile = () => {
                 tablet={6}
                 mobile={12}
             >
-                <NewsCard small={true} mobile={true}/>
+                <NewsCard news={apiData?.data[0]} small={true} mobile={true}/>
             </Grid>
             <Grid 
                 item
                 tablet={6}
                 mobile={12}  
             >
-                <NewsCard small={true} mobile={true}/>
+                <NewsCard news={apiData?.data[1]} small={true} mobile={true}/>
             </Grid>
 
             {
@@ -50,7 +77,7 @@ const NewsListMobile = () => {
                         tablet={6}
                         mobile={12}
                     >
-                        <NewsCard small={true} mobile={true}/>
+                        <NewsCard news={apiData?.data[2]} small={true} mobile={true}/>
                     </Grid>
                     <Grid 
                         item
@@ -125,12 +152,14 @@ const NewsListMobile = () => {
                         tablet={6}
                         mobile={12}
                     >
-                        <NewsCard small={true} mobile={true}/>
+                        <NewsCard news={apiData?.data[2]} small={true} mobile={true}/>
                     </Grid>
                 </> 
             }
            
         </Grid>
+            )}
+        </>
     )
 }
 

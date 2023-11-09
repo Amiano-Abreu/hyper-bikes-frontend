@@ -6,12 +6,37 @@ import ArrowRightAltRoundedIcon from '@mui/icons-material/ArrowRightAltRounded';
 import NewsCard from './NewsCard';
 
 import { useNavigate } from 'react-router-dom'
+import Loader from '../Utility/Loader';
 
-const NewsListDesktop = () => {
+const NewsListDesktop = ({ isLoading, apiData, serverError }) => {
     const navigate = useNavigate()
    
     return (
         <>
+             {
+                isLoading ?
+                isLoading && <Loader loading={isLoading} />
+                :
+                <></>
+            }
+
+            {serverError ?
+
+            <p
+                style={{
+                    textTransform: 'uppercase',
+                    width: '100%',
+                    textAlign: 'center',
+                    fontWeight: '700'
+                }}
+            >
+                {serverError?.message}
+            </p>
+
+            :
+
+            (
+                apiData &&
             <Grid 
                 justifyContent='center'
                 alignItems='center' 
@@ -30,7 +55,7 @@ const NewsListDesktop = () => {
                         }
                     }}  
                 >
-                    <NewsCard />
+                    <NewsCard news={apiData?.data[0]} />
                 </Grid>
                 <Grid
                     container
@@ -42,13 +67,13 @@ const NewsListDesktop = () => {
                         item
                         laptop={12}   
                     >
-                        <NewsCard small={true} />
+                        <NewsCard news={apiData?.data[1]} small={true} />
                     </Grid>
                     <Grid 
                         item
                         laptop={12} 
                     >
-                        <NewsCard small={true}/>
+                        <NewsCard news={apiData?.data[2]} small={true}/>
                     </Grid>
                 </Grid>
                 <Grid 
@@ -81,6 +106,8 @@ const NewsListDesktop = () => {
                     </Button>
                 </Grid>
             </Grid>
+            )
+            }
            
         </>
         

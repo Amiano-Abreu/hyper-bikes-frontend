@@ -7,9 +7,18 @@ import NewsListMobile from './NewsListMobile';
 
 import newsBackgroundImage from '../../assets/Home-Page/news/home-news-backgroundOriginal.jpg';
 
+import useGetRequest from '../../services/useGetRequest';
+
+const BASEURL = "http://localhost:5000/api/news?limit=true";
+
 const NewsSection = () => {
     const isTablet = useMediaQuery('(max-width:1024px)');
-    const isMobile = useMediaQuery('(max-width:640px)');
+
+    const {
+        isLoading,
+        apiData,
+        serverError
+    } = useGetRequest(BASEURL);
 
     return (
         <Box
@@ -45,7 +54,16 @@ const NewsSection = () => {
                         }
                     }}
                 >Check Out The Latest <span>News</span></Typography>
-                { isTablet ? <NewsListMobile /> : <NewsListDesktop /> }
+                { isTablet ? <NewsListMobile 
+                                isLoading={isLoading} 
+                                apiData={apiData} 
+                                serverError={serverError} 
+                            /> : 
+                            <NewsListDesktop 
+                                isLoading={isLoading} 
+                                apiData={apiData} 
+                                serverError={serverError} 
+                            /> }
             </Box>
         </Box>
     )

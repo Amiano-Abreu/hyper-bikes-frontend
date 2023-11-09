@@ -9,6 +9,9 @@ import { useMediaQuery } from '@mui/material';
 import PaperHeader from '../Bikes/PaperHeader';
 
 import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import useGetRequest from '../../services/useGetRequest';
+import Loader from '../Utility/Loader';
 
 const newsData = {
     newsUploader: 'Admin',
@@ -43,7 +46,24 @@ const newsData = {
 
 const NewsDetails = () => {
     const isMedium = useMediaQuery('(max-width:990px)');
+    const location = useLocation();
 
+    const news = location.state;
+    console.log("new Deatils news ", news)
+
+    let url;
+
+    if (news?.newsID) {
+        url = `http://localhost:5000/api/news/${news?.newsID}`;
+    }
+
+    const {
+        isLoading,
+        apiData,
+        serverError
+    } = useGetRequest(url);
+
+    console.log(serverError)
     useEffect(() => {
         window.scrollTo(0,0)
     }, [])
@@ -66,8 +86,33 @@ const NewsDetails = () => {
                     flexDirection: 'column'
                 }}
             >
-                <PaperHeader text={newsData.newsTitle} />
-                <Typography
+                {
+                    isLoading ?
+                        isLoading && <Loader loading={isLoading} />
+                        :
+                        <></>
+                }
+                {
+                    serverError ?
+
+                    <p
+                        style={{
+                            textTransform: 'uppercase',
+                            width: '100%',
+                            textAlign: 'center',
+                            fontWeight: '700'
+                        }}
+                    >
+                        {serverError?.message}
+                    </p>
+        
+                    :
+        
+                    (
+                        apiData &&
+                        <>
+                    <PaperHeader text={news?.newsTitle} />
+                    <Typography
                     sx={{
                         textAlign: 'left',
                         color: 'customBlack.main',
@@ -77,9 +122,9 @@ const NewsDetails = () => {
                         fontSize: { mobile: '0.7rem' , tablet: '.8rem' , laptop: '.8rem' }
                     }}
                 >
-                    {`${newsData.newsUploader}`}
-                </Typography>
-                <Typography
+                    Admin
+                    </Typography>
+                    <Typography
                     sx={{
                         textAlign: 'left',
                         color: 'customBlack.main',
@@ -87,9 +132,9 @@ const NewsDetails = () => {
                         fontSize: { mobile: '0.6rem' , tablet: '.7rem' , laptop: '.7rem' }
                     }}
                 >
-                    {`${newsData.newsDate}`}
-                </Typography>
-                <Box
+                    {`${news?.createdAt}`}
+                    </Typography>
+                    <Box
                     sx={{
                         width: '90%',
                         height: { mobile: '' , tablet: '' , laptop: '550px'},
@@ -100,9 +145,9 @@ const NewsDetails = () => {
                         }
                     }}
                 >
-                    <img src={newsData.newsImg} alt={newsData.newsImgAlt} />
-                </Box>
-                <Typography
+                    <img src={news?.src} alt={news?.alt} />
+                    </Box>
+                    <Typography
                     sx={{
                         textAlign: 'left',
                         fontWeight: '600',
@@ -112,11 +157,11 @@ const NewsDetails = () => {
                         fontSize: { mobile: '0.7rem' , tablet: '.8rem' , laptop: '.9rem' }
                     }}
                 >
-                    {newsData.newsSubtitle}
-                </Typography>
-                {
-                    
-                    newsData.para.map((item , i) => {
+                    {news?.body}
+                    </Typography>
+                    {
+
+                        apiData?.data.body.map((item , i) => {
                         return (
                             <div
                                 key={item.alt+i}
@@ -133,7 +178,7 @@ const NewsDetails = () => {
                                         }
                                     }}
                                 >
-                                    <img src={item.img} alt={item.alt} />
+                                    <img src={item.src} alt={item.alt} />
                                 </Box>
                                 {
                                     item.desc.map((para , index) => {
@@ -160,7 +205,10 @@ const NewsDetails = () => {
                                 }
                             </div>
                         )
-                    })
+                        })
+                    }
+                    </>
+                    )
                 }
         </Paper>
     )

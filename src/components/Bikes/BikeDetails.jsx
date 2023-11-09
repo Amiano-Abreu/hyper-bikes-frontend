@@ -237,6 +237,43 @@ const features = [
 
 const BASEURL = "http://localhost:5000/api/bike";
 
+function millisecondsToRelativeTime(milliseconds) {
+  // Define time intervals in milliseconds
+  const minute = 60 * 1000;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+  const week = 7 * day;
+  const month = 30 * day;
+  const year = 365 * day;
+
+  // Calculate the difference between the current time and the provided time
+  const currentTime = Date.now();
+  const timeDifference = currentTime - milliseconds;
+
+  // Determine the appropriate relative time
+  if (timeDifference < minute) {
+    return 'just now';
+  } else if (timeDifference < hour) {
+    const minutes = Math.floor(timeDifference / minute);
+    return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
+  } else if (timeDifference < day) {
+    const hours = Math.floor(timeDifference / hour);
+    return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+  } else if (timeDifference < week) {
+    const days = Math.floor(timeDifference / day);
+    return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+  } else if (timeDifference < month) {
+    const weeks = Math.floor(timeDifference / week);
+    return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+  } else if (timeDifference < year) {
+    const months = Math.floor(timeDifference / month);
+    return `${months} ${months === 1 ? 'month' : 'months'} ago`;
+  } else {
+    const years = Math.floor(timeDifference / year);
+    return `${years} ${years === 1 ? 'year' : 'years'} ago`;
+  }
+}
+
 const BikeDetails = () => {
     const location = useLocation();
     const bike = location.state.bike;
@@ -308,6 +345,8 @@ const BikeDetails = () => {
     //     }
 
     // }, [bike]);
+
+    console.log("api review ", apiData?.review)
 
     return (
         isLoading ?
@@ -439,7 +478,7 @@ const BikeDetails = () => {
                 content={true}
             >
                 <PaperHeader text={`About ${bikeName.trim() ? bikeName : bikeData[0].bikeName}`} />
-                {bikeData[0].about.map((para, i) => {
+                {apiData?.data.about.map((para, i) => {
                     return (
                         <Typography
                             key={para.slice(0,20)+i}
@@ -464,31 +503,31 @@ const BikeDetails = () => {
                 content={true}
             >
                 <PaperHeader text='power and performance' />
-                <FeaturesGrid arr={power} obj={bikeData[0].powerPerfomance} />
+                <FeaturesGrid arr={power} obj={apiData?.data.powerPerformance} />
             </CustomPaper>
             <CustomPaper
                 content={true}
             >
                 <PaperHeader text='brakes wheels and suspension' />
-                <FeaturesGrid arr={brakeWheel} obj={bikeData[0].brakesWheelSuspension}  />
+                <FeaturesGrid arr={brakeWheel} obj={apiData?.data.brakesWheelSuspension}  />
             </CustomPaper>
             <CustomPaper
                 content={true}
             >
                 <PaperHeader text='dimensions and chassis' />
-                <FeaturesGrid arr={dimensions} obj={bikeData[0].dimensionsChassis}  />
+                <FeaturesGrid arr={dimensions} obj={apiData?.data.dimensionChassis}  />
             </CustomPaper>
             <CustomPaper
                 content={true}
             >
                 <PaperHeader text='warranty' />
-                <FeaturesGrid arr={warranty} obj={bikeData[0].warranty}  />
+                <FeaturesGrid arr={warranty} obj={apiData?.data.warranty}  />
             </CustomPaper>
             <CustomPaper
                 content={true}
             >
                 <PaperHeader text='features' />
-                <FeaturesGrid arr={features} obj={bikeData[0].features}  />
+                <FeaturesGrid arr={features} obj={apiData?.data.features}  />
             </CustomPaper>
             <CustomDivider title='rating and reviews' />
             <CustomPaper
@@ -496,7 +535,7 @@ const BikeDetails = () => {
             >
                 <PaperHeader text={`rating of ${bikeName.trim() ? bikeName : bikeData[0].bikeName}`} />
                 {
-                    parseInt(bikeData[0].numberOfReviews) < 1 ? 
+                    parseInt(apiData?.data.reviewCount) < 1 ? 
                         <Box
                             sx={{
                                 width: '90%',
@@ -589,7 +628,7 @@ const BikeDetails = () => {
                                         fontSize: { mobile: '0.85rem' , tablet: '1rem' , laptop: '1.5rem' }
                                     }}
                                 >
-                                    {bikeData[0].avgRating}
+                                    {(apiData?.data.totalRating / apiData?.data.reviewCount)}
                                 </Typography>
                             </Box>
                             <Box
@@ -623,7 +662,7 @@ const BikeDetails = () => {
                                         fontSize: { mobile: '0.7rem' , tablet: '.8rem' , laptop: '.9rem' }
                                     }}
                                 >
-                                    {`${bikeData[0].numberOfReviews} User Review${parseInt(bikeData[0].numberOfReviews) > 1 ? 's' : '' }`}
+                                    {`${apiData?.data.reviewCount} User Review${parseInt(apiData?.data.reviewCount) > 1 ? 's' : '' }`}
                                 </Typography>
                             </Box>
                         </Box>
@@ -653,7 +692,7 @@ const BikeDetails = () => {
                 }
             </CustomPaper>
             {
-                parseInt(bikeData[0].numberOfReviews) < 1
+                parseInt(apiData?.data.reviewCount) < 1
                     ? 
                         <></>
                         
@@ -663,10 +702,14 @@ const BikeDetails = () => {
                             content={true}
                         >
                             <PaperHeader text={`${bikeName.trim() ? bikeName : bikeData[0].bikeName} User Reviews`} />
-                            {bikeData[0].reviews.map((review, i) => {
+                            {apiData?.review.map((review, i) => {
+                                const timestamp = new Date(review.createdAt.seconds * 1000 + review.createdAt.nanoseconds / 1e6);
+
+                                const createdAt = millisecondsToRelativeTime(timestamp.getTime())
+
                                 return (
                                     <div
-                                        key={review.userId}
+                                        key={review.userID}
                                     >
                                         <Typography
                                             
@@ -677,10 +720,11 @@ const BikeDetails = () => {
                                                 mt: 7.5,
                                                 color: 'customBlack.main',
                                                 textTransform: 'uppercase',
+                                                textDecoration: 'underline',
                                                 fontSize: { mobile: '0.7rem' , tablet: '.8rem' , laptop: '1.25rem' }
                                             }}
                                         >
-                                            {review.reviewTitle}
+                                            {review.title}
                                         </Typography>
                                         <Box
                                             sx={{
@@ -700,11 +744,11 @@ const BikeDetails = () => {
                                                     fontSize: { mobile: '0.7rem' , tablet: '.8rem' , laptop: '1rem' }
                                                 }}
                                             >
-                                                {bikeData[0].avgRating}
+                                                {review.rating}
                                             </Typography>
                                             <Rating
                                                 name="read-only"
-                                                value={bikeData[0].avgRating}
+                                                value={review.rating}
                                                 precision={0.5}
                                                 size={'small'}
                                                 readOnly
@@ -720,8 +764,8 @@ const BikeDetails = () => {
                                             }}
                                         >
                                             {reviewData.map((item,i) => {
-                                                const rKeys = Object.keys(review.reviewData);
-                                                
+                                                const rKeys = Object.keys(review.data);
+
                                                 return (
                                                     <Box
                                                         key={item}
@@ -748,7 +792,7 @@ const BikeDetails = () => {
                                                         >
                                                             {`${item}:`}
                                                         </Typography>
-                                                        <span>{review.reviewData[rKeys[i]]}</span>
+                                                        <span>{review.data[rKeys[i]]}</span>
                                                     </Box>
                                                 )
                                             })}
@@ -763,7 +807,7 @@ const BikeDetails = () => {
                                                 fontSize: { mobile: '0.65rem' , tablet: '.75rem' , laptop: '.8rem' }
                                             }}
                                         >
-                                            {review.reviewBody}
+                                            {review.body}
                                         </Typography>
                                         <Typography
                                             sx={{
@@ -774,7 +818,7 @@ const BikeDetails = () => {
                                                 fontSize: { mobile: '0.7rem' , tablet: '.8rem' , laptop: '.8rem' }
                                             }}
                                         >
-                                            {'By ' + review.userName}
+                                            {'By ' + review.name}
                                         </Typography>
                                         <Typography
                                             sx={{
@@ -784,7 +828,7 @@ const BikeDetails = () => {
                                                 fontSize: { mobile: '0.7rem' , tablet: '.8rem' , laptop: '.7rem' }
                                             }}
                                         >
-                                            {`${review.lastUpdate} ${review.edited ? 'edited' : ''}`}
+                                            {`${createdAt} ${review.edited ? 'edited' : ''}`}
                                         </Typography>
                                         <Divider
                                             variant='middle'
@@ -801,23 +845,23 @@ const BikeDetails = () => {
                         </CustomPaper>
             }
             {
-                bikeData[0].news.length > 0 ?
+                apiData?.news.length > 0 ?
 
                 <CustomPaper
                     content={true}
                 >
                     <PaperHeader text={`${bikeName.trim() ? bikeName : bikeData[0].bikeName} News`} />
-                    {bikeData[0].news.map((newsItem , i) => {
+                    {apiData?.news.map((newsItem , i) => {
                         return (
                             <NewsCard
-                                key={newsItem.description.slice(0,20)+ i}
-                                path={'/news/123'}
-                                newsTitle={newsItem.newsTitle}
-                                newsImg={newsItem.newsImage.src}
-                                newsImgAlt={newsItem.newsImage.alt}
-                                newsDesc={newsItem.description}
-                                newsUploader={newsItem.newsUploader}
-                                newsDate={newsItem.newsDate}
+                                key={newsItem.body.slice(0,20)+ i}
+                                path={`/news/${bike.bikeID}`}
+                                newsTitle={newsItem.title}
+                                newsImg={newsItem.src}
+                                newsImgAlt={newsItem.alt}
+                                newsDesc={newsItem.body}
+                                newsUploader={"Admin"}
+                                newsDate={newsItem.createdAt}
                             />
                         )
                     })}

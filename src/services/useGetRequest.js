@@ -40,8 +40,10 @@ const useGetRequest = (url) => {
       if( url !== "undefined" ) {
         console.log("radio Url ", url)
 
-        setIsLoading(true);
-        fetchData();
+        if(url) {
+          setIsLoading(true);
+          fetchData();
+        }
       }
     }, [url]);
   

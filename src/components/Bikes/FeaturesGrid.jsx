@@ -5,7 +5,10 @@ import { useMediaQuery } from '@mui/material';
 
 const FeaturesGrid = ({ arr, obj  }) => {
     const isTablet = useMediaQuery('(max-width:1024px)')
-    const keys = Object.keys(obj);
+    let keys;
+    if (obj) {
+        keys = Object.keys(obj);
+    }    
 
     return (
         <>
@@ -56,7 +59,7 @@ const FeaturesGrid = ({ arr, obj  }) => {
                                         fontSize: { mobile: '0.7rem' , tablet: '.8rem' , laptop: '.9rem' }
                                     }}
                                 >
-                                    {obj[keys[i]]}
+                                    {keys ? obj[keys[i]] : ''}
                                 </Typography>
                             </Grid>
                         )
