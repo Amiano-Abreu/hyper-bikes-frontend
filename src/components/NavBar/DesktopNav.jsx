@@ -10,12 +10,21 @@ import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded';
 
 import AccountMenu from './AccountMenu';
 import { useSelector } from 'react-redux';
+import Loader from '../Utility/Loader';
 
 const DesktopNav = ({ navLinks }) => {
     const { isLoggedIn } = useSelector(state => state.user);
+    const { loading, success, error, cart } = useSelector(state => state.cart);
     
     return (
         <>
+            {
+              loading ?
+
+              <Loader loading={loading} />
+              :
+              <></>
+            }
             <Box 
               className={styles.nav}
               sx={{
@@ -45,14 +54,24 @@ const DesktopNav = ({ navLinks }) => {
               to='/cart'
               component={Link}
             >
+            {
+              !loading && !error && success && cart?.length > 0 ?
+
               <Badge
-                badgeContent={4} 
+                badgeContent={cart.length} 
                 color="success" 
               >
                 <ShoppingCartRoundedIcon 
                   fontSize='large'
                 />
               </Badge>
+
+              :
+
+              <ShoppingCartRoundedIcon 
+                  fontSize='large'
+                />
+            }
             </IconButton>
             <Box 
               sx={{

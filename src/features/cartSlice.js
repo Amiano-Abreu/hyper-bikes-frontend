@@ -1,20 +1,33 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-export const fetchCart = createAsyncThunk('cart/fetchCart', async (userId) => {
-    console.log(userId)
+export const fetchCart = createAsyncThunk('cart/fetchCart', async ( _, { rejectWithValue }) => {
+    const response = await axios.get('http://localhost:5000/api/csrf', {withCredentials: true});
+    const csrfToken = response.data.csrfToken;
+
     try {
-      const response = await axios.get('http://localhost:5000/cart');
+      const response = await axios.post('http://localhost:5000/api/getcart', {
+                                        _csrf: csrfToken
+                        },
+                        {
+                            headers: {
+                                'Accept': "application/json",
+                                'Content-Type': "application/json"
+                            },
+                            withCredentials: true,
+                            mode: 'cors'
+                        });
       const data = await response.data;
-      return data;
+      return data?.data;
     } catch (error) {
       console.log(error)
-      return error;
+      return rejectWithValue(error);
     }
 })
 
 const initialState = {
   loading: false,
+  success: false,
   cart: [],
   error: ''
 }
@@ -55,15 +68,18 @@ const cartSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(fetchCart.pending, (state) => {
             state.loading = true;
+            state.success = false;
         })
         builder.addCase(fetchCart.fulfilled, (state, action) => {
-            state.loading = false;
-            state.cart = action.payload;
-            state.error = ''
+          state.cart = action.payload;
+          state.error = ''
+          state.success = true;
+          state.loading = false;
         })
         builder.addCase(fetchCart.rejected, (state, action) => {
-            state.loading = false;
-            state.error = action.error.message;
+          state.error = action.error.message;
+          state.loading = false;
+          state.success = true;
         })
     }
 });

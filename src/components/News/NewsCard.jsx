@@ -11,7 +11,7 @@ import { useMediaQuery } from '@mui/material';
 import classes from '../Home/NewsCard.module.css';
 import { Link } from 'react-router-dom';
 
-export default function NewsCard({ path }) {
+export default function NewsCard({ news, path }) {
   const isLaptop = useMediaQuery('(min-width:1024px)');
 
   return (
@@ -27,7 +27,8 @@ export default function NewsCard({ path }) {
     >
       <CardActionArea
         component={Link}
-        to={path}
+        to={news?.newsID}
+        state={news}
         sx={{
           height: '100%'
         }}
@@ -36,8 +37,10 @@ export default function NewsCard({ path }) {
           component="img"
           height='100%'
           width='100%'
-          image="https://img.etimg.com/thumb/msid-77761097,width-650,imgsize-355003,,resizemode-4,quality-100/the-front-headlight-assembly-is-extremely-compact-on-the-ducati-panigale-v2-.jpg"
-          alt="green iguana"
+          // image="https://img.etimg.com/thumb/msid-77761097,width-650,imgsize-355003,,resizemode-4,quality-100/the-front-headlight-assembly-is-extremely-compact-on-the-ducati-panigale-v2-.jpg"
+          // alt="green iguana"
+          image={news?.src}
+          alt={news?.alt}
         />
             <Box
                 sx={{
@@ -52,14 +55,17 @@ export default function NewsCard({ path }) {
                 <CardContent
                     sx={{
                         position: 'absolute',
-                        top: '65%',
+                        top: { mobile: '300px', tablet: '325px', laptop: "225px" },
+                        height: { mobile: '200px', tablet: "170px", laptop: '275px' },
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
                         left: '0',
                         right: '0',
                         p: 5
                     }}
                 >
-                  <Typography 
-                    gutterBottom
+                  <Typography
                     color='customWhite.main'
                     variant="h5" 
                     component="div"
@@ -68,18 +74,16 @@ export default function NewsCard({ path }) {
                       fontWeight: {mobile: 700 , laptop: 500}
                     }}
                   >
-                    Lizard
+                    {news?.title}
                   </Typography>
                   <Typography 
                     sx={{
-                      mb: 5,
                       fontSize: { mobile: '.65rem' , laptop: '0.75rem'}
                     }}
                     variant="body2" 
                     color="#c9c2c2"
                   >
-                    Lizards are a widespread group of squamate reptiles, with over 6,000
-                    species, ranging across all continents except Antarctica
+                    {news?.body}
                   </Typography>
                   <div className={`${classes.content} ${classes.contentSpace}`}>
                     <div className={classes.content}>
@@ -94,7 +98,7 @@ export default function NewsCard({ path }) {
                           }}
                         color="#c9c2c2"
                       >
-                        Name
+                        Admin
                       </Typography>
                     </div>
                     <div>
@@ -105,7 +109,7 @@ export default function NewsCard({ path }) {
                         }}
                         color="#c9c2c2"
                       >
-                        4 hours ago
+                        {news?.createdAt}
                       </Typography>
                     </div>
                   </div>

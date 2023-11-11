@@ -14,10 +14,15 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import styles from './MobileNav.module.css';
 
 import AccountMenu from './AccountMenu'
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import Loader from '../Utility/Loader';
+import { logoutHandler } from "../../features/userSlice";
 
 const MobileNav = ({ navLinks }) => {
-    const isLoggedIn = useSelector(state => state.isLoggedIn);
+    const {isLoggedIn} = useSelector(state => state.user);
+    const { loading, success, error, cart } = useSelector(state => state.cart);
+
+    const dispatch = useDispatch();
 
     const navigate = useNavigate();
 
@@ -41,6 +46,7 @@ const MobileNav = ({ navLinks }) => {
                 navigate(link);
             } else {
                 alert('logout')
+                dispatch(logoutHandler());
                 navigate('/')
             }
         }
@@ -51,6 +57,13 @@ const MobileNav = ({ navLinks }) => {
 
     return (
         <>  
+            {
+              loading ?
+
+              <Loader loading={loading} />
+              :
+              <></>
+            }
             <IconButton
               sx={{
                 marginLeft: 'auto',
@@ -64,14 +77,24 @@ const MobileNav = ({ navLinks }) => {
               to='/cart'
               component={Link}
             >
+            {
+              !loading && !error && success && cart?.length > 0 ?
+
               <Badge
-                badgeContent={4} 
+                badgeContent={cart.length} 
                 color="success" 
               >
                 <ShoppingCartRoundedIcon 
-                  fontSize='medium'
+                  fontSize='large'
                 />
               </Badge>
+
+              :
+
+              <ShoppingCartRoundedIcon 
+                  fontSize='large'
+                />
+            }
             </IconButton>
             <IconButton
                 sx={{

@@ -20,6 +20,7 @@ import NotFound from './NotFound';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUser } from './features/userSlice';
+import { fetchCart } from './features/cartSlice';
 
 
 const PrivateRoutes = () => {
@@ -36,6 +37,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(getUser());
+    dispatch(fetchCart());
   }, [dispatch])
 
   return (

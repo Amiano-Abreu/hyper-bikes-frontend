@@ -4,14 +4,49 @@ import Typography from '@mui/material/Typography';
 import NewsCard from './NewsCard';
 
 import { useEffect } from 'react';
+import useGetRequest from '../../services/useGetRequest';
+import Loader from '../Utility/Loader';
+
+const URL = "http://localhost:5000/api/news"
 
 const News = () => {
 
     useEffect(() => {
         window.scrollTo(0,0)
     }, [])
+
+    const {
+        isLoading,
+        apiData,
+        serverError
+    } = useGetRequest(URL);
     return (
         <>
+             {
+                isLoading ?
+                isLoading && <Loader loading={isLoading} />
+                :
+                <></>
+            }
+
+            {serverError ?
+
+            <p
+                style={{
+                    textTransform: 'uppercase',
+                    width: '100%',
+                    textAlign: 'center',
+                    fontWeight: '700'
+                }}
+            >
+                {serverError?.message}
+            </p>
+
+            :
+
+            (
+                apiData &&
+                <>
             <Typography
                 sx={{
                     textTransform: 'uppercase',
@@ -31,7 +66,7 @@ const News = () => {
             </Typography>
             <Grid
                 container
-                justifyContent='center'
+                justifyContent='flex-start'
                 alignItems='center'
                 sx={{
                     maxWidth: '974px',
@@ -39,10 +74,10 @@ const News = () => {
                     mx: 'auto'
                 }}
             >
-                {[1,2,3,4,5,6].map((item, i) => {
+                {apiData?.data.map((item, i) => {
                     return (
                         <Grid
-                            key={item** i}
+                            key={item?.newsID + i}
                             item
                             laptop={6}
                             mobile={12}
@@ -54,11 +89,14 @@ const News = () => {
                                 })
                             }}
                         >
-                            <NewsCard path={'123'} />
+                            <NewsCard news={item} path={'123'} />
                         </Grid>
                     )
                 })}
             </Grid>
+            </>
+            )
+            }
         </>
     )
 }

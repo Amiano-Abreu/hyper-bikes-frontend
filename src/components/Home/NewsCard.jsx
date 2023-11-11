@@ -51,12 +51,28 @@ export default function NewsCard({ news, small , mobile }) {
                 <CardContent
                     sx={{
                         position: 'absolute',
-                        top: small ? '35%' : '69%',
+                        top: small ? { mobile:'35%', laptop: "75px"} : { mobile: '300px', tablet: '325px', laptop: "250px" },
+                        // top: { mobile: '300px', tablet: '325px', laptop: "225px" },
+                        height: small? { mobile: '200px', laptop: '160px' } :{ mobile: '200px', tablet: "170px", laptop: '250px' },
+                        ...(
+                          small && mobile && {
+                            height: {
+                              mobile: '160px',
+                              tablet: '175px'
+                            },
+                            top: {
+                              mobile: '75px',
+                              tablet: '50px'
+                            }
+                          }
+                        ),
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-around',
                         left: '0'
                     }}
                 >
                   <Typography 
-                    gutterBottom
                     color='customWhite.main'
                     variant="h5" 
                     component="div"
@@ -69,7 +85,6 @@ export default function NewsCard({ news, small , mobile }) {
                   </Typography>
                   <Typography 
                     sx={{
-                      mb: 5,
                       fontSize: mobile ? '0.6rem' : '0.75rem'
                     }}
                     variant="body2" 

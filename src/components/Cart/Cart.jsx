@@ -11,6 +11,8 @@ import { Link } from "react-router-dom";
 
 import { useEffect, useState } from "react";
 import Toaster from "../Utility/Toaster";
+import { useSelector } from "react-redux";
+import Loader from "../Utility/Loader";
 
 const arr = [
     {
@@ -33,10 +35,10 @@ const arr = [
     }
 ];
 
-const getTotal = () => {
+const getTotal = (cart) => {
     let total = 0;
 
-    arr.forEach(item => {
+    cart.forEach(item => {
         const itemTotal = Number(item.quantity) * Number(item.price);
 
         total += itemTotal;
@@ -46,6 +48,8 @@ const getTotal = () => {
 }
 
 const Cart = () => {
+    const { loading, error, success, cart } = useSelector(state => state.cart);
+
     const isMedium = useMediaQuery('(max-width:990px)');
     const isMobile = useMediaQuery('(max-width:640px)')
 
@@ -91,6 +95,12 @@ const Cart = () => {
                     backgroundColor: 'customBlack.light'
                 }}
             >
+                {
+                    loading ? 
+                    <Loader loading={loading} />
+                    :
+                    <></>
+                }
                 <Typography
                     variant='h6'
                     sx={{
@@ -107,12 +117,12 @@ const Cart = () => {
                 <Box
                     sx={{
                         ...(
-                            arr.length > 0 && {
+                            cart.length > 0 && {
                                 width: "100%"
                             }
                         ),
                         ...(
-                        arr.length === 0 && {
+                        cart.length === 0 && {
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center"
@@ -124,7 +134,7 @@ const Cart = () => {
                         variant='body1'
                         sx={{
                             ...(
-                                arr.length > 0 && {
+                                cart.length > 0 && {
                                     textAlign: 'left',
                                     fontWeight: "600",
                                     display: 'flex',
@@ -137,8 +147,10 @@ const Cart = () => {
                             fontSize: { mobile: '0.65rem' , tablet: '.75rem' , laptop: '.8rem' }
                         }}
                     >                    
-                        { arr.length === 0 ? 'Start adding bikes to your cart !' : `You have ${arr.length} cart item${arr.length > 1 ? "s" : "" }.` }
-                        <Button 
+                        { cart.length === 0 ? 'Start adding bikes to your cart !' : `You have ${cart.length} cart item${cart.length > 1 ? "s" : "" }.` }
+                        {
+                            cart.length > 0 &&
+                            <Button 
                             variant='contained'
                             color='customWhite'
                             sx={{
@@ -166,12 +178,12 @@ const Cart = () => {
                             }
                         >
                             delete all
-                        </Button>
+                        </Button>}
                     </Typography>
                     {
-                        arr.length > 0 ?
+                        cart.length > 0 ?
                             
-                                arr.map(
+                                cart.map(
                                     (cartItem, i) => {
                                         return (
                                             <Paper
@@ -185,8 +197,8 @@ const Cart = () => {
                                                     pt: ".5rem",
                                                     pb: "1rem",
                                                     ...(
-                                                        arr.length > 1 &&
-                                                        i !== arr.length -1 && {
+                                                        cart.length > 1 &&
+                                                        i !== cart.length -1 && {
                                                             mb: 5
                                                         }
                                                     )
@@ -214,12 +226,12 @@ const Cart = () => {
                                                             height: "100%",
                                                             width: "400px"
                                                         }}
-                                                        src={bikeImg}
-                                                        alt={'BMW-m1000RR'}
+                                                        src={cartItem.src}
+                                                        alt={cartItem.alt}
                                                     />
                                                     <Box
                                                         sx={{
-                                                            width: '300px',
+                                                            width: { mobile: '300px', tablet:'400px'},
                                                             display: 'flex',
                                                             alignItem: 'center',
                                                             justifyContent: 'space-between',
@@ -311,7 +323,7 @@ const Cart = () => {
 
                     }
                     {
-                        arr.length > 0 ? 
+                        cart.length > 0 ? 
                             (
                                 // <Typography>
                                 //     TOTAL: ₹{getTotal()}
@@ -333,7 +345,7 @@ const Cart = () => {
                                             mx: 'auto'
                                         }}
                                     >
-                                        Total: ₹{getTotal()}
+                                        Total: ₹{getTotal(cart)}
                                     </Typography>
                                     <Button 
                                         variant='contained'
@@ -370,6 +382,27 @@ const Cart = () => {
                             :
 
                             <></>
+                    }
+                    {
+                        cart.length === 0 && !loading && success && error ?
+                        <>
+                            <p
+                                style={{
+                                    textTransform: 'uppercase',
+                                    width: '100%',
+                                    textAlign: 'center',
+                                    fontWeight: '700',
+                                    marginTop: '5rem'
+                                }}
+                            >
+                                {error}
+                            </p>
+                        </>
+
+                        :
+
+                        <>
+                        </>
                     }
                 </Box>
             </Paper>
