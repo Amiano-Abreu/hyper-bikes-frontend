@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+import { fetchCart, resetCart } from './cartSlice';
+
 const initialState = {
     loading: false,
     success: false,
@@ -36,7 +38,7 @@ export const getUser = createAsyncThunk('user/getUser', async( _, { rejectWithVa
     }
 })
 
-export const loginHandler = createAsyncThunk('user/loginHandler', async( login , { rejectWithValue }) => {
+export const loginHandler = createAsyncThunk('user/loginHandler', async( login , { rejectWithValue, dispatch }) => {
 
     try {
         // const response = await axios.get('http://localhost:5000/api/csrf', {withCredentials: true});
@@ -56,13 +58,16 @@ export const loginHandler = createAsyncThunk('user/loginHandler', async( login ,
                                     mode: 'cors'
                                 })
         const { user } = loginResponse.data;
+        dispatch(fetchCart());
         return user;
         //     token: csrfToken
         // };
     } catch (e) {
         const { data } = e.response;
         const { error, message } = data;
-        return rejectWithValue(error || message || e.message);
+        const errorData = data?.data;
+        const err = errorData || error || message || e.message;
+        return rejectWithValue(err);
     }
 
 })
@@ -103,8 +108,7 @@ export const signUpHandler = createAsyncThunk('user/signUpHandler', async( signU
 
 })
 
-export const logoutHandler = createAsyncThunk('user/logoutHandler', async( _ , { rejectWithValue, getState }) => {
-
+export const logoutHandler = createAsyncThunk('user/logoutHandler', async( _ , { rejectWithValue, dispatch }) => {
     // const state = getState().userSlice;
     // const { token: csrfToken } = state;
     const response = await axios.get('http://localhost:5000/api/csrf', {withCredentials: true});
@@ -124,6 +128,7 @@ export const logoutHandler = createAsyncThunk('user/logoutHandler', async( _ , {
                                     mode: 'cors'
                                 })
         console.log( logoutResponse)
+        dispatch(resetCart());
         return logoutResponse;
     } catch (error) {
         console.log(error)
@@ -184,8 +189,8 @@ const userSlice = createSlice({
             state.success = true;
         })
         builder.addCase(getUser.rejected, (state, action) => {
-            state.loading = false;
             state.success = true;
+            state.loading = false;
         })
 
         // LOGIN CASES
@@ -195,13 +200,13 @@ const userSlice = createSlice({
         builder.addCase(loginHandler.fulfilled, (state, action) => {
             userSlice.caseReducers.setUser(state, action)
 
-            state.loading = false;
             state.success = true;
+            state.loading = false;
         })
         builder.addCase(loginHandler.rejected, (state, action) => {
             state.error = action.payload;
-            state.loading = false;
             state.success = true;
+            state.loading = false;
         })
 
         // SIGN UP CASES
@@ -211,16 +216,16 @@ const userSlice = createSlice({
         builder.addCase(signUpHandler.fulfilled, (state, action) => {
             userSlice.caseReducers.setUser(state, action)
 
-            state.loading = false;
             state.success = true;
+            state.loading = false;
         })
         builder.addCase(signUpHandler.rejected, (state, action) => {
             state.error = action.payload;
             if(action.payload.hasOwnProperty('message')) {
                 state.error = action.payload.message;
             }
-            state.loading = false;
             state.success = true;
+            state.loading = false;
         })
 
         // LOGOUT CASES
@@ -234,8 +239,8 @@ const userSlice = createSlice({
         })
         builder.addCase(logoutHandler.rejected, (state, action) => {
             state.error = action.payload;
-            state.loading = false;
             state.success = true;
+            state.loading = false;
         })
     }
 })

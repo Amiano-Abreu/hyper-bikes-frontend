@@ -52,7 +52,7 @@ const Login = () => {
     const handleSuccessClose = () => {
         setOpenSuccess(false)
         
-        navigate('/')
+        navigate({ pathname: '/'})
     }
 
     // const handleLoaderOpen = () => {
@@ -84,6 +84,7 @@ const Login = () => {
         validationSchema: schema,
         onSubmit: (values, {setSubmitting}) => {
             // handleLoaderOpen()
+            console.log("values of login ", values)
             dispatch(loginHandler(values))
             // handleLoaderClose()
             // handleSuccessOpen()
@@ -109,7 +110,7 @@ const Login = () => {
         // }
         console.log('useEffect error ',error, 'loading ', !loading, 'submitCount ',formik.submitCount )
 
-        if (!loading && success && formik.submitCount > 0 && error) {
+        if (!loading && success && error) {
             if (typeof error !== 'string') {
                 formik.setErrors(error)
             }
@@ -117,7 +118,7 @@ const Login = () => {
         }
         else if (!loading && success && formik.submitCount > 0 && error === '') {
             formik.resetForm()
-            handleSuccessOpen()
+            // handleSuccessOpen()
         }
     }, [formik.submitCount, loading, error, success])
     
@@ -242,10 +243,12 @@ const Login = () => {
             </Box>
             <Backdrop
               sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-              open={openBackdrop}
+              open={!loading && success && error}
               onClick={handleClose}
             >
-                <Alert onClose={handleClose} variant='filled' severity="error">
+                <Alert sx={{
+                    maxWidth: '75%'
+                }}onClose={handleClose} variant='filled' severity="error">
                   <AlertTitle>Error</AlertTitle>
                     <strong>
                         {
@@ -259,7 +262,7 @@ const Login = () => {
             </Backdrop>
             <Backdrop
               sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-              open={openSuccess}
+              open={!loading && success && !error && formik.submitCount > 0}
               onClick={handleSuccessClose}
             >
                 <Alert onClose={handleSuccessClose} variant='filled' severity="success">
