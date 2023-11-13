@@ -1,6 +1,6 @@
 # Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project needs the hyper-bikes-backend project running to get api access. Please email me at amianoabreu@gmail.com to get access to environment file.
 
 ## Available Scripts
 
