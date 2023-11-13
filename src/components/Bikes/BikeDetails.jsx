@@ -30,6 +30,8 @@ import { getBikesByPrice, getBikesByDisplacement, getAllBikes, getBikeDetails, g
 import { getAllNews, getNewsByID } from '../../services/news'
 import useGetRequest from '../../services/useGetRequest'
 import Loader from '../Utility/Loader'
+import { useDispatch, useSelector } from 'react-redux'
+import { httpAddToCart } from '../../features/cartSlice'
 
 const bikeData = [
     {
@@ -275,6 +277,8 @@ function millisecondsToRelativeTime(milliseconds) {
 }
 
 const BikeDetails = () => {
+    const dispatch = useDispatch();
+
     const location = useLocation();
     const bike = location.state.bike;
     console.log("state bikeDetails ", location.state.bike) // CHECK BOTH CASES ON HOME & BIKES PAGE
@@ -316,7 +320,7 @@ const BikeDetails = () => {
         if(close) {
             setTimeout(() => {
                 setBuyToaster(false)
-                navigate('/bikes')
+                setIsButtonDisabled(false)
             }, 5100);
         }
     }
@@ -458,6 +462,7 @@ const BikeDetails = () => {
                     }}
                     onClick={
                         () => {
+                            dispatch(httpAddToCart(bike));
                             handleButtonDisable();
                             setTimeout(() => {
                                 handleToasterState(true, true)
@@ -465,7 +470,7 @@ const BikeDetails = () => {
                         }
                     }
                 >
-                    Buy Now
+                    add to cart
                 </Button>
             </CustomPaper>
             <CustomPaper
@@ -873,7 +878,7 @@ const BikeDetails = () => {
             }
             {
                 buyToaster ? 
-                    <Toaster link='/' type="success" message={`Successfully placed order for ${bikeName.trm() ? bikeName : bikeData[0].bikeName}`} />
+                    <Toaster link='/' type="success" message={`Added to cart !`} />
                         :
                     <></>
             }

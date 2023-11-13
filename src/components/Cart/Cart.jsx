@@ -3,37 +3,15 @@ import Button from "@mui/material/Button";
 import ArrowRightAltRoundedIcon from '@mui/icons-material/ArrowRightAltRounded';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import bikeImg from '../../assets/Bikes/Honda cbr 1000rr-r/BMW M 1000 RR(1).png'
-
 import PaperHeader from '../Bikes/PaperHeader'
 
 import { Link } from "react-router-dom";
 
 import { useEffect, useState } from "react";
 import Toaster from "../Utility/Toaster";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Loader from "../Utility/Loader";
-
-const arr = [
-    {
-        brand: "Ducati",
-        model: "panigale v2 bayliss",
-        quantity: 1,
-        price: 7
-    },
-    {
-        brand: "Ducati",
-        model: "panigale v2 bayliss",
-        quantity: 1,
-        price: 7
-    },
-    {
-        brand: "Ducati",
-        model: "panigale v2 bayliss",
-        quantity: 1,
-        price: 7
-    }
-];
+import { httpAddToCart, httpRemoveAllCart, httpRemoveFromCart } from "../../features/cartSlice";
 
 const getTotal = (cart) => {
     let total = 0;
@@ -49,6 +27,8 @@ const getTotal = (cart) => {
 
 const Cart = () => {
     const { loading, error, success, cart } = useSelector(state => state.cart);
+
+    const dispatch = useDispatch();
 
     const isMedium = useMediaQuery('(max-width:990px)');
     const isMobile = useMediaQuery('(max-width:640px)')
@@ -174,6 +154,7 @@ const Cart = () => {
                                     // setTimeout(() => {
                                     //     handleToasterState(true, true)
                                     // }, [1500])
+                                    dispatch(httpRemoveAllCart())
                                 }
                             }
                         >
@@ -257,6 +238,9 @@ const Cart = () => {
                                                                         borderStyle: 'solid',
                                                                         borderColor: '#2a2727c4'
                                                                     }}
+                                                                    onClick={() => {
+                                                                        dispatch(httpAddToCart(cartItem))
+                                                                    }}
                                                                 >
                                                                     +
                                                                 </span>
@@ -272,6 +256,11 @@ const Cart = () => {
                                                                         borderWidth: '2px',
                                                                         borderStyle: 'solid',
                                                                         borderColor: '#2a2727c4'
+                                                                    }}
+                                                                    onClick={() => {
+                                                                        dispatch(httpRemoveFromCart({ 
+                                                                            bikeID: cartItem.bikeID
+                                                                        }))
                                                                     }}
                                                                 >
                                                                     -
@@ -290,6 +279,12 @@ const Cart = () => {
                                                                 fontSize: { mobile: '1.25rem' , tablet: '1.5rem'},
                                                                 color: 'customRed.main',
                                                                 cursor: 'pointer'
+                                                            }}
+                                                            onClick={() => {
+                                                                dispatch(httpRemoveFromCart({ 
+                                                                    bikeID: cartItem.bikeID, 
+                                                                    removeItem: 'true'
+                                                                }))
                                                             }}
                                                         />
                                                     </Box>

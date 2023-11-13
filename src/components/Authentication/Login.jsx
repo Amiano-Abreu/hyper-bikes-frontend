@@ -255,7 +255,10 @@ const Login = () => {
                             typeof error === 'string' ? 
                                 error 
                                     :
-                                "Please check form inputs !"
+                                // "Please check form inputs !"
+                                Object.values(error).map(
+                                    message => `${message}\n`
+                                )
                         }
                     </strong>
                 </Alert>
