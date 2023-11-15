@@ -6,12 +6,10 @@ const BASEURL = 'http://localhost:5000/api';
 export const fetchCart = createAsyncThunk('cart/fetchCart', async ( _, { rejectWithValue }) => {
   
   try {
-      const res = await axios.get(`${BASEURL}/csrf`, {withCredentials: true});
-      const csrfToken = res.data.csrfToken;
+      // const res = await axios.get(`${BASEURL}/csrf`, {withCredentials: true});
+      // const csrfToken = res.data.csrfToken;
       
-      const response = await axios.post(`${BASEURL}/getcart`, {
-                                        _csrf: csrfToken
-                        },
+      const response = await axios.get(`${BASEURL}/cart`,
                         {
                             headers: {
                                 'Accept': "application/json",
@@ -110,6 +108,51 @@ export const httpRemoveAllCart = createAsyncThunk('cart/httpRemoveAllCart', asyn
   }
 })
 
+export const httpAddOrder = createAsyncThunk('cart/httpAddOrder', async ( order, { rejectWithValue }) => {
+  try {
+    const {
+      products,
+      total
+    } = order;
+
+    const res = await axios.get(`${BASEURL}/csrf`, {withCredentials: true});
+    const csrfToken = res.data.csrfToken;
+    
+    const response = await axios.post(`${BASEURL}/addorder`, {
+                                      _csrf: csrfToken,
+                                      products,
+                                      total
+                      },
+                      {
+                          headers: {
+                              'Accept': "application/json",
+                              'Content-Type': "application/json"
+                          },
+                          withCredentials: true,
+                          mode: 'cors'
+                      });
+    const orderData = await response.data;
+
+    const resp = await axios.post(`${BASEURL}/removeallcart`, {
+                            _csrf: csrfToken
+                      },
+                      {
+                        headers: {
+                        'Accept': "application/json",
+                        'Content-Type': "application/json"
+                      },
+                        withCredentials: true,
+                        mode: 'cors'
+                      });
+    const removeCartData = await resp.data;
+
+    return removeCartData?.data;
+  } catch (error) {
+    console.log(error)
+    return rejectWithValue(error);
+  }
+})
+
 const initialState = {
   loading: false,
   success: false,
@@ -187,6 +230,22 @@ const cartSlice = createSlice({
           state.loading = false;
         })
         builder.addCase(httpRemoveAllCart.rejected, (state, action) => {
+          state.error = action.error.message;
+          state.loading = false;
+          state.success = true;
+        })
+
+        builder.addCase(httpAddOrder.pending, (state) => {
+          state.loading = true;
+          state.success = false;
+        })
+        builder.addCase(httpAddOrder.fulfilled, (state, action) => {
+          state.cart = [];
+          state.error = ''
+          state.success = true;
+          state.loading = false;
+        })
+        builder.addCase(httpAddOrder.rejected, (state, action) => {
           state.error = action.error.message;
           state.loading = false;
           state.success = true;

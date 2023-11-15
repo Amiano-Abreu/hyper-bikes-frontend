@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import Toaster from "../Utility/Toaster";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../Utility/Loader";
-import { httpAddToCart, httpRemoveAllCart, httpRemoveFromCart } from "../../features/cartSlice";
+import { httpAddToCart, httpRemoveAllCart, httpRemoveFromCart, httpAddOrder } from "../../features/cartSlice";
 
 const getTotal = (cart) => {
     let total = 0;
@@ -27,24 +27,14 @@ const getTotal = (cart) => {
 
 const Cart = () => {
     const { loading, error, success, cart } = useSelector(state => state.cart);
+    const total = getTotal(cart);
 
     const dispatch = useDispatch();
 
     const isMedium = useMediaQuery('(max-width:990px)');
     const isMobile = useMediaQuery('(max-width:640px)')
 
-    const [buyToaster, setBuyToaster] = useState(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
-    const handleToasterState = (bool, close = false) => {
-        setBuyToaster(bool);
-
-        if(close) {
-            setTimeout(() => {
-                setBuyToaster(false)
-            }, 3200);
-        }
-    }
 
     const handleButtonDisable = () => {
       setIsButtonDisabled(true);
@@ -296,25 +286,61 @@ const Cart = () => {
                                 
                                     : 
                                 
-                                <Button
-                                    variant='contained'
-                                    color='customRed'
-                                    size={ isMobile ? 'small' : 'medium'}
-                                    endIcon={isMobile ? <></> : <ArrowRightAltRoundedIcon />}
+                                <Box
                                     sx={{
-                                        color: 'customWhite.main',
-                                        fontWeight: '600',
-                                        px: 5,
-                                        textTransform: 'uppercase',
-                                        fontSize: { mobile: '0.5rem' , tablet: '0.65rem' , laptop: '0.75rem' }
+                                        display: 'flex',
+                                        flexDirection: {mobile: 'column', tablet: 'row'}
                                     }}
-                                    component={
-                                        Link
-                                    }
-                                    to="/bikes"
                                 >
-                                    Buy Now
-                                </Button>
+                                    <Button
+                                        variant='contained'
+                                        color='customRed'
+                                        size={ isMobile ? 'small' : 'medium'}
+                                        endIcon={isMobile ? <></> : <ArrowRightAltRoundedIcon />}
+                                        sx={{
+                                            color: 'customWhite.main',
+                                            fontWeight: '600',
+                                            px: 5,
+                                            textTransform: 'uppercase',
+                                            fontSize: { mobile: '0.5rem' , tablet: '0.65rem' , laptop: '0.75rem' }
+                                        }}
+                                        component={
+                                            Link
+                                        }
+                                        to="/bikes"
+                                    >
+                                        Buy Now
+                                    </Button>
+                                    <Button
+                                        variant='contained'
+                                        color='customWhite'
+                                        size={ isMobile ? 'small' : 'medium'}
+                                        endIcon={isMobile ? <></> : <ArrowRightAltRoundedIcon />}
+                                        sx={{
+                                            ...(
+                                                isMobile && {
+                                                    mt: 2.5
+                                                }
+                                            ),
+                                            ...(
+                                                !isMobile && {
+                                                    ml: 5
+                                                }
+                                            ),
+                                            color: 'customRed.main',
+                                            fontWeight: '600',
+                                            px: 5,
+                                            textTransform: 'uppercase',
+                                            fontSize: { mobile: '0.5rem' , tablet: '0.65rem' , laptop: '0.75rem' }
+                                        }}
+                                        component={
+                                            Link
+                                        }
+                                        to="/orders"
+                                    >
+                                        go to orders
+                                    </Button>
+                                </Box>
 
                     }
                     {
@@ -340,7 +366,7 @@ const Cart = () => {
                                             mx: 'auto'
                                         }}
                                     >
-                                        Total: ₹{getTotal(cart)}
+                                        Total: ₹{total}
                                     </Typography>
                                     <Button 
                                         variant='contained'
@@ -363,9 +389,10 @@ const Cart = () => {
                                         onClick={
                                             () => {
                                                 handleButtonDisable();
-                                                setTimeout(() => {
-                                                    handleToasterState(true, true)
-                                                }, [1500])
+                                                // setTimeout(() => {
+                                                //     handleToasterState(true, true)
+                                                // }, [1500])
+                                                dispatch(httpAddOrder({ products: cart, total }))
                                             }
                                         }
                                     >
@@ -401,12 +428,6 @@ const Cart = () => {
                     }
                 </Box>
             </Paper>
-            {
-                buyToaster ? 
-                    <Toaster link='/' />
-                        :
-                    <></>
-            }
         </>
     )
 }

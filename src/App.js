@@ -15,6 +15,7 @@ import Review from './components/Bikes/Review';
 import Cart from './components/Cart/Cart'
 import Profile from './components/User/Profile'
 import Account from './components/User/Account'
+import Orders from './components/User/Orders'
 import NotFound from './NotFound';
 
 import { useEffect } from 'react';
@@ -24,15 +25,22 @@ import { fetchCart } from './features/cartSlice';
 
 
 const PrivateRoutes = () => {
-  const {isLoggedIn} = useSelector(state => state.user);
+  const isLoggedIn = useSelector(state => state.user.isLoggedIn);
 
   return (
     isLoggedIn ? <Outlet/> : <Navigate to='/login'/>
   )
 }
 
+const AnonymousRoutes = () => {
+  const isLoggedIn = useSelector(state => state.user.isLoggedIn);
+
+  return (
+    !isLoggedIn ? <Outlet/> : <Navigate to='/' replace />
+  )
+}
+
 const App = () => {
-  const {isLoggedIn} = useSelector(state => state.user);
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -50,25 +58,17 @@ const App = () => {
           <Route path={'/bike/:bikeId'} element={<BikeDetails />} />
           <Route element={<PrivateRoutes />}>
             <Route path={'/cart'} element={<Cart />} />
+            <Route path={'/orders'} element={<Orders />} />
             <Route path={'/bike/:bikeId/review'} element={<Review />} />
             <Route path={'/profile'} element={<Profile />} />
             <Route path={'/account'} element={<Account />} />
           </Route>
           <Route path={'/news'} element={<News />} />
           <Route path={'/news/:newsId'} element={<NewsDetails />} />
-          {
-            !isLoggedIn ? 
-            (
-              <>
-                <Route path={'/signup'} element={<SignUp />} />
-                <Route path={'/login'} element={<Login />} />
-              </>
-            )
-
-            :
-
-            <></>
-          }
+          <Route element={<AnonymousRoutes />}>
+            <Route path={'/signup'} element={<SignUp />} />
+            <Route path={'/login'} element={<Login />} />
+          </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

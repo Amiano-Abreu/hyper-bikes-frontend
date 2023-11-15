@@ -1,28 +1,52 @@
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box"
-
-const profileArray1 = [
-    {
-        type: 'Name',
-        value: 'Amiano Abreu'
-    },
-    {
-        type: 'Email',
-        value: 'amianoabreu@gmail.com'
-    }
-]
-const profileArray2 = [
-    {
-        type: 'State',
-        value: 'Goa'
-    },
-    {
-        type: 'Country',
-        value: 'India'
-    },
-]
+import { useSelector } from "react-redux";
 
 const Profile = () => {
+    const {
+        uid,
+        userName,
+        email,
+        state,
+        country
+    } = useSelector(state => state.user);
+
+    const firstName = userName.split(" ")[0]
+    const lastName = userName.split(" ")[1]
+
+    const arr = [
+        [
+            {
+                label: "User ID",
+                value: uid
+            },
+            {
+                label: "Email",
+                value: email
+            }
+        ],
+        [
+            {
+                label: "First Name",
+                value: firstName
+            },
+            {
+                label: "Last Name",
+                value: lastName
+            }
+        ],
+        [
+            {
+                label: "State",
+                value: state
+            },
+            {
+                label: "Country",
+                value: country
+            },
+        ]
+    ];
+
     return (
         <>
             <Box
@@ -35,72 +59,48 @@ const Profile = () => {
 
                 }}
             >
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'space-around',
-                        alignItems: 'center',
-                        marginBottom: '25px'
-                    }}
-                >
+                {
+                    arr.map(
+                        (arrItem, index) => (
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-around',
+                                    alignItems: 'center',
+                                    ...((index !== arr.length - 1) && {
+                                        marginBottom: '25px'
+                                    })
+                                }}
+                            >
 
-                    {
-                        profileArray1.map(
-                            item => {
-                                return (
-                                    <>
-                                        <div
-                                            style={{
-                                                width: '190px'
-                                            }}
-                                        >
-                                            <Typography
-                                                variant="h5"
-                                            >
-                                                {item.type}
-                                            </Typography>
-                                            <Typography>
-                                                {item.value}
-                                            </Typography>
-                                        </div>
-                                    </>
-                                )
-                            }
+                                {
+                                    arrItem.map(
+                                        item => {
+                                            return (
+                                                <>
+                                                    <div
+                                                        style={{
+                                                            width: '190px'
+                                                        }}
+                                                    >
+                                                        <Typography
+                                                            variant="h5"
+                                                        >
+                                                            {item.label}
+                                                        </Typography>
+                                                        <Typography>
+                                                            {item.value}
+                                                        </Typography>
+                                                    </div>
+                                                </>
+                                            )
+                                        }
+                                    )
+                                }
+                            </div>
                         )
-                    }
-                </div>
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'space-around',
-                        alignItems: 'center',
-                    }}
-                >
-                    {
-                        profileArray2.map(
-                            item => {
-                                return (
-                                    <>
-                                        <div
-                                            style={{
-                                                width: '190px'
-                                            }}
-                                        >
-                                            <Typography
-                                                variant="h5"
-                                            >
-                                                {item.type}
-                                            </Typography>
-                                            <Typography>
-                                                {item.value}
-                                            </Typography>
-                                        </div>
-                                    </>
-                                )
-                            }
-                        )
-                    }
-                </div>
+                    )
+                }
             </Box>
         </>
     )

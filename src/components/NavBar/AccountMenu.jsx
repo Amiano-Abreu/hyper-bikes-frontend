@@ -41,7 +41,6 @@ export default function BasicMenu({closeFunction, mobile}) {
   return (
     <div
       style={{
-        width: '260px',
         ...(mobile && {
           marginRight: "auto",
           marginLeft: "auto"
@@ -71,6 +70,7 @@ export default function BasicMenu({closeFunction, mobile}) {
            sx={{
              fontSize: '1rem',
              fontWeight: '600',
+             ml: 4,
              ...(mobile && {
                color: 'customBlack.main'
              }),
