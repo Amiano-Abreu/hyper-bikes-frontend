@@ -377,7 +377,6 @@ const Bikes = () => {
                 bgcolor: 'customWhite.main'
             }}
         >
-            {`'${String(url)}'`}
             {
                 // (filterValue || sortValue) 
                 (

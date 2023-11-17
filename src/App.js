@@ -59,10 +59,10 @@ const App = () => {
           <Route element={<PrivateRoutes />}>
             <Route path={'/cart'} element={<Cart />} />
             <Route path={'/orders'} element={<Orders />} />
-            <Route path={'/bike/:bikeId/review'} element={<Review />} />
             <Route path={'/profile'} element={<Profile />} />
             <Route path={'/account'} element={<Account />} />
           </Route>
+            <Route path={'/bike/:bikeId/review'} element={<Review />} />
           <Route path={'/news'} element={<News />} />
           <Route path={'/news/:newsId'} element={<NewsDetails />} />
           <Route element={<AnonymousRoutes />}>

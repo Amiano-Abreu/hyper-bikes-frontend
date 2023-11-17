@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Box from "@mui/material/Box";
@@ -23,6 +23,121 @@ import { useFormik } from "formik";
 import * as yup from 'yup';
 
 import styles from './Review.module.css'
+
+const owned = [
+    {
+        value: "> 1 yr",
+        label: "> 1 yr"
+    },
+    {
+        value: "6 - 12 months",
+        label: "6 - 12 months"
+    },
+    {
+        value: "3 - 6 months",
+        label: "3 - 6 months"
+    },
+    {
+        value: "< 3 months",
+        label: "< 3 months"
+    },
+    {
+        value: "never owned",
+        label: "never owned"
+    }
+]
+
+const used = [
+    {
+        value: "daily commute",
+        label: "Daily commute"
+    },
+    {
+        value: "occasional commute",
+        label: "Occasional commute"
+    },
+    {
+        value: "leisure rides",
+        label: "Leisure rides"
+    },
+    {
+        value: "tours",
+        label: "Tours"
+    },
+    {
+        value: "everything",
+        label: "Everything"
+    }
+]
+
+const ridden = [
+    {
+        value: "< 5000 Km",
+        label: "< 5000 Km"
+    },
+    {
+        value: "5000-10000 Km",
+        label:"5000-10000 Km"
+    },
+    {
+        value: "10000-15000 Km",
+        label: "10000-15000 Km"
+    },
+    {
+        value: "> 15000 Km",
+        label:"> 15000 Km"
+    }
+]
+
+// VALIDATE THE RADIO ON CHANGE AS IT DOESN'T TRIGGER AN ONBLUR EVENT
+const CustomRadio = ({ formik, is700, controlLabel, name, options }) => {
+    return (
+        <FormControl
+            error={formik.touched[name] && formik.errors[name] ? true: false}
+            sx={{
+                mb: is700 ? '20px' : '25px'
+            }}
+        >
+          <FormLabel id={name}
+            sx={{
+                fontWeight: '600',
+                color: 'customBlack.main',
+                fontSize: is700 ? '.9rem' : '1rem'  
+            }}
+          >{controlLabel}</FormLabel>
+          <RadioGroup
+            row
+            aria-labelledby={name}
+            name={name}
+            value={formik.values[name]}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            sx={{
+                '& .MuiTypography-root': {
+                    fontSize: is700 ? '.9rem': '1rem'
+                }
+            }}
+          >
+            {
+                options.map(
+                    (obj, index) => (
+                        <FormControlLabel key={obj.value + index} value={obj.value} control={<Radio sx={{
+                            '& .MuiSvgIcon-root': {
+                                fontSize: is700 ? '1rem' : is700 ? '1rem' : '1.25rem'
+                            }
+                        }} />} label={obj.label} />
+                    )
+                )
+            }
+          </RadioGroup>
+          <FormHelperText
+            sx={{
+                color: 'customRed.main'
+            }}
+          >{formik.touched[name] && formik.errors[name]}</FormHelperText>
+        </FormControl>
+    )
+}
 
 const Review = () => {
     const is700 = useMediaQuery('(max-width:700px)')
@@ -67,6 +182,7 @@ const Review = () => {
             ridden: '',
             mileage: 0
         },
+        validateOnChange: false,
         validationSchema: yup.object().shape({
             rating: yup
                 .number()
@@ -179,6 +295,11 @@ const Review = () => {
                     noValidate
                     className={styles.form}
                 >
+                    {formik.touched.rating && formik.errors.rating ?
+                        <p className={styles.error} style={{ fontWeight: "700"}}>{formik.errors.rating}</p>
+                        :
+                        null
+                    }
                     <Rating 
                         name='rating'
                         id='rating'
@@ -190,198 +311,45 @@ const Review = () => {
                             mb: 2
                         }}
                     />
-                    {formik.touched.rating && formik.errors.rating ?
-                        <p className={styles.error}>{formik.errors.rating}</p>
-                        :
-                        null
-                    }
-                    
-                    <FormControl
-                        error={formik.touched.owned && formik.errors.owned ? true: false}
-                        sx={{
-                            mb: is700 ? '20px' : '25px',
-                            mt: 2
-                        }}
-                    >
-                      <FormLabel id="owned"
-                        sx={{
-                            fontWeight: '600',
-                            color: 'customBlack.main',
-                            fontSize: is700 ? '.9rem' : '1rem' 
-                        }}
-                      >How long have you owned this bike for ?</FormLabel>
-                      <RadioGroup
-                        row
-                        aria-labelledby="owned"
-                        name="owned"
-                        value={formik.values.owned}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        sx={{
-                            '& .MuiTypography-root': {
-                                fontSize: is700 ? '.9rem': '1rem'
-                            }
-                        }}
-                      >
-                        <FormControlLabel value="> 1 yr" control={<Radio sx={{
-                            '& .MuiSvgIcon-root': {
-                                fontSize: is700 ? '1rem' : is700 ? '1rem' : '1.25rem'
-                            }
-                        }} />} label="> 1 yr" />
-                        <FormControlLabel value="6 - 12 months" control={<Radio sx={{
-                            '& .MuiSvgIcon-root': {
-                                fontSize: is700 ? '1rem' : '1.25rem'
-                            }
-                        }} />} label="6 - 12 months" />
-                        <FormControlLabel value="3 - 6 months" control={<Radio sx={{
-                            '& .MuiSvgIcon-root': {
-                                fontSize: is700 ? '1rem' : '1.25rem'
-                            }
-                        }} />} label="3 - 6 months" />
-                        <FormControlLabel value="< 3 months" control={<Radio sx={{
-                            '& .MuiSvgIcon-root': {
-                                fontSize: is700 ? '1rem' : '1.25rem'
-                            }
-                        }} />} label="< 3 months" />
-                        <FormControlLabel value="never owned" control={<Radio sx={{
-                            '& .MuiSvgIcon-root': {
-                                fontSize: is700 ? '1rem' : '1.25rem'
-                            }
-                        }} />} label="never owned" />
-                      </RadioGroup>
-                      <FormHelperText
-                        sx={{
-                            color: 'customRed.main'
-                        }}
-                      >{formik.touched.owned && formik.errors.owned}</FormHelperText>
-                    </FormControl>
-                    <FormControl
-                        error={formik.touched.used && formik.errors.used ? true: false}
-                        sx={{
-                            mb: is700 ? '20px' : '25px'
-                        }}
-                    >
-                      <FormLabel id="used"
-                        sx={{
-                            fontWeight: '600',
-                            color: 'customBlack.main',
-                            fontSize: is700 ? '.9rem' : '1rem'  
-                        }}
-                      >What do you use this bike for?</FormLabel>
-                      <RadioGroup
-                        row
-                        aria-labelledby="used"
-                        name="used"
-                        value={formik.values.used}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        sx={{
-                            '& .MuiTypography-root': {
-                                fontSize: is700 ? '.9rem': '1rem'
-                            }
-                        }}
-                      >
-                        <FormControlLabel value="daily commute" control={<Radio sx={{
-                            '& .MuiSvgIcon-root': {
-                                fontSize: is700 ? '1rem' : '1.25rem'
-                            }
-                        }} />} label="Daily commute" />
-                        <FormControlLabel value="occasional commute" control={<Radio sx={{
-                            '& .MuiSvgIcon-root': {
-                                fontSize: is700 ? '1rem' : '1.25rem'
-                            }
-                        }} />} label="Occasional commute" />
-                        <FormControlLabel value="leisure rides" control={<Radio sx={{
-                            '& .MuiSvgIcon-root': {
-                                fontSize: is700 ? '1rem' : '1.25rem'
-                            }
-                        }} />} label="Leisure rides" />
-                        <FormControlLabel value="tours" control={<Radio sx={{
-                            '& .MuiSvgIcon-root': {
-                                fontSize: is700 ? '1rem' : '1.25rem'
-                            }
-                        }} />} label="Tours" />
-                        <FormControlLabel value="everything" control={<Radio sx={{
-                            '& .MuiSvgIcon-root': {
-                                fontSize: is700 ? '1rem' : '1.25rem'
-                            }
-                        }} />} label="Everything" />
-                      </RadioGroup>
-                      <FormHelperText
-                        sx={{
-                            color: 'customRed.main'
-                        }}
-                      >{formik.touched.used && formik.errors.used}</FormHelperText>
-                    </FormControl>
-                    <FormControl
-                        error={formik.touched.ridden && formik.errors.ridden ? true: false}
-                        sx={{
-                            mb: is700 ? '20px' : '25px'
-                        }}
-                    >
-                      <FormLabel id="ridden"
-                        sx={{
-                            fontWeight: '600',
-                            color: 'customBlack.main',
-                            fontSize: is700 ? '.9rem' : '1rem'  
-                        }}
-                      >How much have you ridden this bike?</FormLabel>
-                      <RadioGroup
-                        row
-                        aria-labelledby="ridden"
-                        name="ridden"
-                        value={formik.values.ridden}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        sx={{
-                            '& .MuiTypography-root': {
-                                fontSize: is700 ? '.9rem': '1rem'
-                            }
-                        }}
-                      >
-                        <FormControlLabel value="< 5000 Km" control={<Radio sx={{
-                            '& .MuiSvgIcon-root': {
-                                fontSize: is700 ? '1rem' : '1.25rem'
-                            }
-                        }} />} label="< 5000 Km" />
-                        <FormControlLabel value="5000-10000 Km" control={<Radio sx={{
-                            '& .MuiSvgIcon-root': {
-                                fontSize: is700 ? '1rem' : '1.25rem'
-                            }
-                        }} />} label="5000-10000 Km" />
-                        <FormControlLabel value="10000-15000 Km" control={<Radio sx={{
-                            '& .MuiSvgIcon-root': {
-                                fontSize: is700 ? '1rem' : '1.25rem'
-                            }
-                        }} />} label="10000-15000 Km" />
-                        <FormControlLabel value="> 15000 Km" control={<Radio sx={{
-                            '& .MuiSvgIcon-root': {
-                                fontSize: is700 ? '1rem' : '1.25rem'
-                            }
-                        }} />} label="> 15000 Km" />
-                      </RadioGroup>
-                      <FormHelperText
-                        sx={{
-                            color: 'customRed.main'
-                        }}
-                      >{formik.touched.ridden && formik.errors.ridden}</FormHelperText>
-                    </FormControl>
+                    <CustomRadio 
+                        formik={formik}
+                        is700={is700}
+                        controlLabel={"How long have you owned this bike for ?"}
+                        name={"owned"}
+                        options={owned}
+                    />
+                    <CustomRadio 
+                        formik={formik}
+                        is700={is700}
+                        controlLabel={"What do you use this bike for?"}
+                        name={"used"}
+                        options={used}
+                    />
+                    <CustomRadio 
+                        formik={formik}
+                        is700={is700}
+                        controlLabel={"How much have you ridden this bike ?"}
+                        name={"ridden"}
+                        options={ridden}
+                    />
                     <TextField
-                        id='title'
                         label='Title'
                         type='text'
+                        sx={{
+                            marginBottom: `${is700 ? '20px' : '25px'}`
+                        }}
+                        id='title'
                         size={is700? 'small' : 'medium'}
                         fullWidth={true}
-                        value={formik.values.title}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
+                        onBlur={(e) => {
+                            formik.setFieldValue("title", e.target.value).then(
+                                () => formik.handleBlur(e)
+                            )
+                        }}
                         error={formik.touched.title && formik.errors.title ?
                             true : false
                         }
                         helperText={formik.touched.title && formik.errors.title}
-                        sx={{
-                            marginBottom: `${is700 ? '20px' : '25px'}`
-                        }}
                     />
                     <TextField
                         id='body'
@@ -392,9 +360,11 @@ const Review = () => {
                         multiline
                         maxRows={4}
                         fullWidth={true}
-                        value={formik.values.body}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
+                        onBlur={(e) => {
+                            formik.setFieldValue("body", e.target.value).then(
+                                () => formik.handleBlur(e)
+                            )
+                        }}
                         error={formik.touched.body && formik.errors.body ?
                             true : false
                         }
@@ -410,9 +380,11 @@ const Review = () => {
                         type='number'
                         size={is700? 'small' : 'medium'}
                         fullWidth={true}
-                        value={formik.values.mileage}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
+                        onBlur={(e) => {
+                            formik.setFieldValue("mileage", e.target.value).then(
+                                () => formik.handleBlur(e)
+                            )
+                        }}
                         error={formik.touched.mileage && formik.errors.mileage ?
                             true : false
                         }
@@ -446,7 +418,7 @@ const Review = () => {
                 </form>
             </Paper>
         </Box>
-        <Backdrop
+        {/* <Backdrop
           sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={openBackdrop}
           onClick={handleClose}
@@ -471,7 +443,7 @@ const Review = () => {
           open={openLoader}
         >
           <CircularProgress color="inherit" />
-        </Backdrop>
+        </Backdrop> */}
         </>
     )
 }
