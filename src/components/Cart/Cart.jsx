@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import Toaster from "../Utility/Toaster";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../Utility/Loader";
-import { httpAddToCart, httpRemoveAllCart, httpRemoveFromCart, httpAddOrder } from "../../features/cartSlice";
+import { httpAddToCart, httpRemoveAllCart, httpRemoveFromCart, httpAddOrder, resetAtc } from "../../features/cartSlice";
 
 const getTotal = (cart) => {
     let total = 0;
@@ -26,13 +26,14 @@ const getTotal = (cart) => {
 }
 
 const Cart = () => {
-    const { loading, error, success, cart } = useSelector(state => state.cart);
+    const { loading, error, success, cart, atc } = useSelector(state => state.cart);
     const total = getTotal(cart);
 
     const dispatch = useDispatch();
 
     const isMedium = useMediaQuery('(max-width:990px)');
-    const isMobile = useMediaQuery('(max-width:640px)')
+    const isMobile = useMediaQuery('(max-width:639px)')
+    const isTablet = useMediaQuery('(min-width:640px)')
 
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
@@ -42,6 +43,7 @@ const Cart = () => {
 
     useEffect(() => {
         window.scrollTo(0,0);
+        dispatch(resetAtc())
     }, [])
 
     return (
@@ -51,7 +53,7 @@ const Cart = () => {
                 sx={{
                     display: 'flex',
                     justifyContent: 'center',
-                    width: { mobile: '100%', tablet: '550px' , laptop: '1000px'},
+                    width: { mobile: '90%', tablet: '550px' , laptop: '1000px'},
                     mx: 'auto',
                     alignItems: 'center',
                     p: 5,
@@ -68,6 +70,18 @@ const Cart = () => {
                 {
                     loading ? 
                     <Loader loading={loading} />
+                    :
+                    <></>
+                }
+                {
+                    (!loading && !error && atc && success) ?
+                    <Toaster timer={1500} message={`Successful`} />
+                    :
+                    <></>
+                }
+                {
+                    (!loading && error && atc && success) ?
+                    <Toaster timer={1500} type={"error"} message={`Error: ${error}`} />
                     :
                     <></>
                 }
@@ -189,21 +203,23 @@ const Cart = () => {
                                                             laptop: 'row'
                                                         },
                                                         alignItems: "center",
-                                                        justifyContent: "space-around"
+                                                        justifyContent: "space-around",
+                                                        "& img": {
+                                                            height: { mobile: '65%', tablet: '100%'},
+                                                            width: { mobile: '100%', tablet: "400px"},
+                                                            objectFit: { mobile: 'contain'},
+                                                        }
                                                     }}
                                                 >
                                                     <img
-                                                        style={{
-                                                            height: "100%",
-                                                            width: "400px"
-                                                        }}
                                                         src={cartItem.src}
                                                         alt={cartItem.alt}
                                                     />
                                                     <Box
                                                         sx={{
-                                                            width: { mobile: '300px', tablet:'400px'},
+                                                            width: { mobile: '90%', tablet:'400px'},
                                                             display: 'flex',
+                                                            flexDirection: { mobile: 'column', tablet: 'row'},
                                                             alignItem: 'center',
                                                             justifyContent: 'space-between',
                                                             pb: { mobile: 5, laptop: 'none'}

@@ -10,12 +10,15 @@ import Button from "@mui/material/Button";
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Rating from '@mui/material/Rating';
+import IconButton from '@mui/material/IconButton';
 
 import { useMediaQuery } from '@mui/material';
 
 import ArrowRightAltRoundedIcon from '@mui/icons-material/ArrowRightAltRounded';
 import StarBorderRoundedIcon from '@mui/icons-material/StarBorderRounded';
 import StarRoundedIcon from '@mui/icons-material/StarRounded';
+import BorderColorRoundedIcon from '@mui/icons-material/BorderColorRounded';
+import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 
 import CustomPaper from './CustomPaper'
 import PaperHeader from './PaperHeader'
@@ -26,12 +29,11 @@ import Toaster from '../Utility/Toaster'
 
 import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { getBikesByPrice, getBikesByDisplacement, getAllBikes, getBikeDetails, getBikesByBrand, getSingleBikeSummary, getBikesByCategory } from '../../services/bikes'
-import { getAllNews, getNewsByID } from '../../services/news'
 import useGetRequest from '../../services/useGetRequest'
 import Loader from '../Utility/Loader'
 import { useDispatch, useSelector } from 'react-redux'
-import { httpAddToCart } from '../../features/cartSlice'
+import { httpAddToCart, resetAtc } from '../../features/cartSlice'
+import { httpDeleteReview } from '../../services/review'
 
 const bikeData = [
     {
@@ -197,44 +199,377 @@ const bikeData = [
 ]
 
 const reviewData = [
-    'Used' , 'Owned' , 'Ridden' , 'Milleage'
+    'Used', 'Ridden', 'Mileage' , 'Owned'
 ]
 
 const specs = [ 
-    'Engine Capacity' , 'Transmission' , 'Kerb Weight' , 'Fuel Tank Capacity' , 'Seat Height' , 'Max Power'
+    { 
+        label: 'Engine Capacity',
+        value: "engineCapacity"
+    }, 
+    { 
+        label: 'Transmission',
+        value: "transmission"
+    }, 
+    { 
+        label: 'Kerb Weight',
+        value: "kerbWeight"
+    }, 
+    { 
+        label: 'Fuel Tank Capacity',
+        value: "fuelTankCapacity"
+    }, 
+    { 
+        label: 'Seat Height',
+        value: "seatHeight"
+    }, 
+    { 
+        label: 'Max Power',
+        value: "maxPower"
+    }
 ]
 
 const power = [
-    'Fuel Type' , 'Max Power' , 'Max Torque' , 'Emission Standard' , 'Displacement' , 'Cylinders' , 'Bore' ,
-    'Stroke' , 'Valves Per Cylinder' , 'Compression Ratio' , 'Cooling System' , 'Transmission' , 'Transmission Type' , 
-    'Gear Shifting Pattern' , 'Clutch' , 'Ignition' , 'Fuel Delivery System' , 'Fuel Tank Capacity' ,
-    'Reserve Fuel Capacity' , 'Top Speed'
+    {
+        value: "fuelType",
+        label: 'Fuel Type' 
+    }, 
+    {
+        value: "maxPower",
+        label: 'Max Power' 
+    }, 
+    {
+        value: "maxTorque",
+        label: 'Max Torque' 
+    }, 
+    {
+        value: "emissionStandard",
+        label: 'Emission Standard' 
+    }, 
+    {
+        value: "displacement",
+        label: 'Displacement' 
+    }, 
+    {
+        value: "cylinders",
+        label: 'Cylinders' 
+    }, 
+    {
+        value: "bore",
+        label: 'Bore' 
+    },
+    {
+        value: "stroke",
+        label: 'Stroke' 
+    }, 
+    {
+        value: "valves",
+        label: 'Valves Per Cylinder' 
+    }, 
+    {
+        value: "compressionRatio",
+        label: 'Compression Ratio' 
+    }, 
+    {
+        value: "coolingSystem",
+        label: 'Cooling System' 
+    }, 
+    {
+        value: "transmission",
+        label: 'Transmission' 
+    }, 
+    {
+        value: "transmissionType",
+        label: 'Transmission Type' 
+    }, 
+    {
+        value: "gearShiftPattern",
+        label: 'Gear Shifting Pattern' 
+    }, 
+    {
+        value: "clutch",
+        label: 'Clutch' 
+    }, 
+    {
+        value: "ignition",
+        label: 'Ignition' 
+    }, 
+    {
+        value: "fuelDelivery",
+        label: 'Fuel Delivery System' 
+    }, 
+    {
+        value: "fuelTankCapacity",
+        label: 'Fuel Tank Capacity' 
+    },
+    {
+        value: "reserveFuelCapacity",
+        label: 'Reserve Fuel Capacity' 
+    }, 
+    {
+        value: "topSpeed",
+        label: 'Top Speed'
+    }
 ]
 
 const brakeWheel = [ 
-    'Braking System' , 'Front Brake Type' , 'Front Brake Size' , 'Rear Brake Type' , 'Rear Brake Size' ,
-    'Wheel Type' , 'Front Wheel Size' , 'Rear Wheel Size' , 'Front Tyre Size' , 'Rear Tyre Size' ,
-    'Tyre Type' , 'Radial Tyres' , 'Front Tyre Pressure (Rider)' , 'Rear Tyre Pressure (Rider)' ,
-    'Front Tyre Pressure (Rider & Pillion)' , 'Rear Tyre Pressure (Rider & Pillion)' , 'Calliper Type' ,
-    'Front Suspension' , 'Rear Suspension'
+    { 
+        value: "brakingSystem",
+        label: 'Braking System' 
+    }, 
+    { 
+        value: "frontBrakeType",
+        label: 'Front Brake Type' 
+    }, 
+    { 
+        value: "frontBrakeSize",
+        label: 'Front Brake Size' 
+    }, 
+    { 
+        value: "rearBrakeType",
+        label: 'Rear Brake Type' 
+    }, 
+    { 
+        value: "rearBrakeSize",
+        label: 'Rear Brake Size' 
+    },
+    { 
+        value: "wheelType",
+        label: 'Wheel Type' 
+    }, 
+    { 
+        value: "frontWheelSize",
+        label: 'Front Wheel Size' 
+    }, 
+    { 
+        value: "rearWheelSize",
+        label: 'Rear Wheel Size' 
+    }, 
+    { 
+        value: "frontTyreSize",
+        label: 'Front Tyre Size' 
+    }, 
+    { 
+        value: "rearTyreSize",
+        label: 'Rear Tyre Size' 
+    },
+    { 
+        value: "tyreType",
+        label: 'Tyre Type' 
+    }, 
+    { 
+        value: "radialTyres",
+        label: 'Radial Tyres' 
+    }, 
+    { 
+        value: "frontTyrePressureR",
+        label: 'Front Tyre Pressure (Rider)' 
+    }, 
+    { 
+        value: "rearTyrePressureR",
+        label: 'Rear Tyre Pressure (Rider)' 
+    },
+    { 
+        value: "frontTyrePressureRP",
+        label: 'Front Tyre Pressure (Rider & Pillion)' 
+    }, 
+    { 
+        value: "rearTyrePressureRP",
+        label: 'Rear Tyre Pressure (Rider & Pillion)' 
+    }, 
+    { 
+        value: "calliperType",
+        label: 'Calliper Type' 
+    },
+    { 
+        value: "frontSuspension",
+        label: 'Front Suspension' 
+    }, 
+    { 
+        value: "rearSuspension",
+        label: 'Rear Suspension'
+    }
 ]
 
 const dimensions = [
-    'Kerb Weight' , 'Overall Length' , 'Overall Width' , 'Overall Height' , 'Wheelbase' , 'Ground Clearance' ,
-    'Seat Height' , 'Chassis Type'
+    {
+        label:'Kerb Weight', 
+        value: "kerbWeight"
+    }, 
+    {
+        label:'Overall Length', 
+        value: "overallLength"
+    }, 
+    {
+        label:'Overall Width', 
+        value: "overallWidth"
+    }, 
+    {
+        label:'Overall Height', 
+        value: "overallHeight"
+    }, 
+    {
+        label:'Wheelbase', 
+        value: "wheelBase"
+    }, 
+    {
+        label:'Ground Clearance', 
+        value: "groundClearance"
+    },
+    {
+        label:'Seat Height', 
+        value: "seatHeight"
+    }, 
+    {
+        label:'Chassis Type', 
+        value: "chassisType"
+    }
 ]
 
 const warranty = [
-    'Standard Warranty (Year)' , 'Standard Warranty (Kilometers)'
+    {
+        label:'Standard Warranty (Year)', 
+        value: "years"
+    }, 
+    {
+        label:'Standard Warranty (Kilometers)', 
+        value: "kilometers"
+    }
 ]
 
 const features = [
-    'Odometer' , 'DRLs (Daytime running lights)' , 'Mobile App Connectivity' , 'GPS & Navigation' , 'USB charging port' ,
-    'Front storage box' , 'Under seat storage' , 'AHO (Automatic Headlight On)' , 'Speedometer' , 'Fuel Guage' , 
-    'Tachometer' , 'Stand Alarm' , 'Stepped Seat' , 'No. of Tripmeters' , 'Tripmeter Type' , 'Low Fuel Indicator' , 
-    'Low Oil Indicator' , 'Low Battery Indicator' , 'Pillion Backrest' , 'Pillion Grabrail' , 'Pillion Seat' , 
-    'Pillion Footrest' , 'Digital Fuel Guage' , 'Start Type' , 'Shift Light' , 'Killswitch' , 'Clock' , 'Battery' ,
-    'Headlight Type' , 'Brake/Tail Light' , 'Turn Signal' , 'Pass Light' , 'Additional features'
+    {
+        label:'Odometer', 
+        value: "odometer"
+    }, 
+    {
+        label:'DRLs (Daytime running lights)', 
+        value: "drl"
+    }, 
+    {
+        label:'Mobile App Connectivity', 
+        value: "appConnectivity"
+    }, 
+    {
+        label:'GPS & Navigation', 
+        value: "gpsNavigation"
+    }, 
+    {
+        label:'USB charging port', 
+        value: "usbChargingPort"
+    },
+    {
+        label:'Front storage box', 
+        value: "frontStorageBox"
+    }, 
+    {
+        label:'Under seat storage', 
+        value: "underSeatStorage"
+    }, 
+    {
+        label:'AHO (Automatic Headlight On)', 
+        value: "aho"
+    }, 
+    {
+        label:'Speedometer', 
+        value: "speedometer"
+    }, 
+    {
+        label:'Fuel Guage', 
+        value: "fuelGuage"
+    }, 
+    {
+        label:'Tachometer', 
+        value: "tachometer"
+    }, 
+    {
+        label:'Stand Alarm', 
+        value: "standAlarm"
+    }, 
+    {
+        label:'Stepped Seat', 
+        value: "steppedSeat"
+    }, 
+    {
+        label:'No. of Tripmeters', 
+        value: "numberOfTripmeters"
+    }, 
+    {
+        label:'Tripmeter Type', 
+        value: "tripmeterType"
+    }, 
+    {
+        label:'Low Fuel Indicator', 
+        value: "lowFuelIndicator"
+    }, 
+    {
+        label:'Low Oil Indicator', 
+        value: "lowOilIndicator"
+    }, 
+    {
+        label:'Low Battery Indicator', 
+        value: "lowBatteryIndicator"
+    }, 
+    {
+        label:'Pillion Backrest', 
+        value: "pillionBackrest"
+    }, 
+    {
+        label:'Pillion Grabrail', 
+        value: "pillionGrabrail"
+    }, 
+    {
+        label:'Pillion Seat', 
+        value: "pillionSeat"
+    }, 
+    {
+        label:'Pillion Footrest', 
+        value: "pillionFootrest"
+    }, 
+    {
+        label:'Digital Fuel Guage', 
+        value: "digitalFuelGuage"
+    }, 
+    {
+        label:'Start Type', 
+        value: "startType"
+    }, 
+    {
+        label:'Shift Light', 
+        value: "shiftLight"
+    }, 
+    {
+        label:'Killswitch',
+        value: "killSwitch"
+    },
+    {
+        label:'Clock', 
+        value: "clock"
+    }, 
+    {
+        label:'Battery', 
+        value: "battery"
+    },
+    {
+        label:'Headlight Type', 
+        value: "headlightType"
+    }, 
+    {
+        label:'Brake/Tail Light', 
+        value: "brakeLight"
+    }, 
+    {
+        label:'Turn Signal', 
+        value: "turnSignal"
+    }, 
+    {
+        label:'Pass Light', 
+        value: "passLight"
+    }, 
+    {
+        label:'Additional features', 
+        value: "additionalFeatures"
+    }
 ]
 
 const BASEURL = "http://localhost:5000/api/bike";
@@ -277,7 +612,12 @@ function millisecondsToRelativeTime(milliseconds) {
 }
 
 const BikeDetails = () => {
+    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState(null);
+
     const dispatch = useDispatch();
+    const { uid } = useSelector(state => state.user);
+    const { loading: cartLoading, success, error, atc } = useSelector(state => state.cart);
 
     const location = useLocation();
     const bike = location.state.bike;
@@ -309,21 +649,21 @@ const BikeDetails = () => {
     const isMobile = useMediaQuery('(max-width:640px)')
     const isTablet = useMediaQuery('(max-width:1024px)')
 
-    const [buyToaster, setBuyToaster] = useState(false);
+    // const [buyToaster, setBuyToaster] = useState(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
     const navigate = useNavigate();
     
-    const handleToasterState = (bool, close = false) => {
-        setBuyToaster(bool);
+    // const handleToasterState = (bool, close = false) => {
+    //     setBuyToaster(bool);
 
-        if(close) {
-            setTimeout(() => {
-                setBuyToaster(false)
-                setIsButtonDisabled(false)
-            }, 5100);
-        }
-    }
+    //     if(close) {
+    //         setTimeout(() => {
+    //             setBuyToaster(false)
+    //             setIsButtonDisabled(false)
+    //         }, 5100);
+    //     }
+    // }
 
     const handleButtonDisable = () => {
         setIsButtonDisabled(true);
@@ -332,9 +672,14 @@ const BikeDetails = () => {
     useEffect(() => {
         window.scrollTo(0,0)
         // getAllNews(true);
+        dispatch(resetAtc());
     }, [])
 
-    // useEffect(() => {}, [location.state])
+    useEffect(() => {
+        if ( !cartLoading && success ) {
+            setIsButtonDisabled(false);
+        }
+    }, [cartLoading, success])
 
     // useEffect(() => {
     //     url.current = `${BASEURL}/${bike?.bikeID}`;
@@ -392,6 +737,32 @@ const BikeDetails = () => {
             apiData &&
         (    
             <>
+            {
+                loading ?
+
+                <Loader loading={loading} />
+
+                :
+
+                <></>
+            }
+
+            {
+
+                !loading && data && data?.status === 'ERROR' ?
+                <Toaster timer={1500} type={"error"} message={data?.data ? data.data.map(obj => Object.values(obj)[0]).join(', ') : data?.message} />
+                :
+                <></>
+            }
+
+            {
+
+                !loading && data && data?.status === 'SUCCESS' ?
+                <Toaster timer={1500} message={`${data?.message} !`} />
+                :
+                <></>
+            }
+
             <Divider
                     variant='middle'
                     textAlign='center'
@@ -462,11 +833,11 @@ const BikeDetails = () => {
                     }}
                     onClick={
                         () => {
-                            dispatch(httpAddToCart(bike));
                             handleButtonDisable();
-                            setTimeout(() => {
-                                handleToasterState(true, true)
-                            }, [1500])
+                            dispatch(httpAddToCart(bike));
+                            // setTimeout(() => {
+                            //     handleToasterState(true, true)
+                            // }, [1500])
                         }
                     }
                 >
@@ -502,37 +873,6 @@ const BikeDetails = () => {
                         </Typography>
                     )
                 })}
-            </CustomPaper>
-            <CustomDivider title='specifications' />
-            <CustomPaper
-                content={true}
-            >
-                <PaperHeader text='power and performance' />
-                <FeaturesGrid arr={power} obj={apiData?.data.powerPerformance} />
-            </CustomPaper>
-            <CustomPaper
-                content={true}
-            >
-                <PaperHeader text='brakes wheels and suspension' />
-                <FeaturesGrid arr={brakeWheel} obj={apiData?.data.brakesWheelSuspension}  />
-            </CustomPaper>
-            <CustomPaper
-                content={true}
-            >
-                <PaperHeader text='dimensions and chassis' />
-                <FeaturesGrid arr={dimensions} obj={apiData?.data.dimensionChassis}  />
-            </CustomPaper>
-            <CustomPaper
-                content={true}
-            >
-                <PaperHeader text='warranty' />
-                <FeaturesGrid arr={warranty} obj={apiData?.data.warranty}  />
-            </CustomPaper>
-            <CustomPaper
-                content={true}
-            >
-                <PaperHeader text='features' />
-                <FeaturesGrid arr={features} obj={apiData?.data.features}  />
             </CustomPaper>
             <CustomDivider title='rating and reviews' />
             <CustomPaper
@@ -708,19 +1048,18 @@ const BikeDetails = () => {
                         >
                             <PaperHeader text={`${bikeName.trim() ? bikeName : bikeData[0].bikeName} User Reviews`} />
                             {apiData?.review.map((review, i) => {
-                                const timestamp = new Date(review.createdAt.seconds * 1000 + review.createdAt.nanoseconds / 1e6);
-
-                                const createdAt = millisecondsToRelativeTime(timestamp.getTime())
-
                                 return (
                                     <div
                                         key={review.userID}
+                                        style={{
+                                            width: "90%"
+                                        }}
                                     >
                                         <Typography
                                             
                                             sx={{
                                                 textAlign: 'left',
-                                                width: '90%',
+                                                width: '100%',
                                                 fontWeight: '600',
                                                 mt: 7.5,
                                                 color: 'customBlack.main',
@@ -734,23 +1073,13 @@ const BikeDetails = () => {
                                         <Box
                                             sx={{
                                                 display: 'flex',
-                                                justifyContent: 'flex-start',
-                                                alignItems: 'center',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'flex-end',
                                                 height: '20px',
-                                                width: '90%'
+                                                mb: ".5rem",
+                                                width: '100%'
                                             }}
                                         >
-                                            <Typography
-                                                sx={{
-                                                    textAlign: 'inherit',
-                                                    color: 'customBlack.light',
-                                                    fontWeight: '600',
-                                                    mr: 2.5,
-                                                    fontSize: { mobile: '0.7rem' , tablet: '.8rem' , laptop: '1rem' }
-                                                }}
-                                            >
-                                                {review.rating}
-                                            </Typography>
                                             <Rating
                                                 name="read-only"
                                                 value={review.rating}
@@ -758,18 +1087,96 @@ const BikeDetails = () => {
                                                 size={'small'}
                                                 readOnly
                                             />
+                                            {
+                                                review.userID === uid ?
+                                                <div>
+                                                
+                                                    <IconButton
+                                                        aria-label="edit review"
+                                                        sx={{
+                                                            p: 0,
+                                                            mr: 2.5,
+                                                            "& svg": {
+                                                                fontSize: "18px",
+                                                                color: "customBlack.light",
+                                                            }
+                                                        }}
+                                                        onClick={
+                                                            () => {
+                                                                navigate(`review`, { state: { review } })
+                                                            }
+                                                        }
+                                                    >
+                                                        <BorderColorRoundedIcon />
+                                                    </IconButton>
+                                                    <IconButton
+                                                        aria-label="delete review"
+                                                        sx={{
+                                                            p: 0,
+                                                            "& svg": {
+                                                                fontSize: "20px",
+                                                                color: "customRed.main"
+                                                            }
+                                                        }}
+                                                        onClick={
+                                                            () => {
+                                                                setLoading(true);
+                                                                setData(null);
+                                                                httpDeleteReview(review.bikeID)
+                                                                        .then(
+                                                                            data => setData(data)
+                                                                        )
+                                                                        .finally(
+                                                                            () => {
+                                                                                setLoading(false)
+                                                                                setTimeout(() => {
+                                                                                    window.location.reload()
+                                                                                }, 1500)
+                                                                            }
+                                                                        )
+                                                            }
+                                                        }
+                                                    >
+                                                        <DeleteForeverRoundedIcon />
+                                                    </IconButton>
+                                                </div>
+                                                // <Button
+                                                //     variant='contained'
+                                                //     color='customRed'
+                                                //     size={ isMobile ? 'small' : 'medium'}
+                                                //     endIcon={isMobile ? <></> : <ArrowRightAltRoundedIcon />}
+                                                //     sx={{
+                                                //         color: 'customWhite.main',
+                                                //         width: '50%',
+                                                //         fontWeight: '600',
+                                                //         px: 5,
+                                                //         textTransform: 'uppercase',
+                                                //         fontSize: { mobile: '0.5rem' , tablet: '0.65rem' , laptop: '0.75rem' }
+                                                //     }}
+                                                //     onClick={
+                                                //         () => {
+                                                //             navigate({pathname: 'review'})
+                                                //         }
+                                                //     }
+                                                // >
+                                                //     edit review
+                                                // </Button>
+
+                                                :
+
+                                                <></>
+                                            }
                                         </Box>
                                         <Box
                                             sx={{
-                                                width: '90%',
+                                                width: '100%',
                                                 height: { mobile: '15px' , laptop: '20px' },
                                                 display: 'flex',
                                                 justifyContent: 'space-between',
                                                 alignItems: 'flex-start'
                                             }}
                                         >
-                                            {reviewData.map((item,i) => {
-                                                const rKeys = Object.keys(review.data);
+                                            {reviewData.slice(0,2).map((item,i) => {
 
                                                 return (
                                                     <Box
@@ -787,17 +1194,58 @@ const BikeDetails = () => {
                                                                 fontWeight: '400',
                                                                 color: 'customBlack.light',
                                                                 mr: 1,
-                                                                fontSize: { mobile: '0.5rem' , tablet: '.75rem' , laptop: '.8rem' },
+                                                                fontSize: { mobile: '0.6rem' , tablet: '.75rem' , laptop: '.8rem' },
                                                                 '& + span': {
                                                                     fontWeight: '600',
                                                                     color: 'customBlack.main',
-                                                                    fontSize: { mobile: '0.5rem' , tablet: '.75rem' , laptop: '.8rem' }
+                                                                    fontSize: { mobile: '0.6rem' , tablet: '.75rem' , laptop: '.8rem' }
                                                                 }
                                                             }}
                                                         >
                                                             {`${item}:`}
                                                         </Typography>
-                                                        <span>{review.data[rKeys[i]]}</span>
+                                                        <span>{review.data[item.toLowerCase()]}</span>
+                                                    </Box>
+                                                )
+                                            })}
+                                        </Box>
+                                        <Box
+                                            sx={{
+                                                width: '100%',
+                                                height: { mobile: '15px' , laptop: '20px' },
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'flex-start'
+                                            }}
+                                        >
+                                            {reviewData.slice(2).map((item,i) => {
+                                                return (
+                                                    <Box
+                                                        key={item}
+                                                        sx={{
+                                                            display: 'flex',
+                                                            ...(isMobile && {
+                                                                alignItems: 'flex-start'
+                                                            })
+                                                        }}
+                                                    >
+                                                        <Typography
+                                                            sx={{
+                                                                textAlign: 'left',
+                                                                fontWeight: '400',
+                                                                color: 'customBlack.light',
+                                                                mr: 1,
+                                                                fontSize: { mobile: '0.6rem' , tablet: '.75rem' , laptop: '.8rem' },
+                                                                '& + span': {
+                                                                    fontWeight: '600',
+                                                                    color: 'customBlack.main',
+                                                                    fontSize: { mobile: '0.6rem' , tablet: '.75rem' , laptop: '.8rem' }
+                                                                }
+                                                            }}
+                                                        >
+                                                            {`${item}:`}
+                                                        </Typography>
+                                                        <span>{review.data[item.toLowerCase()]}</span>
                                                     </Box>
                                                 )
                                             })}
@@ -806,8 +1254,8 @@ const BikeDetails = () => {
                                             sx={{
                                                 textAlign: 'left',
                                                 fontWeight: '400',
-                                                color: 'customBlack.light',
-                                                width: '90%',
+                                                color: 'customBlack.main',
+                                                width: '100%',
                                                 my: 2.5,
                                                 fontSize: { mobile: '0.65rem' , tablet: '.75rem' , laptop: '.8rem' }
                                             }}
@@ -817,29 +1265,40 @@ const BikeDetails = () => {
                                         <Typography
                                             sx={{
                                                 textAlign: 'left',
+                                                textTransform: "capitalize",
                                                 color: 'customBlack.main',
                                                 fontWeight: 600,
-                                                width: '90%',
+                                                width: '100%',
                                                 fontSize: { mobile: '0.7rem' , tablet: '.8rem' , laptop: '.8rem' }
                                             }}
                                         >
                                             {'By ' + review.name}
+                                            <span
+                                                style={{
+                                                    marginRight: ".5rem",
+                                                    color: "#2a2727c4",
+                                                    textTransform: "capitalize"
+                                                }}
+                                            >
+                                                {`${review.edited ? ' (edited)' : ''}`}
+                                            </span>
                                         </Typography>
                                         <Typography
                                             sx={{
                                                 textAlign: 'left',
                                                 color: 'customBlack.light',
-                                                width: '90%',
+                                                width: '100%',
                                                 fontSize: { mobile: '0.7rem' , tablet: '.8rem' , laptop: '.7rem' }
                                             }}
                                         >
-                                            {`${createdAt} ${review.edited ? 'edited' : ''}`}
+                                            {`${new Date(review.createdAt).toGMTString()}`}
                                         </Typography>
                                         <Divider
                                             variant='middle'
                                             sx={{
                                                 pt: 2.5,
-                                                width: '60%',
+                                                mx: "auto",
+                                                width: '80%',
                                                 height: '1px',
                                                 borderColor: 'customBlack.main'
                                             }}    
@@ -849,6 +1308,37 @@ const BikeDetails = () => {
                             })}
                         </CustomPaper>
             }
+            <CustomDivider title='specifications' />
+            <CustomPaper
+                content={true}
+            >
+                <PaperHeader text='power and performance' />
+                <FeaturesGrid arr={power} obj={apiData?.data.powerPerformance} />
+            </CustomPaper>
+            <CustomPaper
+                content={true}
+            >
+                <PaperHeader text='brakes wheels and suspension' />
+                <FeaturesGrid arr={brakeWheel} obj={apiData?.data.brakesWheelSuspension}  />
+            </CustomPaper>
+            <CustomPaper
+                content={true}
+            >
+                <PaperHeader text='dimensions and chassis' />
+                <FeaturesGrid arr={dimensions} obj={apiData?.data.dimensionChassis}  />
+            </CustomPaper>
+            <CustomPaper
+                content={true}
+            >
+                <PaperHeader text='warranty' />
+                <FeaturesGrid arr={warranty} obj={apiData?.data.warranty}  />
+            </CustomPaper>
+            <CustomPaper
+                content={true}
+            >
+                <PaperHeader text='features' />
+                <FeaturesGrid arr={features} obj={apiData?.data.features}  />
+            </CustomPaper>
             {
                 apiData?.news.length > 0 ?
 
@@ -877,10 +1367,23 @@ const BikeDetails = () => {
                 <></>
             }
             {
-                buyToaster ? 
-                    <Toaster link='/' type="success" message={`Added to cart !`} />
+                (!cartLoading && !error && success && atc) ? 
+                    <Toaster timer={2000} link='/' message={`Added to cart !`} />
                         :
                     <></>
+            }
+            {
+                (!cartLoading && error && success && atc) ? 
+                    <Toaster timer={1500} type="error" message={`Error: ${error} !`} />
+                        :
+                    <></>
+            }
+            {
+                cartLoading ?
+
+                <Loader loading={cartLoading} />
+                :
+                <></>
             }
             </>
         )

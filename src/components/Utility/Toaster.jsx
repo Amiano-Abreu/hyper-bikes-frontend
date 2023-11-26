@@ -9,7 +9,7 @@ const SlideTransition = (props) => {
   return <Slide {...props} direction="up" />;
 };
   
-const Toaster = ( {link = false, message, type} ) => {
+const Toaster = ( {link = false, message, type, timer} ) => {
     console.log("message ", message, "type ", type)
     const navigate = useNavigate();
     const [open, setOpen] = useState(true);
@@ -30,7 +30,7 @@ const Toaster = ( {link = false, message, type} ) => {
             }}
             open={open}
             onClose={handleClose}
-            autoHideDuration={5000} // Adjust as needed
+            autoHideDuration={timer ? timer : 5000} // Adjust as needed
             anchorOrigin={{ 
                 vertical: "bottom", 
                 horizontal: "center" 

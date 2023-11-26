@@ -1,5 +1,5 @@
-import { useEffect, useState, memo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -13,16 +13,17 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import FormHelperText from '@mui/material/FormHelperText';
-import Backdrop from '@mui/material/Backdrop';
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
-import CircularProgress from '@mui/material/CircularProgress';
 import { useMediaQuery } from '@mui/material';
 
 import { useFormik } from "formik";
 import * as yup from 'yup';
 
 import styles from './Review.module.css'
+
+import { httpAddReview, httpEditReview } from "../../services/review";
+
+import Loader from "../Utility/Loader"
+import Toaster from "../Utility/Toaster"
 
 const owned = [
     {
@@ -110,8 +111,12 @@ const CustomRadio = ({ formik, is700, controlLabel, name, options }) => {
             aria-labelledby={name}
             name={name}
             value={formik.values[name]}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
+            onChange={(e) => {
+                formik.setFieldValue(name, e.target.value).then(
+                    () => formik.handleBlur(e)
+                )
+            }}
+            // onBlur={formik.handleBlur}
             sx={{
                 '& .MuiTypography-root': {
                     fontSize: is700 ? '.9rem': '1rem'
@@ -140,47 +145,37 @@ const CustomRadio = ({ formik, is700, controlLabel, name, options }) => {
 }
 
 const Review = () => {
+    const location = useLocation();
+    const bikeID = location.pathname.split('/')[2]
+    const editReview = location.state?.review;
+
+    const titleRef = useRef();
+    const bodyRef = useRef();
+    const mileageRef = useRef();
+
     const is700 = useMediaQuery('(max-width:700px)')
-    const [openBackdrop, setOpenBackdrop] = useState(false); // for displaying alert
-    const [openSuccess, setOpenSuccess] = useState(false);
-    const [openLoader, setOpenLoader] = useState(false);
+    
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
-    const handleOpen = () => {
-        setOpenBackdrop(true);
-    };
-
-    const handleClose = () => {
-        setOpenBackdrop(false);
-    };
-
-    const handleSuccessOpen = () => {
-        setOpenSuccess(true)
-    }
-
-    const handleSuccessClose = () => {
-        setOpenSuccess(false)
-        navigate({pathname: '/bikes'})
-    }
-
-    const handleLoaderOpen = () => {
-        setOpenLoader(true)
-    }
-
-    const handleLoaderClose = () => {
-        setOpenLoader(false)
-    }
-
     const formik = useFormik({
         initialValues: {
-            rating: 0,
-            title: '',
-            body: '',
-            owned: '',
-            used: '',
-            ridden: '',
-            mileage: 0
+            rating: editReview?.rating ? 
+                        editReview.rating : 0,
+            title: editReview?.title ? 
+                        editReview.title : '',
+            body: editReview?.body ? 
+                        editReview.body : '',
+            owned: editReview?.data?.owned ? 
+                        editReview.data.owned : '',
+            used: editReview?.data?.used ? 
+                        editReview.data.used : '',
+            ridden: editReview?.data?.ridden ? 
+                        editReview.data.ridden : '',
+            mileage:  editReview?.data?.mileage ? 
+                        editReview.data.mileage : '',
         },
         validateOnChange: false,
         validationSchema: yup.object().shape({
@@ -214,33 +209,88 @@ const Review = () => {
                     .required('Mileage is required')
         }),
         onSubmit: (values, {setSubmitting}) => {
-            handleLoaderOpen()
+            setData(null)
+            setLoading(true)
+            // setTimeout(() => {
+                console.log({ ...values, bikeID })
+                
+                if (editReview) {
+                    httpEditReview({ ...values, bikeID })
+                        .then(
+                            data => {
+                                console.log(data)
+                                setData(data)
+                            }
+                        )
+                        .finally(
+                            () => {
+                                setLoading(false)
+                                setSubmitting(false)
+                                setTimeout(() => {
+                                    navigate(-1)
+                                }, 1500)
+                            }
+                        )
+                } else {
 
-            setTimeout(() => {
-                console.log(values)
-                handleLoaderClose()
-                handleSuccessOpen()
-                formik.resetForm()
-            }, 5000)
+                    httpAddReview({ ...values, bikeID })
+                        .then(
+                            data => {
+                                console.log(data)
+                                setData(data)
+                            }
+                        )
+                        .finally(
+                            () => {
+                                setLoading(false)
+                                setSubmitting(false)
+                                setTimeout(() => {
+                                    navigate(-1)
+                                }, 1500)
+                            }
+                        )
+                }
+            // }, 5000)
 
-            setSubmitting(false)
         }
     })
 
     useEffect(() => {
         window.scrollTo(0,0)
-    }, [])
-
-    useEffect(() => {
-        if(formik.submitCount > 0 && !formik.isValid){
-            handleOpen()
+        if ( editReview ) {
+            titleRef.current.lastChild.firstChild.value = editReview.title;
+            bodyRef.current.lastChild.firstChild.value = editReview.body;
+            mileageRef.current.lastChild.firstChild.value = editReview.data.mileage;
+            console.log(titleRef.current.lastChild.firstChild.value)
         }
-    }, [formik.submitCount, formik.isValid])
+    }, [editReview])
 
     console.count();
 
     return (
         <>
+        {
+            loading ?
+
+                <Loader loading={loading} />
+
+                :
+
+                <></>
+
+        }
+        {
+            !loading && data && data?.status === 'ERROR' ?
+                <Toaster timer={1500} type={"error"} message={data?.message} />
+                :
+                <></>
+        }
+        {
+            !loading && data && data?.status === 'SUCCESS' ?
+                <Toaster timer={1500} message={data?.message} />
+                :
+                <></>
+        }
         <Box
             sx={{
                 height: 'auto',
@@ -254,7 +304,7 @@ const Review = () => {
                 sx={{
                     bgcolor: 'customWhite.main',
                     height: 'auto',
-                    width: `${is700 ? '400px' : '600px'}`,
+                    width: { mobile: '90%', tablet: '400px',  laptop:'600px'},
                     mx: 'auto',
                     py: 10
                 }}
@@ -283,7 +333,7 @@ const Review = () => {
                     sx={{
                         color: 'customBlack.main',
                         pt: 5,
-                        width: '300px',
+                        width: { mobile: '200px', tablet: '300px'},
                         mx: 'auto',
                         fontSize: '.75rem'
                     }}
@@ -304,8 +354,12 @@ const Review = () => {
                         name='rating'
                         id='rating'
                         value={Number(formik.values.rating)}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
+                        onChange={(e) => {
+                            formik.setFieldValue("rating", e.target.value).then(
+                                () => formik.handleBlur(e)
+                            )
+                        }}
+                        // onBlur={formik.handleBlur}
                         size={is700 ? 'medium' : 'large'}
                         sx={{
                             mb: 2
@@ -340,6 +394,7 @@ const Review = () => {
                         }}
                         id='title'
                         size={is700? 'small' : 'medium'}
+                        ref={titleRef}
                         fullWidth={true}
                         onBlur={(e) => {
                             formik.setFieldValue("title", e.target.value).then(
@@ -352,6 +407,7 @@ const Review = () => {
                         helperText={formik.touched.title && formik.errors.title}
                     />
                     <TextField
+                        ref={bodyRef}
                         id='body'
                         label='Body'
                         placeholder="Less than 255 chars"
@@ -374,17 +430,20 @@ const Review = () => {
                         }}
                     />
                     <TextField
+                        ref={mileageRef}
                         id='mileage'
                         label='Mileage'
                         placeholder="Got mileage in Km"
                         type='number'
                         size={is700? 'small' : 'medium'}
                         fullWidth={true}
-                        onBlur={(e) => {
-                            formik.setFieldValue("mileage", e.target.value).then(
-                                () => formik.handleBlur(e)
-                            )
+                        onChange={(e) => {
+                            formik.setFieldValue("mileage", e.target.value)
+                            // .then(
+                                // () => formik.handleBlur(e)
+                            // )
                         }}
+                        onBlur={formik.handleBlur}
                         error={formik.touched.mileage && formik.errors.mileage ?
                             true : false
                         }
@@ -394,7 +453,12 @@ const Review = () => {
                         }}
                     />
                     <Button
-                        type='submit'
+                        // type='submit'
+                        onClick={() => {
+                            formik.validateForm().then(
+                                () => formik.submitForm()
+                            )
+                        }}
                         disabled={formik.isSubmitting ? true : false}
                         sx={{
                             height: '40px',
@@ -418,32 +482,6 @@ const Review = () => {
                 </form>
             </Paper>
         </Box>
-        {/* <Backdrop
-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={openBackdrop}
-          onClick={handleClose}
-        >
-            <Alert onClose={handleClose} variant='filled' severity="error">
-              <AlertTitle>Error</AlertTitle>
-                <strong>Please check form inputs !</strong>
-            </Alert>
-        </Backdrop>
-        <Backdrop
-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={openSuccess}
-          onClick={handleSuccessClose}
-        >
-            <Alert onClose={handleSuccessClose} variant='filled' severity="success">
-              <AlertTitle>Success</AlertTitle>
-                <strong>Review Submitted !</strong>
-            </Alert>
-        </Backdrop>
-        <Backdrop
-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={openLoader}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop> */}
         </>
     )
 }

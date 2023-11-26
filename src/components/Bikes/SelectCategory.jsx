@@ -6,7 +6,6 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
-import { Link } from 'react-router-dom'
 import ArrowRightAltRoundedIcon from '@mui/icons-material/ArrowRightAltRounded';
 
 const SelectCategory = ({ grid, onFilterChange, onSave, onViewAll }) => {
@@ -37,7 +36,7 @@ const SelectCategory = ({ grid, onFilterChange, onSave, onViewAll }) => {
                     width: { mobile: '330px' , tablet: '500px' , laptop: '950px'},
                     mt: 5,
                     mx: 'auto',
-                    height: '600px',
+                    height: { mobile: '600px', laptop: '205.594px'},
                     ...(!isMobile && {
                         height: '205.594px',
                     })
@@ -150,11 +149,13 @@ const SelectCategory = ({ grid, onFilterChange, onSave, onViewAll }) => {
                                     <>
                                         <Box
                                             sx={{
-                                                height: { mobile: '30%' , laptop: '30%'},
-                                                width: { mobile: '28%' , laptop: '30%'},
+                                                height: '40%',
+                                                width: { mobile: '100%' , tablet: '70%', laptop: '100%'},
+                                                px: "10px",
                                                 '& img': {
                                                     height: '100%',
-                                                    width: '100%'
+                                                    width: '100%',
+                                                    objectFit: "contain"
                                                 },
                                                 // mb: { mobile: 5 , laptop: 5 }
                                             }}

@@ -113,7 +113,7 @@ const Preview = ({ onViewAll }) => {
                                     })
                                 }}
                             >
-                                <BikeCard path={'bike/123'} bike={item} />
+                                <BikeCard path={`bike/${item.bikeID}`} bike={item} />
                             </Grid>
                         )
                     })}

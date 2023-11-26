@@ -157,7 +157,8 @@ const initialState = {
   loading: false,
   success: false,
   cart: [],
-  error: ''
+  error: '',
+  atc: false
 }
 
 const cartSlice = createSlice({
@@ -168,6 +169,12 @@ const cartSlice = createSlice({
           state = {
             ...initialState
           };
+        },
+        resetAtc: (state) => {
+          return {
+            ...state,
+            atc: false
+          }
         }
     },
     extraReducers: (builder) => {
@@ -190,48 +197,57 @@ const cartSlice = createSlice({
         builder.addCase(httpAddToCart.pending, (state) => {
             state.loading = true;
             state.success = false;
+            state.atc = false;
         })
         builder.addCase(httpAddToCart.fulfilled, (state, action) => {
           state.cart = action.payload;
+          state.atc = true;
           state.error = ''
           state.success = true;
           state.loading = false;
         })
         builder.addCase(httpAddToCart.rejected, (state, action) => {
           state.error = action.error.message;
+          state.atc = true;
           state.loading = false;
           state.success = true;
         })
 
         builder.addCase(httpRemoveFromCart.pending, (state) => {
             state.loading = true;
+            state.atc = false;
             state.success = false;
         })
         builder.addCase(httpRemoveFromCart.fulfilled, (state, action) => {
           state.cart = action.payload;
           state.error = ''
           state.success = true;
+          state.atc = true;
           state.loading = false;
         })
         builder.addCase(httpRemoveFromCart.rejected, (state, action) => {
           state.error = action.error.message;
           state.loading = false;
+          state.atc = true;
           state.success = true;
         })
 
         builder.addCase(httpRemoveAllCart.pending, (state) => {
             state.loading = true;
+            state.atc = false;
             state.success = false;
         })
         builder.addCase(httpRemoveAllCart.fulfilled, (state, action) => {
           state.cart = action.payload;
           state.error = ''
           state.success = true;
+          state.atc = true;
           state.loading = false;
         })
         builder.addCase(httpRemoveAllCart.rejected, (state, action) => {
           state.error = action.error.message;
           state.loading = false;
+          state.atc = true;
           state.success = true;
         })
 
@@ -255,4 +271,4 @@ const cartSlice = createSlice({
 
 export default cartSlice.reducer;
 
-export const { resetCart } = cartSlice.actions;
+export const { resetCart, resetAtc } = cartSlice.actions;

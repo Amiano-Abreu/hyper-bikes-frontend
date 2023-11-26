@@ -63,7 +63,8 @@ const OrderRows = ({ row }) => {
                         fontSize: { mobile: '5.96px', tablet: '7px', laptop: '12px'},
                     },
                     '& td': {
-                        color: 'customWhite.main'
+                        color: 'customWhite.main',
+                        fontSize: { mobile: '6px', tablet: '6px' }
                     }
                 }}
             >

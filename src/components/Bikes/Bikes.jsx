@@ -21,6 +21,19 @@ import FormLabel from '@mui/material/FormLabel';
 import FilterAltRoundedIcon from '@mui/icons-material/FilterAltRounded';
 
 import ducatiLogo from '../../assets/Bikes/logo/ducati-logo.png'
+import ktmLogo from '../../assets/Bikes/logo/Ktm.png'
+import bmwLogo from '../../assets/Bikes/logo/bmw.png'
+import harleyDavidsonLogo from '../../assets/Bikes/logo/harleyDavidson.png'
+import hondaLogo from '../../assets/Bikes/logo/honda.png'
+import kawasakiLogo from '../../assets/Bikes/logo/kawasaki.png'
+
+import adventure from '../../assets/Bikes/category/adventure.png'
+import bobber from '../../assets/Bikes/category/bobber.png'
+import cafeRacer from '../../assets/Bikes/category/cafeRacer.png'
+import dirt from '../../assets/Bikes/category/dirt.png'
+import naked from '../../assets/Bikes/category/naked.png'
+import superbike from '../../assets/Bikes/category/superbike.png'
+
 
 import SelectCategory from "./SelectCategory"
 import Preview from './Preview'
@@ -46,33 +59,33 @@ const grid = [
             },
             {
                 name: 'BMW',
-                imgLogo: ducatiLogo,
-                imgAlt: 'ducati-logo'
+                imgLogo: bmwLogo,
+                imgAlt: 'bmw-logo'
             },
             {
                 name: 'Kawasaki',
-                imgLogo: ducatiLogo,
-                imgAlt: 'ducati-logo'
+                imgLogo: kawasakiLogo,
+                imgAlt: 'Kawasaki-logo'
             },
             {
                 name: 'KTM',
-                imgLogo: ducatiLogo,
-                imgAlt: 'ducati-logo'
+                imgLogo: ktmLogo,
+                imgAlt: 'KTM-logo'
             },
             {
                 name: 'Honda',
-                imgLogo: ducatiLogo,
-                imgAlt: 'ducati-logo'
+                imgLogo: hondaLogo,
+                imgAlt: 'Honda-logo'
             },
             {
                 name: 'Harley Davidson',
-                imgLogo: ducatiLogo,
-                imgAlt: 'ducati-logo'
+                imgLogo: harleyDavidsonLogo,
+                imgAlt: 'Harley-Davidson-logo'
             }
         ]
     },
     {
-        title: 'cubic capacity (cc)',
+        title: 'displacement',
         gridArr: [
             {
                 property: '100cc - 150cc',
@@ -105,33 +118,33 @@ const grid = [
         gridArr: [
             {
                 name: 'dirt',
-                imgLogo: ducatiLogo,
-                imgAlt: 'ducati-logo'
+                imgLogo: dirt,
+                imgAlt: 'dirt-bike'
             },
             {
                 name: 'bobber',
-                imgLogo: ducatiLogo,
-                imgAlt: 'ducati-logo'
+                imgLogo: bobber,
+                imgAlt: 'bobber-bike'
             },
             {
                 name: 'naked',
-                imgLogo: ducatiLogo,
-                imgAlt: 'ducati-logo'
+                imgLogo: naked,
+                imgAlt: 'naked-bike'
             },
             {
                 name: 'superbike',
-                imgLogo: ducatiLogo,
-                imgAlt: 'ducati-logo'
+                imgLogo: superbike,
+                imgAlt: 'superbike-bike'
             },
             {
                 name: 'adventure',
-                imgLogo: ducatiLogo,
-                imgAlt: 'ducati-logo'
+                imgLogo: adventure,
+                imgAlt: 'adventure-bike'
             },
             {
                 name: 'cafe racer',
-                imgLogo: ducatiLogo,
-                imgAlt: 'ducati-logo'
+                imgLogo: cafeRacer,
+                imgAlt: 'cafe-racer-bike'
             },
         ]
     },

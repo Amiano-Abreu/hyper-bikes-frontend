@@ -73,7 +73,7 @@ const NewsDetails = () => {
                 sx={{
                     display: 'flex',
                     justifyContent: 'center',
-                    width: { mobile: '320px', tablet: '620px' , laptop: '1000px'},
+                    width: { mobile: '90%', tablet: '620px' , laptop: '1000px'},
                     mx: 'auto',
                     alignItems: 'center',
                     p: 5,
@@ -111,7 +111,7 @@ const NewsDetails = () => {
                     (
                         apiData &&
                         <>
-                    <PaperHeader text={news?.newsTitle} />
+                    <PaperHeader text={news?.title} />
                     <Typography
                     sx={{
                         textAlign: 'left',
