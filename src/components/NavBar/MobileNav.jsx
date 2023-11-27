@@ -14,13 +14,19 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import styles from './MobileNav.module.css';
 
 import AccountMenu from './AccountMenu'
-import { useSelector, useDispatch } from "react-redux";
+import Toaster from "../Utility/Toaster";
 import Loader from '../Utility/Loader';
+
+import { useSelector, useDispatch } from "react-redux";
 import { logoutHandler } from "../../features/userSlice";
+import { resetCart } from "../../features/cartSlice";
 
 const MobileNav = ({ navLinks }) => {
     const {isLoggedIn} = useSelector(state => state.user);
     const { loading, success, error, cart } = useSelector(state => state.cart);
+
+    const [status, setStatus] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);  
 
     const dispatch = useDispatch();
 
@@ -32,7 +38,7 @@ const MobileNav = ({ navLinks }) => {
 
     const closeDrawer = (e) => {
         
-        console.log(e, "NAVLINKS ", navLinks)
+        // console.log(e, "NAVLINKS ", navLinks)
         setIsOpen(false);
 
         if(e !== undefined && e.target) {
@@ -45,9 +51,21 @@ const MobileNav = ({ navLinks }) => {
                 // setIsOpen(false);
                 navigate(link);
             } else {
-                alert('logout')
-                dispatch(logoutHandler());
-                navigate('/')
+                setIsLoading(true)
+                dispatch(logoutHandler())
+                    .then((data) => {
+                        // console.log("logouterr suc ",data)
+            
+                        if (data.type.split("/")[2] === "rejected") {
+                            setStatus("error");
+                        }
+            
+                        if (data.type.split("/")[2] === "fulfilled") {
+                            setStatus("success");
+                            dispatch(resetCart())
+                        }
+                    })
+                    .finally(() => setIsLoading(false))
             }
         }
         
@@ -63,6 +81,24 @@ const MobileNav = ({ navLinks }) => {
               <Loader loading={loading} />
               :
               <></>
+            }
+            {
+                isLoading ?
+                <Loader loading={loading} />
+                    :
+                <></>
+            }
+            {
+                !isLoading && status && status === "error" ?
+                <Toaster timer={2000} type={"error"} message={"Failed to logout !"} />
+                    :
+                <></>
+            }
+            {
+                !isLoading && status && status === "success" ?
+                <Toaster timer={2000} message={"Successfully logged out !"} link={"/"} />
+                    :
+                <></>
             }
             <IconButton
               sx={{

@@ -6,9 +6,6 @@ const BASEURL = 'http://localhost:5000/api';
 export const fetchCart = createAsyncThunk('cart/fetchCart', async ( _, { rejectWithValue }) => {
   
   try {
-      // const res = await axios.get(`${BASEURL}/csrf`, {withCredentials: true});
-      // const csrfToken = res.data.csrfToken;
-      
       const response = await axios.get(`${BASEURL}/cart`,
                         {
                             headers: {
@@ -21,7 +18,7 @@ export const fetchCart = createAsyncThunk('cart/fetchCart', async ( _, { rejectW
       const data = await response.data;
       return data?.data;
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       return rejectWithValue(error);
     }
 })
@@ -51,7 +48,7 @@ export const httpAddToCart = createAsyncThunk('cart/httpAddToCart', async ( cart
     const data = await response.data;
     return data?.data;
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     return rejectWithValue(error);
   }
 })
@@ -79,7 +76,7 @@ export const httpRemoveFromCart = createAsyncThunk('cart/httpRemoveFromCart', as
     const data = await response.data;
     return data?.data;
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     return rejectWithValue(error);
   }
 })
@@ -103,7 +100,7 @@ export const httpRemoveAllCart = createAsyncThunk('cart/httpRemoveAllCart', asyn
     const data = await response.data;
     return data?.data;
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     return rejectWithValue(error);
   }
 })
@@ -118,7 +115,7 @@ export const httpAddOrder = createAsyncThunk('cart/httpAddOrder', async ( order,
     const res = await axios.get(`${BASEURL}/csrf`, {withCredentials: true});
     const csrfToken = res.data.csrfToken;
     
-    const response = await axios.post(`${BASEURL}/addorder`, {
+    await axios.post(`${BASEURL}/addorder`, {
                                       _csrf: csrfToken,
                                       products,
                                       total
@@ -131,7 +128,6 @@ export const httpAddOrder = createAsyncThunk('cart/httpAddOrder', async ( order,
                           withCredentials: true,
                           mode: 'cors'
                       });
-    const orderData = await response.data;
 
     const resp = await axios.post(`${BASEURL}/removeallcart`, {
                             _csrf: csrfToken
@@ -148,7 +144,7 @@ export const httpAddOrder = createAsyncThunk('cart/httpAddOrder', async ( order,
 
     return removeCartData?.data;
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     return rejectWithValue(error);
   }
 })
@@ -166,7 +162,7 @@ const cartSlice = createSlice({
     initialState,
     reducers: {
         resetCart: (state) => {
-          state = {
+          return {
             ...initialState
           };
         },

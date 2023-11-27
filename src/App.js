@@ -25,18 +25,25 @@ import { fetchCart } from './features/cartSlice';
 
 
 const PrivateRoutes = () => {
+  const isAuthenticated = localStorage.getItem("isAuthenticated");
+  // console.log("localSt ", isAuthenticated)
   const isLoggedIn = useSelector(state => state.user.isLoggedIn);
 
   return (
-    isLoggedIn ? <Outlet/> : <Navigate to='/login'/>
+    ( (isAuthenticated && isAuthenticated === "true") || isLoggedIn ) ? 
+        
+        <Outlet/> 
+          : 
+        <Navigate to='/login'/>
   )
 }
 
 const AnonymousRoutes = () => {
+  const isAuthenticated = localStorage.getItem("isAuthenticated");
   const isLoggedIn = useSelector(state => state.user.isLoggedIn);
 
   return (
-    !isLoggedIn ? <Outlet/> : <Navigate to='/' replace />
+    ( !isAuthenticated || !isLoggedIn) ? <Outlet/> : <Navigate to='/' replace />
   )
 }
 

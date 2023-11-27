@@ -15,7 +15,7 @@ import useGetRequest from '../../services/useGetRequest';
 const url = "http://localhost:5000/api/bikes?limit=true";
 const Home = () => {
     const is1130 = useMediaQuery('(max-width:1130px)');
-    console.log(is1130)
+    // console.log(is1130)
 
     const { isLoading, apiData, serverError } = useGetRequest(url);
 

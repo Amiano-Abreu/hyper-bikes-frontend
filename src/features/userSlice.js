@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-import { fetchCart, resetCart } from './cartSlice';
+import { fetchCart } from './cartSlice';
 
 const initialState = {
     loading: false,
@@ -18,13 +18,8 @@ const initialState = {
 export const getUser = createAsyncThunk('user/getUser', async( _, { rejectWithValue }) => {
 
     try {
-        // const response = await axios.get('http://localhost:5000/api/csrf', {withCredentials: true});
-        // const csrfToken = response.data.csrfToken;
 
         const userResponse = await axios.get('http://localhost:5000/api/user', {
-            // headers: {
-            //     'X-CSRF-Token': csrfToken
-            // },
             withCredentials: true,
             mode: 'cors'
         })
@@ -33,7 +28,7 @@ export const getUser = createAsyncThunk('user/getUser', async( _, { rejectWithVa
         return data;
 
     } catch (error) {
-        console.log(error.response?.data || error.message)
+        // console.log(error.response?.data || error.message)
         return rejectWithValue(error.response?.data || error.message);
     }
 })
@@ -41,10 +36,6 @@ export const getUser = createAsyncThunk('user/getUser', async( _, { rejectWithVa
 export const loginHandler = createAsyncThunk('user/loginHandler', async( login , { rejectWithValue, dispatch }) => {
 
     try {
-        // const response = await axios.get('http://localhost:5000/api/csrf', {withCredentials: true});
-        // const csrfToken = response.data.csrfToken;
-        
-        // console.log(csrfToken);
         const loginResponse = await axios.post('http://localhost:5000/api/login', {
                                     email: login.email,
                                     password: login.password
@@ -52,7 +43,6 @@ export const loginHandler = createAsyncThunk('user/loginHandler', async( login ,
                                     headers: {
                                         'Accept': "application/json",
                                         'Content-Type': "application/json",
-                                        // 'X-CSRF-Token': csrfToken
                                     },
                                     withCredentials: true,
                                     mode: 'cors'
@@ -60,8 +50,6 @@ export const loginHandler = createAsyncThunk('user/loginHandler', async( login ,
         const { user } = loginResponse.data;
         dispatch(fetchCart());
         return user;
-        //     token: csrfToken
-        // };
     } catch (e) {
         const { data } = e.response;
         const { error, message } = data;
@@ -75,11 +63,11 @@ export const loginHandler = createAsyncThunk('user/loginHandler', async( login ,
 export const signUpHandler = createAsyncThunk('user/signUpHandler', async( signUp , { rejectWithValue }) => {
 
     try {
-        // const response = await axios.get('http://localhost:5000/api/csrf', {withCredentials: true});
-        // const csrfToken = response.data.csrfToken;
-        
-        // console.log(csrfToken);
+        const response = await axios.get('http://localhost:5000/api/csrf', {withCredentials: true});
+        const csrfToken = response.data.csrfToken;
+
         const signUpResponse = await axios.post('http://localhost:5000/api/signup', {
+                                    _csrf: csrfToken,
                                     firstName: signUp.firstName,
                                     lastName: signUp.lastName,
                                     email: signUp.email,
@@ -91,30 +79,27 @@ export const signUpHandler = createAsyncThunk('user/signUpHandler', async( signU
                                     headers: {
                                         'Accept': "application/json",
                                         'Content-Type': "application/json",
-                                        // 'X-CSRF-Token': csrfToken
                                     },
                                     withCredentials: true,
                                     mode: 'cors'
                                 })
+
         const { user } = signUpResponse.data;
         return user;
     } catch (e) {
         const { data } = e.response;
-        console.log('data ', data)
         const { error, message } = data;
-        console.log('erorrrr ', error, 'mess ',message,'e.mes', e.message)
-        return rejectWithValue(error || message || e.message);
+        const errorData = data?.data;
+        const err = errorData || error || message || e.message;
+        return rejectWithValue(err);
     }
 
 })
 
-export const logoutHandler = createAsyncThunk('user/logoutHandler', async( _ , { rejectWithValue, dispatch }) => {
-    // const state = getState().userSlice;
-    // const { token: csrfToken } = state;
+export const logoutHandler = createAsyncThunk('user/logoutHandler', async( _ , { rejectWithValue }) => {
     const response = await axios.get('http://localhost:5000/api/csrf', {withCredentials: true});
     const csrfToken = response.data.csrfToken;
-    
-    // console.log('logout csrf ',csrfToken);
+
     try {
         const logoutResponse = await axios.post('http://localhost:5000/api/logout', {
                                     _csrf: csrfToken
@@ -127,11 +112,10 @@ export const logoutHandler = createAsyncThunk('user/logoutHandler', async( _ , {
                                     withCredentials: true,
                                     mode: 'cors'
                                 })
-        console.log( logoutResponse)
-        dispatch(resetCart());
+        // console.log( logoutResponse)
         return logoutResponse;
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         const { data } = error.response;
         const { message } = data;
         return rejectWithValue(message || error.message);
@@ -185,37 +169,42 @@ const userSlice = createSlice({
         })
         builder.addCase(getUser.fulfilled, (state, action) => {
             userSlice.caseReducers.setUser(state, action)
+            localStorage.setItem("isAuthenticated", true);
             state.loading = false;
             state.success = true;
         })
         builder.addCase(getUser.rejected, (state, action) => {
+            localStorage.removeItem("isAuthenticated");
             state.success = true;
             state.loading = false;
         })
 
         // LOGIN CASES
         builder.addCase(loginHandler.pending, (state, action) => {
+            localStorage.removeItem("isAuthenticated");
             userSlice.caseReducers.setLoading(state)
         })
         builder.addCase(loginHandler.fulfilled, (state, action) => {
             userSlice.caseReducers.setUser(state, action)
-
+            localStorage.setItem("isAuthenticated", true);
             state.success = true;
             state.loading = false;
         })
         builder.addCase(loginHandler.rejected, (state, action) => {
             state.error = action.payload;
+            localStorage.removeItem("isAuthenticated");
             state.success = true;
             state.loading = false;
         })
 
         // SIGN UP CASES
         builder.addCase(signUpHandler.pending, (state, action) => {
+            localStorage.removeItem("isAuthenticated");
             userSlice.caseReducers.setLoading(state)
         })
         builder.addCase(signUpHandler.fulfilled, (state, action) => {
             userSlice.caseReducers.setUser(state, action)
-
+            localStorage.setItem("isAuthenticated", true);
             state.success = true;
             state.loading = false;
         })
@@ -224,6 +213,7 @@ const userSlice = createSlice({
             if(action.payload.hasOwnProperty('message')) {
                 state.error = action.payload.message;
             }
+            localStorage.removeItem("isAuthenticated");
             state.success = true;
             state.loading = false;
         })
@@ -234,6 +224,7 @@ const userSlice = createSlice({
         })
         builder.addCase(logoutHandler.fulfilled, (state, action) => {
             userSlice.caseReducers.resetUser(state)
+            localStorage.removeItem("isAuthenticated");
             state.success = true;
             state.loading = false;
         })
@@ -248,7 +239,3 @@ const userSlice = createSlice({
 export default userSlice.reducer;
 
 export const { setUser, resetError, resetUser } = userSlice.actions;
-
-/**
-    CHECK LOGOUT, LOGIN CASE
- */

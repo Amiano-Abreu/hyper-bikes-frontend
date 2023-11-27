@@ -10,8 +10,8 @@ import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 
 import { Link } from 'react-router-dom';
 
-export default function ActionAreaCard({ path, newsImg , newsImgAlt , newsTitle , newsDesc , newsUploader , newsDate }) {
-  const d = new Date()
+export default function ActionAreaCard({ path, news }) {
+    // console.log("newsccc ", news)
   return (
     <Card 
         sx={{ 
@@ -28,11 +28,12 @@ export default function ActionAreaCard({ path, newsImg , newsImgAlt , newsTitle 
             }}
             component={Link}
             to={path}
+            state={news}
         >
             <CardMedia
                 component="img"
-                image={newsImg}
-                alt={newsImgAlt}
+                image={news?.src}
+                alt={news?.alt}
                 sx={{
                     height: '100%'
                 }}
@@ -59,7 +60,7 @@ export default function ActionAreaCard({ path, newsImg , newsImgAlt , newsTitle 
                         fontSize: { mobile: '0.7rem' , tablet: '.8rem' , laptop: '1rem' }
                     }}
                 >
-                  {newsTitle}
+                  {news?.title}
                 </Typography>
                 <Typography
                     variant="body2"
@@ -71,7 +72,7 @@ export default function ActionAreaCard({ path, newsImg , newsImgAlt , newsTitle 
                         fontSize: { mobile: '0.65rem' , tablet: '.75rem' , laptop: '.8rem' }
                     }}
                 >
-                  {newsDesc}
+                  {news?.body}
                 </Typography>
                 <Box
                     sx={{
@@ -100,7 +101,7 @@ export default function ActionAreaCard({ path, newsImg , newsImgAlt , newsTitle 
                                 fontSize: { mobile: '0.7rem' , tablet: '.8rem' , laptop: '.7rem' }
                             }}
                         >
-                            {newsUploader}
+                            Admin
                         </Typography>
                     </Box>
                     
@@ -111,7 +112,7 @@ export default function ActionAreaCard({ path, newsImg , newsImgAlt , newsTitle 
                             fontSize: { mobile: '0.7rem' , tablet: '.8rem' , laptop: '.7rem' }
                         }}
                     >
-                        {d.toLocaleDateString(undefined,{ weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' })}
+                        {news?.createdAt}
                     </Typography>
                 </Box>
             </CardContent>

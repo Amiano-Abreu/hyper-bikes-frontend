@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
-import DucatiBike from '../../assets/Home-Page/hero/Ducati-test.png';
+import DucatiBike from '../../assets/Home-Page/hero/Ducati-Bayliss.png';
 
 import { useMediaQuery } from '@mui/material';
 
@@ -76,7 +76,7 @@ const HeroMobile = ({ bikes }) => {
                         '& img': {
                             height: '100%',
                             width: '100%',
-                            objectFit: 'cover',
+                            objectFit: 'contain',
                         }
                     }}
                 >  

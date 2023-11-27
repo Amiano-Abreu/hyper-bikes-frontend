@@ -5,7 +5,6 @@ import Button from "@mui/material/Button"
 import Dialog from '@mui/material/Dialog';
 import ListItem from '@mui/material/ListItem';
 import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -220,17 +219,17 @@ const filterRadioSelect = grid.map(
     }
 )
 
-console.log('filterOptions ', filterRadioSelect)
-console.log('filterbrandRadio ', brandRadio)
-console.log('filtercategoryRadio ', categoryRadio)
-console.log('filterpriceRadio ', priceRadio)
-console.log('filterdisplacementRadio ', displacementRadio)
+// console.log('filterOptions ', filterRadioSelect)
+// console.log('filterbrandRadio ', brandRadio)
+// console.log('filtercategoryRadio ', categoryRadio)
+// console.log('filterpriceRadio ', priceRadio)
+// console.log('filterdisplacementRadio ', displacementRadio)
 
 const filterNames = ["selectedFilter", "selectedBrand", "selectedPrice", "selectedDisplacement", "selectedCategory"]
 
 
 const Bikes = () => {
-    console.log("start ")
+    // console.log("start ")
     const isMobile = useMediaQuery('(max-width:1024px)')
 
     const [filterDialog, setFilterDialog] = useState(false);
@@ -245,7 +244,6 @@ const Bikes = () => {
 
     const openFilterDialog = () => {
         setFilterDialog(true);
-        // setSaved(false);
     }
 
     const closeFilterDialog = () => {
@@ -267,18 +265,9 @@ const Bikes = () => {
         selectedCategory
     } = filters;
 
-    
-    // const handleFilterChange = (event) => {
-    //   FOR HANDLING ALL FILTERS AT ONCE
-    //   SERVICE NOT IMPLEMENTED YET
-    // 
-    //   const { name, value } = event.target;
-    //   setFilters({ ...filters, [name]: value });
-    // };
-
     const handleFilterChange = (event) => {
         //   FOR HANDLING SINGLE FILTERS AT ONCE
-        console.log("filters event", event)
+        // console.log("filters event", event)
         const { name, value } = event.target;
         
         let  otherFilters;
@@ -288,12 +277,12 @@ const Bikes = () => {
         else {
             otherFilters = filterNames.filter( fName => fName !== name ).filter( i => i !== "selectedFilter" );
         }
-        console.log('otherFilters ', otherFilters)
+        // console.log('otherFilters ', otherFilters)
         
         setFilters((filters) => {
             const updatedFilters = { ...filters, [name]: value };
 
-            otherFilters.map(
+            otherFilters.forEach(
                 item => {
                     updatedFilters[item] = "";
                 }
@@ -307,19 +296,17 @@ const Bikes = () => {
         // console.log('updatedFilters ', filters)
     }
     
-    const [sortDialogValue, setSortDialogValue] = useState(null);
+    // FOR FUTURE FEATURE OF SORTING BASED ON CC
+    // const [sortDialogValue, setSortDialogValue] = useState(null);
 
-    const handleSortDialog = (e) => {
-        setSortDialogValue(e.target.value)
-    }
+    // const handleSortDialog = (e) => {
+    //     setSortDialogValue(e.target.value)
+    // }
 
     useEffect(() => {
         window.scrollTo(0,0)
-        // console.log('searchParams ', searchParams)
-        // console.log('sijze ', searchParams.size)
     }, [])
 
-    // let url;
     const url = useMemo(
         () => {
             if( 
@@ -331,7 +318,7 @@ const Bikes = () => {
                     selectedCategory
                 )
             ) {
-                console.log('filter async')
+                // console.log('filter async')
                 if (selectedBrand) {
                     return `${BASEURL}/brand/${selectedBrand}`;
                 }
@@ -370,12 +357,12 @@ const Bikes = () => {
                 !saved &&
                 viewAll
             ) {
-                console.log('view all filter async')
+                // console.log('view all filter async')
                 return `${BASEURL}`;
             }
         }, [saved, selectedBrand, selectedPrice, selectedDisplacement, selectedCategory, viewAll])
 
-        console.log("radio url ", url)
+        // console.log("radio url ", url)
     const { isLoading, apiData, serverError } = useGetRequest(`${url}`)
 
     // useEffect(() => {
@@ -391,7 +378,7 @@ const Bikes = () => {
             }}
         >
             {
-                // (filterValue || sortValue) 
+                
                 (
                     (
                         (
@@ -498,7 +485,6 @@ const Bikes = () => {
                                                                         type='error'
                                                                         message={message}
                                                                     />
-                                                                    // <p>{message}</p>
                                                                 )
                                                             }
                                                         )
@@ -620,7 +606,7 @@ const Bikes = () => {
                     </Toolbar>
                 </AppBar>
                 <List>
-                    <ListItem
+                    {/* <ListItem
                         sx={{
                             px: 10,
                             py: 5
@@ -648,7 +634,7 @@ const Bikes = () => {
                             </RadioGroup>
                         </FormControl>
                     </ListItem>
-                    <Divider />
+                    <Divider /> */}
                     <ListItem
                         sx={{
                             px: 10,

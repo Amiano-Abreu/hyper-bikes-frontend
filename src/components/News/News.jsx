@@ -89,7 +89,7 @@ const News = () => {
                                 })
                             }}
                         >
-                            <NewsCard news={item} path={'123'} />
+                            <NewsCard news={item}/>
                         </Grid>
                     )
                 })}

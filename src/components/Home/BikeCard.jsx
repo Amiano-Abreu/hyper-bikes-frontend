@@ -8,10 +8,7 @@ import { useMediaQuery } from '@mui/material';
 
 import { Link, useNavigate } from 'react-router-dom'
 
-import Honda from '../../assets/Home-Page/hero/Honda-Cbr-Fireblade-1000rr.png';
-
 export default function BikeCard({ path, bike }) {
-    // const [bikePath, setBikePath] = useState(path);
 
     const isMobile = useMediaQuery('(max-width:1023px)')
     const isLaptop = useMediaQuery('(min-width:1024px)')
@@ -19,14 +16,9 @@ export default function BikeCard({ path, bike }) {
 
     const navigate = useNavigate();
 
-    console.log('Path ',path)
-    console.log('bikecard Location ', window.location, 'origin ',window.location.origin)
-
-    // useEffect(() => {
-    //   if(window.location.pathname === '/bikes') {
-    //     setBikePath(window.location.origin + '/' + path);
-    //   }
-    // }, [path])
+    // console.log('Path ',path)
+    // console.log('bikecard Location ', window.location, 'origin ',window.location.origin)
+    
   return (
     <Card 
       sx={{ 
@@ -46,13 +38,12 @@ export default function BikeCard({ path, bike }) {
           display: 'inline-block',
       }}
       elevation={6}
-      // to={ window.location.pathname === '/bikes' ? window.location.origin + '/' + path : path }
       {
         ...(
               window.location.pathname === '/bikes' ?
               {
                 onClick: (e) => {
-                  console.log("event ", window.location, "eventtt ", e)
+                  // console.log("event ", window.location, "eventtt ", e)
                   navigate(`/${path}`, { state: { bike } })
                 }
               }
@@ -103,7 +94,7 @@ export default function BikeCard({ path, bike }) {
         <CardMedia
           component="img"
           height="230"
-          image={ bike?.images[0].src ? bike?.images[0].src : Honda }
+          image={ bike?.images[0].src ? bike?.images[0].src : "" }
           alt={bike?.images[0].alt ? bike?.images[0].alt : "Honda CBR 1000"}
           sx={{
               objectFit: 'scale-down',

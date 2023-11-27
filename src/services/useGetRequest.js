@@ -15,7 +15,7 @@ const useGetRequest = (url) => {
           });
           const data = await resp?.data;
   
-          console.log(data)
+          // console.log(data)
           setApiData(data);
           setServerError(null);
           setIsLoading(false);
@@ -38,7 +38,7 @@ const useGetRequest = (url) => {
       };
   
       if( url !== "undefined" ) {
-        console.log("radio Url ", url)
+        // console.log("radio Url ", url)
 
         if(url) {
           setIsLoading(true);

@@ -9,9 +9,15 @@ import Avatar from '@mui/material/Avatar';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutHandler } from '../../features/userSlice';
+import Toaster from '../Utility/Toaster';
+import Loader from '../Utility/Loader';
+import { resetCart } from '../../features/cartSlice';
 
 export default function BasicMenu({closeFunction, mobile}) {
   const {userName} = useSelector(state => state.user)
+
+  const [status, setStatus] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
@@ -20,20 +26,33 @@ export default function BasicMenu({closeFunction, mobile}) {
   const open = Boolean(anchorEl);
 
   const handleClick = (event) => {
-    console.log("event ",event.currentTarget)
+    // console.log("event ",event.currentTarget)
     setAnchorEl(event.currentTarget);
   };
 
   const handleClose = (e) => {
-    console.log("eventClose ",e.currentTarget.textContent)
+    // console.log("eventClose ",e.currentTarget.textContent)
     const link = e.currentTarget.textContent;
 
     if(link && link !== 'logout') {
       navigate(link)
     } else if (link && link === 'logout') {
-      alert('logout')
-      dispatch(logoutHandler());
-      navigate('/')
+      setLoading(true);
+      dispatch(logoutHandler())
+        .then((data) => {
+          // console.log("logouterr suc ",data)
+
+          if (data.type.split("/")[2] === "rejected") {
+            setStatus("error");
+          }
+
+          if (data.type.split("/")[2] === "fulfilled") {
+            setStatus("success");
+            dispatch(resetCart())
+          }
+
+        })
+        .finally(() => setLoading(false))
     }
     setAnchorEl(null);
   };
@@ -114,10 +133,25 @@ export default function BasicMenu({closeFunction, mobile}) {
             }
           )
         }
-        
-        {/* <MenuItem onClick={handleClose}>account</MenuItem>
-        <MenuItem onClick={handleClose}>Logout</MenuItem> */}
       </Menu>
+      {
+        loading ?
+        <Loader loading={loading} />
+        :
+        <></>
+      }
+      {
+        !loading && status && status === "error" ?
+        <Toaster timer={2000} type={"error"} message={"Failed to logout !"} />
+        :
+        <></>
+      }
+      {
+        !loading && status && status === "success" ?
+        <Toaster timer={2000} message={"Successfully logged out !"} link={"/"} />
+        :
+        <></>
+      }
     </div>
   );
 }

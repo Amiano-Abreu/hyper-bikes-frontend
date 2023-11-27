@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
-import DucatiBike from '../../assets/Home-Page/hero/Ducati-test.png';
+import DucatiBike from '../../assets/Home-Page/hero/Ducati-Bayliss.png';
 
 import { useMediaQuery } from '@mui/material';
 
@@ -14,10 +14,10 @@ const HeroDesktop = ({ bikes }) => {
 
     const is1250 = useMediaQuery('(max-width:1250px)');
 
-    console.log(isMedium)
+    // console.log(isMedium)
     const panigale = bikes?.data.find(bike => bike.model === "Panigale V2 Bayliss");
 
-    console.log("panigale ", panigale)
+    // console.log("panigale ", panigale)
     
     return (
         <>
@@ -38,7 +38,7 @@ const HeroDesktop = ({ bikes }) => {
                         '& img': {
                             height: '100%',
                             width: '100%',
-                            objectFit: 'cover',
+                            objectFit: 'contain',
                         }
                     }}
                 >  

@@ -5,10 +5,6 @@ import { useMediaQuery } from '@mui/material';
 
 const FeaturesGrid = ({ arr, obj  }) => {
     const isTablet = useMediaQuery('(max-width:1024px)')
-    // let keys;
-    // if (obj) {
-    //     keys = Object.keys(obj);
-    // }    
 
     return (
         <>

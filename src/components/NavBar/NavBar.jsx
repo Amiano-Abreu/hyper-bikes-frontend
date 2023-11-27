@@ -14,7 +14,7 @@ const links = ['Home', 'Bikes' , 'News'];
 const NavBar = () => {
     const isMedium = useMediaQuery('(max-width:990px)');
 
-    console.log(isMedium);
+    // console.log(isMedium);
 
     return (
         <>

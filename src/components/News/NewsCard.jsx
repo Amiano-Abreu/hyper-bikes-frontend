@@ -37,8 +37,6 @@ export default function NewsCard({ news, path }) {
           component="img"
           height='100%'
           width='100%'
-          // image="https://img.etimg.com/thumb/msid-77761097,width-650,imgsize-355003,,resizemode-4,quality-100/the-front-headlight-assembly-is-extremely-compact-on-the-ducati-panigale-v2-.jpg"
-          // alt="green iguana"
           image={news?.src}
           alt={news?.alt}
         />

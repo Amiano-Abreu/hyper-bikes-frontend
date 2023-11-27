@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 import { loginHandler, resetError } from "../../features/userSlice";
@@ -8,60 +8,28 @@ import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import Backdrop from '@mui/material/Backdrop';
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
-import CircularProgress from '@mui/material/CircularProgress';
+
 import { useMediaQuery } from '@mui/material';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { useFormik } from "formik";
 import * as yup from 'yup';
 
-import desktopImg from '../../assets/Authentication/login2.jpg'
+import Loader from "../Utility/Loader"
+import Toaster from "../Utility/Toaster"
+
+import desktopImg from '../../assets/Authentication/auth.jpg'
 import loginStyles from './loginStyles.module.css'
 
 
 const Login = () => {
-    const navigate = useNavigate();
 
     const dispatch = useDispatch();
     const { error, loading, success } = useSelector(state => state.user);
     
     const isMedium = useMediaQuery('(max-width:990px)');
     const is700 = useMediaQuery('(max-width:700px)');
-
-    const [openBackdrop, setOpenBackdrop] = useState(false); // for displaying alert
-    const [openSuccess, setOpenSuccess] = useState(false);
-    // const [openLoader, setOpenLoader] = useState(false);
-
-    const handleOpen = () => {
-        setOpenBackdrop(true);
-    };
-
-    const handleClose = () => {
-        dispatch(resetError())
-        setOpenBackdrop(false);
-    };
-
-    const handleSuccessOpen = () => {
-        setOpenSuccess(true)
-    }
-
-    const handleSuccessClose = () => {
-        setOpenSuccess(false)
-        
-        navigate({ pathname: '/'})
-    }
-
-    // const handleLoaderOpen = () => {
-    //     setOpenLoader(true)
-    // }
-
-    // const handleLoaderClose = () => {
-    //     setOpenLoader(false)
-    // }
 
     const schema = yup.object().shape({
         email: yup
@@ -83,50 +51,39 @@ const Login = () => {
         },
         validationSchema: schema,
         onSubmit: (values, {setSubmitting}) => {
-            // handleLoaderOpen()
-            console.log("values of login ", values)
+            
+            // console.log("values of login ", values)
             dispatch(loginHandler(values))
-            // handleLoaderClose()
-            // handleSuccessOpen()
-            // formik.resetForm()
-            {/*setTimeout(() => {
-                console.log(values)
-                handleLoaderClose()
-                handleSuccessOpen()
-                formik.resetForm()
-            }, 5000)*/}
-
-            setSubmitting(false)
+                .finally(() => setSubmitting(false))
         }
     })
 
+    const { submitCount, isValid, setErrors } = formik;
+
     useEffect(() => {
+        dispatch(resetError())
         window.scrollTo(0,0)
-    }, [])
+    }, [dispatch])
     
     useEffect(() => {
-        // if(formik.submitCount > 0 && !formik.isValid){
-        //     handleOpen()
-        // }
-        console.log('useEffect error ',error, 'loading ', !loading, 'submitCount ',formik.submitCount )
+        
+        // console.log('useEffect error ',error, 'loading ', !loading, 'submitCount ',formik.submitCount )
 
         if (!loading && success && error) {
             if (typeof error !== 'string') {
-                formik.setErrors(error)
+                setErrors(error)
             }
-            handleOpen();
         }
-        else if (!loading && success && formik.submitCount > 0 && error === '') {
-            formik.resetForm()
-            // handleSuccessOpen()
-        }
-    }, [formik.submitCount, loading, error, success])
+    }, [setErrors, loading, error, success])
     
     return (
         <>
             <Box
                 sx={{
                     backgroundImage: `url(${desktopImg} )`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: "cover",
+                    backgroundPosition: { mobile: "bottom", tablet:"right center"},
                     height: `calc(100vh - ${isMedium ? '70px' : '80px'})`,
                     width: 'auto',
                     paddingTop: '75px'
@@ -139,9 +96,9 @@ const Login = () => {
                         marginX: 'auto',
                         marginTop: '0px',
                         height: 'auto',
-                        width: `${is700 ? '400px' : '600px'}`,
+                        width: { mobile:'90%', tablet:'600px'},
                         backgroundColor: 'customWhite.main',
-                        opacity: `${is700 ? '0.6' : '0.7'}`,
+                        opacity: `.8`,
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'space-around',
@@ -241,44 +198,34 @@ const Login = () => {
                 </Paper>
 
             </Box>
-            <Backdrop
-              sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-              open={!loading && success && error}
-              onClick={handleClose}
-            >
-                <Alert sx={{
-                    maxWidth: '75%'
-                }}onClose={handleClose} variant='filled' severity="error">
-                  <AlertTitle>Error</AlertTitle>
-                    <strong>
-                        {
-                            typeof error === 'string' ? 
-                                error 
-                                    :
-                                // "Please check form inputs !"
-                                Object.values(error).map(
-                                    message => `${message}\n`
-                                )
-                        }
-                    </strong>
-                </Alert>
-            </Backdrop>
-            <Backdrop
-              sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-              open={!loading && success && !error && formik.submitCount > 0}
-              onClick={handleSuccessClose}
-            >
-                <Alert onClose={handleSuccessClose} variant='filled' severity="success">
-                  <AlertTitle>Success</AlertTitle>
-                    <strong>Login successfull !</strong>
-                </Alert>
-            </Backdrop>
-            <Backdrop
-              sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-              open={loading}
-            >
-              <CircularProgress color="inherit" />
-            </Backdrop>
+            {
+                !loading && error ?
+                <Toaster 
+                    timer={2000}
+                    type={"error"}
+                    message={
+                        typeof error === 'string' ? 
+                            error 
+                                :
+                            Object.values(error).join("\n")
+                    }
+                />
+                :
+                <></>
+            }
+            {
+                !loading && success && !error && submitCount > 0 && isValid ?
+                <Toaster timer={1500} message={"Login successfull !"} />
+                :
+                <></>
+            }
+            {
+                loading ?
+                <Loader loading={loading} />
+
+                :
+                <></>
+            }
         </>
     )
 }

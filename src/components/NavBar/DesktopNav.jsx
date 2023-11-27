@@ -14,7 +14,7 @@ import Loader from '../Utility/Loader';
 
 const DesktopNav = ({ navLinks }) => {
     const { isLoggedIn } = useSelector(state => state.user);
-    const { loading, success, error, cart } = useSelector(state => state.cart);
+    const { loading, success, cart } = useSelector(state => state.cart);
     
     return (
         <>
@@ -55,7 +55,7 @@ const DesktopNav = ({ navLinks }) => {
               component={Link}
             >
             {
-              !loading && !error && success && cart?.length > 0 ?
+              !loading && success && cart?.length > 0 ?
 
               <Badge
                 badgeContent={cart.length} 

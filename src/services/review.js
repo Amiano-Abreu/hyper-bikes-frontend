@@ -24,7 +24,7 @@ export const httpAddReview = async (body) => {
         return data;
 
     } catch (e) {
-        console.log(e)
+        // console.log(e)
         
         if (e.hasOwnProperty("response")) {
             if (e.response.hasOwnProperty("data")) {
@@ -62,7 +62,7 @@ export const httpEditReview = async (body) => {
         return data;
 
     } catch (e) {
-        console.log(e)
+        // console.log(e)
         
         if (e.hasOwnProperty("response")) {
             if (e.response.hasOwnProperty("data")) {
@@ -100,7 +100,7 @@ export const httpDeleteReview = async (bikeID) => {
         return data;
 
     } catch (e) {
-        console.log(e)
+        // console.log(e)
         
         if (e.hasOwnProperty("response")) {
             if (e.response.hasOwnProperty("data")) {

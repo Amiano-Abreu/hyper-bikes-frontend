@@ -71,18 +71,6 @@ const Preview = ({ onViewAll }) => {
     
             apiData &&
             <>
-                {/* <Typography
-                    variant='h2'
-                    sx={{
-                        color: 'customBlack.light',
-                        p: 2.5,
-                        textAlign: 'center',
-                        mb: 5,
-                        fontSize: { mobile: '.75rem', laptop: '1.125rem' }
-                    }}
-                >
-                    1 - 3 of over 15,000 results for bikes
-                </Typography> */}
                 <Grid
                     container
                     justifyContent='center'
@@ -135,8 +123,6 @@ const Preview = ({ onViewAll }) => {
                                 fontSize: '0.75rem'
                             })
                         }}
-                        // component={Link}
-                        // to={'all'}
                         onClick={() => {
                             onViewAll();
                         }}

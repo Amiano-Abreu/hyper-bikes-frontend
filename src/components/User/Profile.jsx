@@ -52,21 +52,23 @@ const Profile = () => {
             <Box
                 sx={{
                     height: 'auto',
-                    p: 15,
+                    py: { mobile: 10, laptop: 15 },
+                    px: { mobile: 7.5, laptop: 15 },
                     bgcolor: 'customWhite.main',
                     display: 'flex',
                     flexDirection: 'column',
-
+                    width: "100%"
                 }}
             >
                 {
                     arr.map(
                         (arrItem, index) => (
-                            <div
-                                style={{
+                            <Box
+                                sx={{
                                     display: 'flex',
                                     justifyContent: 'space-around',
-                                    alignItems: 'center',
+                                    alignItems: { mobile: 'flex-start', laptop:'center'},
+                                    flexDirection: { mobile: "column", laptop: "row"},
                                     ...((index !== arr.length - 1) && {
                                         marginBottom: '25px'
                                     })
@@ -75,12 +77,15 @@ const Profile = () => {
 
                                 {
                                     arrItem.map(
-                                        item => {
+                                        (item, i) => {
                                             return (
                                                 <>
-                                                    <div
-                                                        style={{
-                                                            width: '190px'
+                                                    <Box
+                                                        sx={{
+                                                            width: '190px',
+                                                            ...((arrItem.length -1 !== i) && {
+                                                                mb: 5
+                                                            })
                                                         }}
                                                     >
                                                         <Typography
@@ -91,13 +96,13 @@ const Profile = () => {
                                                         <Typography>
                                                             {item.value}
                                                         </Typography>
-                                                    </div>
+                                                    </Box>
                                                 </>
                                             )
                                         }
                                     )
                                 }
-                            </div>
+                            </Box>
                         )
                     )
                 }

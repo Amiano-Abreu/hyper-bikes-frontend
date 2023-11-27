@@ -23,7 +23,7 @@ export const getAllOrders = async () => {
         return data;
 
     } catch (e) {
-        console.log(e)
+        // console.log(e)
         
         if (e.hasOwnProperty("response")) {
             if (e.response.hasOwnProperty("data")) {
@@ -61,7 +61,7 @@ export const cancelOrder = async (orderID) => {
         return data;
 
     } catch (e) {
-        console.log(e)
+        // console.log(e)
         
         if (e.hasOwnProperty("response")) {
             if (e.response.hasOwnProperty("data")) {

@@ -74,7 +74,6 @@ const SelectCategory = ({ grid, onFilterChange, onSave, onViewAll }) => {
                                 }}
                                 elevation={6}
                                 onClick={ () => {
-                                    console.log('yo')
                                     const selectFilterObj = {
                                         target: {
                                             name: 'selectedFilter',

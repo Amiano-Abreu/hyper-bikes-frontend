@@ -10,7 +10,7 @@ const SlideTransition = (props) => {
 };
   
 const Toaster = ( {link = false, message, type, timer} ) => {
-    console.log("message ", message, "type ", type)
+    // console.log("message ", message, "type ", type)
     const navigate = useNavigate();
     const [open, setOpen] = useState(true);
 

@@ -33,7 +33,6 @@ const Cart = () => {
 
     const isMedium = useMediaQuery('(max-width:990px)');
     const isMobile = useMediaQuery('(max-width:639px)')
-    const isTablet = useMediaQuery('(min-width:640px)')
 
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
@@ -44,7 +43,7 @@ const Cart = () => {
     useEffect(() => {
         window.scrollTo(0,0);
         dispatch(resetAtc())
-    }, [])
+    }, [dispatch])
 
     return (
         <>
@@ -154,10 +153,6 @@ const Cart = () => {
                             startIcon={<DeleteIcon />}
                             onClick={
                                 () => {
-                                    // handleButtonDisable();
-                                    // setTimeout(() => {
-                                    //     handleToasterState(true, true)
-                                    // }, [1500])
                                     dispatch(httpRemoveAllCart())
                                 }
                             }
@@ -362,9 +357,6 @@ const Cart = () => {
                     {
                         cart.length > 0 ? 
                             (
-                                // <Typography>
-                                //     TOTAL: ₹{getTotal()}
-                                // </Typography>
                                 <div
                                     style={{
                                         width: '100%'
@@ -405,9 +397,6 @@ const Cart = () => {
                                         onClick={
                                             () => {
                                                 handleButtonDisable();
-                                                // setTimeout(() => {
-                                                //     handleToasterState(true, true)
-                                                // }, [1500])
                                                 dispatch(httpAddOrder({ products: cart, total }))
                                             }
                                         }

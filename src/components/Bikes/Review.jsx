@@ -90,7 +90,6 @@ const ridden = [
     }
 ]
 
-// VALIDATE THE RADIO ON CHANGE AS IT DOESN'T TRIGGER AN ONBLUR EVENT
 const CustomRadio = ({ formik, is700, controlLabel, name, options }) => {
     return (
         <FormControl
@@ -116,7 +115,6 @@ const CustomRadio = ({ formik, is700, controlLabel, name, options }) => {
                     () => formik.handleBlur(e)
                 )
             }}
-            // onBlur={formik.handleBlur}
             sx={{
                 '& .MuiTypography-root': {
                     fontSize: is700 ? '.9rem': '1rem'
@@ -211,14 +209,13 @@ const Review = () => {
         onSubmit: (values, {setSubmitting}) => {
             setData(null)
             setLoading(true)
-            // setTimeout(() => {
-                console.log({ ...values, bikeID })
+                // console.log({ ...values, bikeID })
                 
                 if (editReview) {
                     httpEditReview({ ...values, bikeID })
                         .then(
                             data => {
-                                console.log(data)
+                                // console.log(data)
                                 setData(data)
                             }
                         )
@@ -236,7 +233,7 @@ const Review = () => {
                     httpAddReview({ ...values, bikeID })
                         .then(
                             data => {
-                                console.log(data)
+                                // console.log(data)
                                 setData(data)
                             }
                         )
@@ -250,7 +247,6 @@ const Review = () => {
                             }
                         )
                 }
-            // }, 5000)
 
         }
     })
@@ -261,7 +257,7 @@ const Review = () => {
             titleRef.current.lastChild.firstChild.value = editReview.title;
             bodyRef.current.lastChild.firstChild.value = editReview.body;
             mileageRef.current.lastChild.firstChild.value = editReview.data.mileage;
-            console.log(titleRef.current.lastChild.firstChild.value)
+            // console.log(titleRef.current.lastChild.firstChild.value)
         }
     }, [editReview])
 
