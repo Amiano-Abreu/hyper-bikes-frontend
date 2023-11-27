@@ -11,7 +11,7 @@ import BikeCard from "../Home/BikeCard";
 import useGetRequest from "../../services/useGetRequest";
 import Loader from "../Utility/Loader";
 
-const URL = "http://localhost:5000/api/bikes?limit=true";
+const URL = `${process.env.REACT_APP_API_URL}/bikes?limit=true`;
 
 const Preview = ({ onViewAll }) => {
     const isMobile = useMediaQuery('(max-width:1024px)');

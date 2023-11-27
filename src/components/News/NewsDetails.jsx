@@ -21,7 +21,7 @@ const NewsDetails = () => {
     let url;
 
     if (news?.newsID) {
-        url = `http://localhost:5000/api/news/${news?.newsID}`;
+        url = `${process.env.REACT_APP_API_URL}/news/${news?.newsID}`;
     }
 
     const {

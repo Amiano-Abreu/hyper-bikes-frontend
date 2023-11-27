@@ -45,7 +45,7 @@ import useGetRequest from "../../services/useGetRequest"
 import { useMediaQuery } from '@mui/material';
 import Toaster from "../Utility/Toaster";
 
-const BASEURL = "http://localhost:5000/api/bikes";
+const BASEURL = `${process.env.REACT_APP_API_URL}/bikes`;
 
 const grid = [
     {

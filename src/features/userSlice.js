@@ -19,7 +19,7 @@ export const getUser = createAsyncThunk('user/getUser', async( _, { rejectWithVa
 
     try {
 
-        const userResponse = await axios.get('http://localhost:5000/api/user', {
+        const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/user`, {
             withCredentials: true,
             mode: 'cors'
         })
@@ -36,7 +36,7 @@ export const getUser = createAsyncThunk('user/getUser', async( _, { rejectWithVa
 export const loginHandler = createAsyncThunk('user/loginHandler', async( login , { rejectWithValue, dispatch }) => {
 
     try {
-        const loginResponse = await axios.post('http://localhost:5000/api/login', {
+        const loginResponse = await axios.post(`${process.env.REACT_APP_API_URL}/login`, {
                                     email: login.email,
                                     password: login.password
                                 }, {
@@ -63,10 +63,10 @@ export const loginHandler = createAsyncThunk('user/loginHandler', async( login ,
 export const signUpHandler = createAsyncThunk('user/signUpHandler', async( signUp , { rejectWithValue }) => {
 
     try {
-        const response = await axios.get('http://localhost:5000/api/csrf', {withCredentials: true});
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/csrf`, {withCredentials: true});
         const csrfToken = response.data.csrfToken;
 
-        const signUpResponse = await axios.post('http://localhost:5000/api/signup', {
+        const signUpResponse = await axios.post(`${process.env.REACT_APP_API_URL}/signup`, {
                                     _csrf: csrfToken,
                                     firstName: signUp.firstName,
                                     lastName: signUp.lastName,
@@ -97,11 +97,11 @@ export const signUpHandler = createAsyncThunk('user/signUpHandler', async( signU
 })
 
 export const logoutHandler = createAsyncThunk('user/logoutHandler', async( _ , { rejectWithValue }) => {
-    const response = await axios.get('http://localhost:5000/api/csrf', {withCredentials: true});
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/csrf`, {withCredentials: true});
     const csrfToken = response.data.csrfToken;
 
     try {
-        const logoutResponse = await axios.post('http://localhost:5000/api/logout', {
+        const logoutResponse = await axios.post(`${process.env.REACT_APP_API_URL}/logout`, {
                                     _csrf: csrfToken
                                 },
                                 {

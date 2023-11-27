@@ -404,7 +404,7 @@ const features = [
     }
 ]
 
-const BASEURL = "http://localhost:5000/api/bike";
+const BASEURL = `${process.env.REACT_APP_API_URL}/bike`;
 
 const BikeDetails = () => {
     const [loading, setLoading] = useState(false);
