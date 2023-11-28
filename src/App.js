@@ -1,28 +1,29 @@
-import styles from './App.module.css';
 
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+
+import styles from './App.module.css';
 
 import Home from './components/Home/Home';
-
 import NavBar from './components/NavBar/NavBar';
-import Bikes from './components/Bikes/Bikes';
-import News from './components/News/News';
-import BikeDetails from './components/Bikes/BikeDetails';
-import NewsDetails from './components/News/NewsDetails';
-import Login from './components/Authentication/Login';
-import SignUp from './components/Authentication/SignUp';
-import Review from './components/Bikes/Review';
-import Cart from './components/Cart/Cart'
-import Profile from './components/User/Profile'
-import Account from './components/User/Account'
-import Orders from './components/User/Orders'
-import NotFound from './NotFound';
+import Loader from './components/Utility/Loader';
 
-import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUser } from './features/userSlice';
 import { fetchCart } from './features/cartSlice';
 
+const Bikes = lazy(() => import('./components/Bikes/Bikes'));
+const News = lazy(() => import('./components/News/News'));
+const BikeDetails = lazy(() => import('./components/Bikes/BikeDetails'));
+const NewsDetails = lazy(() => import('./components/News/NewsDetails'));
+const Login = lazy(() => import('./components/Authentication/Login'));
+const SignUp = lazy(() => import('./components/Authentication/SignUp'));
+const Review = lazy(() => import('./components/Bikes/Review'));
+const Cart = lazy(() => import('./components/Cart/Cart')); 
+const Profile = lazy(() => import('./components/User/Profile')); 
+const Account = lazy(() => import('./components/User/Account')); 
+const Orders = lazy(() => import('./components/User/Orders')); 
+const NotFound = lazy(() => import('./NotFound'));
 
 const PrivateRoutes = () => {
   const isAuthenticated = localStorage.getItem("isAuthenticated");
@@ -59,25 +60,27 @@ const App = () => {
     <>
       <NavBar />
       <main className={styles.mainBody}>
-        <Routes>
-          <Route path={'/'} element={<Home />} />
-          <Route exact path={'/bikes'} element={<Bikes />} />
-          <Route path={'/bike/:bikeId'} element={<BikeDetails />} />
-          <Route element={<PrivateRoutes />}>
-            <Route path={'/cart'} element={<Cart />} />
-            <Route path={'/orders'} element={<Orders />} />
-            <Route path={'/profile'} element={<Profile />} />
-            <Route path={'/account'} element={<Account />} />
-          </Route>
-            <Route path={'/bike/:bikeId/review'} element={<Review />} />
-          <Route path={'/news'} element={<News />} />
-          <Route path={'/news/:newsId'} element={<NewsDetails />} />
-          <Route element={<AnonymousRoutes />}>
-            <Route path={'/signup'} element={<SignUp />} />
-            <Route path={'/login'} element={<Login />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={<Loader />} >
+          <Routes>
+            <Route path={'/'} element={<Home />} />
+            <Route exact path={'/bikes'} element={<Bikes />} />
+            <Route path={'/bike/:bikeId'} element={<BikeDetails />} />
+            <Route element={<PrivateRoutes />}>
+              <Route path={'/cart'} element={<Cart />} />
+              <Route path={'/orders'} element={<Orders />} />
+              <Route path={'/profile'} element={<Profile />} />
+              <Route path={'/account'} element={<Account />} />
+            </Route>
+              <Route path={'/bike/:bikeId/review'} element={<Review />} />
+            <Route path={'/news'} element={<News />} />
+            <Route path={'/news/:newsId'} element={<NewsDetails />} />
+            <Route element={<AnonymousRoutes />}>
+              <Route path={'/signup'} element={<SignUp />} />
+              <Route path={'/login'} element={<Login />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </main>
     </>
   );
