@@ -55,7 +55,7 @@ const NewsDetails = () => {
             >
                 {
                     isLoading ?
-                        isLoading && <Loader loading={isLoading} />
+                        isLoading && <Loader />
                         :
                         <></>
                 }

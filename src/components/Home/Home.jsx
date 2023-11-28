@@ -52,7 +52,7 @@ const Home = () => {
             </Box>
             <NewsSection />
             <FeaturedBikesSection isLoading={isLoading} apiData={apiData} serverError={serverError} />
-            { !isLoading ? <></> : <Loader loading={isLoading} />}
+            { !isLoading ? <></> : <Loader />}
         </>
     )
 }

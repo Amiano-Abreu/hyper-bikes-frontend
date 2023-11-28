@@ -346,7 +346,7 @@ const SignUp = () => {
             }
             {
                 loading ?
-                <Loader loading={loading} />
+                <Loader />
 
                 :
                 <></>

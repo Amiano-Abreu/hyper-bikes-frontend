@@ -78,13 +78,13 @@ const MobileNav = ({ navLinks }) => {
             {
               loading ?
 
-              <Loader loading={loading} />
+              <Loader />
               :
               <></>
             }
             {
                 isLoading ?
-                <Loader loading={loading} />
+                <Loader />
                     :
                 <></>
             }

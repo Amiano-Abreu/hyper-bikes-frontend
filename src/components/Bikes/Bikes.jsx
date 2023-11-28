@@ -837,7 +837,7 @@ const Bikes = () => {
                     </ListItem>
                 </List>
             </Dialog>
-            {isLoading ? <Loader loading={isLoading} /> : <></>}
+            {isLoading ? <Loader /> : <></>}
         </Box>
     )
 }

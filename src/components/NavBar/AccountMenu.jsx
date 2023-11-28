@@ -136,7 +136,7 @@ export default function BasicMenu({closeFunction, mobile}) {
       </Menu>
       {
         loading ?
-        <Loader loading={loading} />
+        <Loader />
         :
         <></>
       }

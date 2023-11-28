@@ -56,7 +56,7 @@ export default function OrderCard({ order }) {
     <>
         {
             loading ? 
-            <Loader loading={loading} />
+            <Loader />
             :
             <></>
         }

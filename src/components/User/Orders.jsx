@@ -56,7 +56,7 @@ const Orders = () => {
             >
                 {
                     loading ? 
-                    <Loader loading={loading} />
+                    <Loader />
                     :
                     <></>
                 }

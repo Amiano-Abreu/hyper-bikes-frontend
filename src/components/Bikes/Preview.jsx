@@ -37,7 +37,7 @@ const Preview = ({ onViewAll }) => {
                 1 - 3 of over 15,000 results for bikes
             </Typography>
             {isLoading ?
-            <Loader loading={isLoading} />
+            <Loader />
     
             :
     

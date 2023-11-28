@@ -15,7 +15,7 @@ const NewsListDesktop = ({ isLoading, apiData, serverError }) => {
         <>
              {
                 isLoading ?
-                isLoading && <Loader loading={isLoading} />
+                isLoading && <Loader />
                 :
                 <></>
             }

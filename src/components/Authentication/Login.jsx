@@ -221,7 +221,7 @@ const Login = () => {
             }
             {
                 loading ?
-                <Loader loading={loading} />
+                <Loader />
 
                 :
                 <></>

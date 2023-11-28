@@ -468,7 +468,7 @@ const BikeDetails = () => {
     return (
         isLoading ?
 
-        <Loader loading={isLoading} />
+        <Loader />
 
         :
 
@@ -499,7 +499,7 @@ const BikeDetails = () => {
             {
                 loading ?
 
-                <Loader loading={loading} />
+                <Loader />
 
                 :
 
@@ -1111,7 +1111,7 @@ const BikeDetails = () => {
             {
                 cartLoading ?
 
-                <Loader loading={cartLoading} />
+                <Loader />
                 :
                 <></>
             }

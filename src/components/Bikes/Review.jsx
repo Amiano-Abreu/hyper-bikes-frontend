@@ -268,7 +268,7 @@ const Review = () => {
         {
             loading ?
 
-                <Loader loading={loading} />
+                <Loader />
 
                 :
 

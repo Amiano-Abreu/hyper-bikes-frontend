@@ -21,7 +21,7 @@ const DesktopNav = ({ navLinks }) => {
             {
               loading ?
 
-              <Loader loading={loading} />
+              <Loader />
               :
               <></>
             }

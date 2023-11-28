@@ -20,7 +20,7 @@ const NewsListMobile = ({ isLoading, apiData, serverError }) => {
 
             {
                 isLoading ?
-                isLoading && <Loader loading={isLoading} />
+                isLoading && <Loader />
                 :
                 <></>
             }

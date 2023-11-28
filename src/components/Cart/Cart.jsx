@@ -68,7 +68,7 @@ const Cart = () => {
             >
                 {
                     loading ? 
-                    <Loader loading={loading} />
+                    <Loader />
                     :
                     <></>
                 }
