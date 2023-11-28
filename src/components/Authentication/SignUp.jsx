@@ -12,7 +12,7 @@ import { signUpHandler, resetError } from "../../features/userSlice";
 
 import { Link } from 'react-router-dom';
 
-import desktopImg from '../../assets/Authentication/auth.jpg'
+import desktopImg from '../../assets/Authentication/auth.webp'
 import loginStyles from './loginStyles.module.css'
 
 import { useFormik } from "formik";

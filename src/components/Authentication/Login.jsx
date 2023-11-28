@@ -19,7 +19,7 @@ import * as yup from 'yup';
 import Loader from "../Utility/Loader"
 import Toaster from "../Utility/Toaster"
 
-import desktopImg from '../../assets/Authentication/auth.jpg'
+import desktopImg from '../../assets/Authentication/auth.webp'
 import loginStyles from './loginStyles.module.css'
 
 

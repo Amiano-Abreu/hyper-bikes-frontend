@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
-import DucatiBike from '../../assets/Home-Page/hero/Ducati-Bayliss.png';
+import DucatiBike from '../../assets/Home-Page/hero/Ducati-Bayliss.webp';
 
 import { useMediaQuery } from '@mui/material';
 

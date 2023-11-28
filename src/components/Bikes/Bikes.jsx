@@ -20,18 +20,18 @@ import FormLabel from '@mui/material/FormLabel';
 import FilterAltRoundedIcon from '@mui/icons-material/FilterAltRounded';
 
 import ducatiLogo from '../../assets/Bikes/logo/ducati-logo.png'
-import ktmLogo from '../../assets/Bikes/logo/Ktm.png'
-import bmwLogo from '../../assets/Bikes/logo/bmw.png'
-import harleyDavidsonLogo from '../../assets/Bikes/logo/harleyDavidson.png'
+import ktmLogo from '../../assets/Bikes/logo/Ktm.webp'
+import bmwLogo from '../../assets/Bikes/logo/bmw.webp'
+import harleyDavidsonLogo from '../../assets/Bikes/logo/harleyDavidson.webp'
 import hondaLogo from '../../assets/Bikes/logo/honda.png'
-import kawasakiLogo from '../../assets/Bikes/logo/kawasaki.png'
+import kawasakiLogo from '../../assets/Bikes/logo/kawasaki.webp'
 
-import adventure from '../../assets/Bikes/category/adventure.png'
-import bobber from '../../assets/Bikes/category/bobber.png'
-import cafeRacer from '../../assets/Bikes/category/cafeRacer.png'
-import dirt from '../../assets/Bikes/category/dirt.png'
-import naked from '../../assets/Bikes/category/naked.png'
-import superbike from '../../assets/Bikes/category/superbike.png'
+import adventure from '../../assets/Bikes/category/adventure.webp'
+import bobber from '../../assets/Bikes/category/bobber.webp'
+import cafeRacer from '../../assets/Bikes/category/cafeRacer.webp'
+import dirt from '../../assets/Bikes/category/dirt.webp'
+import naked from '../../assets/Bikes/category/naked.webp'
+import superbike from '../../assets/Bikes/category/superbike.webp'
 
 
 import SelectCategory from "./SelectCategory"

@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import NewsListDesktop from './NewsListDesktop';
 import NewsListMobile from './NewsListMobile';
 
-import newsBackgroundImage from '../../assets/Home-Page/news/home-news-backgroundOriginal.jpg';
+import newsBackgroundImage from '../../assets/Home-Page/news/home-news-backgroundOriginal.webp';
 
 import useGetRequest from '../../services/useGetRequest';
 
