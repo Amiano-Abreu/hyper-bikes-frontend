@@ -61,30 +61,45 @@ const FeaturedBikesSection = ({ isLoading, apiData, serverError }) => {
                     {
                         !isLoading && !serverError ?
 
-                        apiData?.data.map((item, i) => {
-                            return (
-                                <Grid
-                                    key={item.bikeID}
-                                    item
-                                    laptop={4}
-                                    mobile={12}
-                                    sx={{
-                                        ...(isMobile && {
-                                            pl: 0,
-                                            pt: 5
-                                        }),
-                                        ...(isMobile && i === 0 && {
-                                            pl: 0,
-                                            pt: 0
-                                        }),
-                                        ...(isLaptop && i===2 && {
-                                            pr: 0
-                                        })
-                                    }}
-                                >
-                                    <BikeCard path={`bike/${item.bikeID}`} bike={item} />
-                                </Grid>
-                            )})
+                        (
+                            apiData?.data.length > 0 ?
+                            apiData?.data.map((item, i) => {
+                                return (
+                                    <Grid
+                                        key={item.bikeID}
+                                        item
+                                        laptop={4}
+                                        mobile={12}
+                                        sx={{
+                                            ...(isMobile && {
+                                                pl: 0,
+                                                pt: 5
+                                            }),
+                                            ...(isMobile && i === 0 && {
+                                                pl: 0,
+                                                pt: 0
+                                            }),
+                                            ...(isLaptop && i===2 && {
+                                                pr: 0
+                                            })
+                                        }}
+                                    >
+                                        <BikeCard path={`bike/${item.bikeID}`} bike={item} />
+                                    </Grid>
+                                )})
+                            :
+                            <p
+                                style={{
+                                    textTransform: 'uppercase',
+                                    width: '100%',
+                                    textAlign: 'center',
+                                    fontWeight: '700'
+                                }}
+                            >
+                                No bikes available or your network may be slow.
+                            </p>
+                        )
+                        
 
                             :
 

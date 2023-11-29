@@ -69,7 +69,7 @@ const Preview = ({ onViewAll }) => {
     
             :
     
-            apiData &&
+            apiData?.data.length > 0 ?
             <>
                 <Grid
                     container
@@ -130,7 +130,20 @@ const Preview = ({ onViewAll }) => {
                         view all
                     </Button>
                 </Grid>
-            </>}
+            </>
+            :
+            <p
+                style={{
+                    textTransform: 'uppercase',
+                    width: '100%',
+                    textAlign: 'center',
+                    fontWeight: '700',
+                    marginBottom: '25px'
+                }}
+            >
+                No bikes available or your network may be slow.
+            </p>
+            }
         </>
     )
 }

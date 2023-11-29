@@ -415,7 +415,7 @@ const BikeDetails = () => {
     const { loading: cartLoading, success, error, atc } = useSelector(state => state.cart);
 
     const location = useLocation();
-    const bike = location.state.bike;
+    const bike = location.state?.bike;
     // console.log("state bikeDetails ", location.state.bike) // CHECK BOTH CASES ON HOME & BIKES PAGE
 
     let url;

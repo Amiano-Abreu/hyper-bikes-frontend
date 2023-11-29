@@ -60,6 +60,22 @@ const NewsDetails = () => {
                         <></>
                 }
                 {
+                    !serverError && !url ?
+
+                    <p
+                        style={{
+                            textTransform: 'uppercase',
+                            width: '100%',
+                            textAlign: 'center',
+                            fontWeight: '700'
+                        }}
+                    >
+                        Error occurred    
+                    </p>
+                    :
+                    <></>
+                }
+                {
                     serverError ?
 
                     <p
@@ -70,7 +86,7 @@ const NewsDetails = () => {
                             fontWeight: '700'
                         }}
                     >
-                        {serverError?.message}
+                        {serverError?.message} adf
                     </p>
         
                     :

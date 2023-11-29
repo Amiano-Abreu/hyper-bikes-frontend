@@ -36,6 +36,7 @@ const News = () => {
                     textTransform: 'uppercase',
                     width: '100%',
                     textAlign: 'center',
+                    mt: 7.5,
                     fontWeight: '700'
                 }}
             >
@@ -64,36 +65,51 @@ const News = () => {
             >
                 Check out the latest <span>news</span>
             </Typography>
-            <Grid
-                container
-                justifyContent='flex-start'
-                alignItems='center'
-                sx={{
-                    maxWidth: '974px',
-                    width: '80vw',
-                    mx: 'auto'
-                }}
-            >
-                {apiData?.data.map((item, i) => {
-                    return (
-                        <Grid
-                            key={item?.newsID + i}
-                            item
-                            laptop={6}
-                            mobile={12}
-                            sx={{
-                                pr: { mobile: 0, laptop: 5},
-                                pb: 5,
-                                ...(i%2 !==0 && {
-                                    pr: 0
-                                })
-                            }}
-                        >
-                            <NewsCard news={item}/>
-                        </Grid>
-                    )
-                })}
-            </Grid>
+            {
+                apiData?.data.length > 0 ?
+                    <Grid
+                        container
+                        justifyContent='flex-start'
+                        alignItems='center'
+                        sx={{
+                            maxWidth: '974px',
+                            width: '80vw',
+                            mx: 'auto'
+                        }}
+                    >
+                        {apiData?.data.map((item, i) => {
+                            return (
+                                <Grid
+                                    key={item?.newsID + i}
+                                    item
+                                    laptop={6}
+                                    mobile={12}
+                                    sx={{
+                                        pr: { mobile: 0, laptop: 5},
+                                        pb: 5,
+                                        ...(i%2 !==0 && {
+                                            pr: 0
+                                        })
+                                    }}
+                                >
+                                    <NewsCard news={item}/>
+                                </Grid>
+                            )
+                        })}
+                    </Grid>
+
+                :
+                <p
+                    style={{
+                        textTransform: 'uppercase',
+                        width: '100%',
+                        textAlign: 'center',
+                        fontWeight: '700'
+                    }}
+                >
+                    No news available or your network may be slow.
+                </p>
+            }
             </>
             )
             }

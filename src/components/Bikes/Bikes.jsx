@@ -455,7 +455,7 @@ const Bikes = () => {
                                     textTransform: 'uppercase',
                                     fontWeight: '700'
                                 }}
-                            >No Bikes Of Selected Filter Available Yet</p>
+                            >No Bikes Of Selected Filter Available Yet or your network may be slow</p>
 
                             :
 

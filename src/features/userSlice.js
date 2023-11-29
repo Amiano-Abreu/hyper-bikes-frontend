@@ -55,7 +55,7 @@ export const loginHandler = createAsyncThunk('user/loginHandler', async( login ,
         const { error, message } = data;
         const errorData = data?.data;
         const err = errorData || error || message || e.message;
-        return rejectWithValue(err);
+                return rejectWithValue(err);
     }
 
 })
@@ -191,7 +191,7 @@ const userSlice = createSlice({
             state.loading = false;
         })
         builder.addCase(loginHandler.rejected, (state, action) => {
-            state.error = action.payload;
+            state.error = action.payload || "Please check your network !";
             localStorage.removeItem("isAuthenticated");
             state.success = true;
             state.loading = false;
@@ -209,8 +209,8 @@ const userSlice = createSlice({
             state.loading = false;
         })
         builder.addCase(signUpHandler.rejected, (state, action) => {
-            state.error = action.payload;
-            if(action.payload.hasOwnProperty('message')) {
+            state.error = action.payload || "Please check your network !";
+            if(action.payload && action.payload.hasOwnProperty('message')) {
                 state.error = action.payload.message;
             }
             localStorage.removeItem("isAuthenticated");
@@ -229,7 +229,7 @@ const userSlice = createSlice({
             state.loading = false;
         })
         builder.addCase(logoutHandler.rejected, (state, action) => {
-            state.error = action.payload;
+            state.error = action.payload || "Please check your network !";
             state.success = true;
             state.loading = false;
         })

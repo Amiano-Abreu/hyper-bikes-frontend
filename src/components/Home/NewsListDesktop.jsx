@@ -35,8 +35,8 @@ const NewsListDesktop = ({ isLoading, apiData, serverError }) => {
 
             :
 
-            (
-                apiData &&
+            
+                apiData?.data.length > 0 ?
             <Grid 
                 justifyContent='center'
                 alignItems='center' 
@@ -106,7 +106,18 @@ const NewsListDesktop = ({ isLoading, apiData, serverError }) => {
                     </Button>
                 </Grid>
             </Grid>
-            )
+            :
+            <p
+                style={{
+                    textTransform: 'uppercase',
+                    width: '100%',
+                    textAlign: 'center',
+                    fontWeight: '700'
+                }}
+            >
+                No news available or your network may be slow.
+            </p>
+            
             }
            
         </>
