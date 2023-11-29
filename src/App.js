@@ -70,8 +70,8 @@ const App = () => {
               <Route path={'/orders'} element={<Orders />} />
               <Route path={'/profile'} element={<Profile />} />
               <Route path={'/account'} element={<Account />} />
-            </Route>
               <Route path={'/bike/:bikeId/review'} element={<Review />} />
+            </Route>
             <Route path={'/news'} element={<News />} />
             <Route path={'/news/:newsId'} element={<NewsDetails />} />
             <Route element={<AnonymousRoutes />}>
