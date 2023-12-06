@@ -6,7 +6,8 @@ const store = configureStore({
     reducer: {
         cart: cartReducer,
         user: userReducer
-    }
+    },
+    devTools: false, 
 });
 
 export default store;
