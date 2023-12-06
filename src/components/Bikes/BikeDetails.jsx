@@ -488,7 +488,7 @@ const BikeDetails = () => {
                     fontWeight: '700'
                 }}
             >
-                {serverError?.message}
+                {serverError?.message || "Error Occurred !"}
             </p>
 
             :

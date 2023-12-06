@@ -64,7 +64,7 @@ const Preview = ({ onViewAll }) => {
     
                     :
                     
-                    ` ${serverError?.message}`}
+                    ` ${serverError?.message  || "Occurred !"}`}
             </p>
     
             :

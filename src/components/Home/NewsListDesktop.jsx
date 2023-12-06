@@ -30,7 +30,7 @@ const NewsListDesktop = ({ isLoading, apiData, serverError }) => {
                     fontWeight: '700'
                 }}
             >
-                {serverError?.message}
+                {serverError?.message || "Error Occurred !"}
             </p>
 
             :

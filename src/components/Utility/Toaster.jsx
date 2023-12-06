@@ -43,7 +43,7 @@ const Toaster = ( {link = false, message, type, timer} ) => {
                 severity={ type ? type : "success"} 
                 sx={{ width: '100%' }}
             >
-                { message ? message : "This is a success message!"}
+                { message ? message : !message && type === "error" ? "Error occurred !" : "This is a success message !"}
             </Alert>
         </Snackbar>
         

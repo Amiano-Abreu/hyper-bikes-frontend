@@ -36,11 +36,11 @@ const News = () => {
                     textTransform: 'uppercase',
                     width: '100%',
                     textAlign: 'center',
-                    mt: 7.5,
-                    fontWeight: '700'
+                    fontWeight: '700',
+                    paddingTop: '5rem'
                 }}
             >
-                {serverError?.message}
+                {serverError?.message  || "Error Occurred !"}
             </p>
 
             :
