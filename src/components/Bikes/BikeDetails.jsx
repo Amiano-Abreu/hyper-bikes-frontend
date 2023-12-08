@@ -411,7 +411,7 @@ const BikeDetails = () => {
     const [data, setData] = useState(null);
 
     const dispatch = useDispatch();
-    const { uid } = useSelector(state => state.user);
+    const { uid, isLoggedIn } = useSelector(state => state.user);
     const { loading: cartLoading, success, error, atc } = useSelector(state => state.cart);
 
     const location = useLocation();
@@ -592,8 +592,13 @@ const BikeDetails = () => {
                     }}
                     onClick={
                         () => {
-                            handleButtonDisable();
-                            dispatch(httpAddToCart(bike));
+                            if (isLoggedIn) {
+                                handleButtonDisable();
+                                dispatch(httpAddToCart(bike));
+                            }
+                            else {
+                                alert("PLEASE SIGN IN TO ADD TO CART !")
+                            }
                         }
                     }
                 >

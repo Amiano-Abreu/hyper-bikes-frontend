@@ -19,7 +19,7 @@ const FeaturesGrid = ({ arr, obj  }) => {
                     {arr.map((item,i) => {
                         return (
                             <Grid
-                                key={item}
+                                key={item.value}
                                 item
                                 mobile={12}
                                 laptop={6}
