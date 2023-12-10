@@ -19,7 +19,7 @@ import FormLabel from '@mui/material/FormLabel';
 
 import FilterAltRoundedIcon from '@mui/icons-material/FilterAltRounded';
 
-import ducatiLogo from '../../assets/Bikes/logo/ducati-logo.png'
+import ducatiLogo from '../../assets/Bikes/logo/ducati.png'
 import ktmLogo from '../../assets/Bikes/logo/Ktm.webp'
 import bmwLogo from '../../assets/Bikes/logo/bmw.webp'
 import harleyDavidsonLogo from '../../assets/Bikes/logo/harleyDavidson.webp'

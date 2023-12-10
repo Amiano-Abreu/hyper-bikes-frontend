@@ -86,7 +86,7 @@ const NewsDetails = () => {
                             fontWeight: '700'
                         }}
                     >
-                        {serverError?.message} adf
+                        {serverError?.message}
                     </p>
         
                     :
@@ -144,10 +144,10 @@ const NewsDetails = () => {
                     </Typography>
                     {
 
-                        apiData?.data.body.map((item , i) => {
+                        apiData?.data?.body?.map((item , i) => {
                         return (
                             <div
-                                key={item.alt+i}
+                                key={item?.alt+i}
                             >
                                 <Box
                                     sx={{
@@ -161,10 +161,10 @@ const NewsDetails = () => {
                                         }
                                     }}
                                 >
-                                    <img src={item.src} alt={item.alt} />
+                                    <img src={item?.src} alt={item?.alt} />
                                 </Box>
                                 {
-                                    item.desc.map((para , index) => {
+                                    item?.desc?.map((para , index) => {
                                         return (
                                             <Typography
                                                 key={para.slice(0,20)+index}
