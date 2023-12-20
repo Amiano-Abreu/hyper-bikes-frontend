@@ -1,12 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const BASEURL = process.env.REACT_APP_API_URL;
+const BASEURL = "api";
 
 export const fetchCart = createAsyncThunk('cart/fetchCart', async ( _, { rejectWithValue }) => {
   
   try {
-      const response = await axios.get(`${BASEURL}/cart`,
+      const cartURL = new URL(`${BASEURL}/cart`, process.env.REACT_APP_API_URL)
+      const response = await axios.get(cartURL.toString(),
                         {
                             headers: {
                                 'Accept': "application/json",
@@ -25,10 +26,13 @@ export const fetchCart = createAsyncThunk('cart/fetchCart', async ( _, { rejectW
 
 export const httpAddToCart = createAsyncThunk('cart/httpAddToCart', async ( cartObj, { rejectWithValue }) => {
   try {
-    const res = await axios.get(`${BASEURL}/csrf`, {withCredentials: true});
+    const csrfURL = new URL(`${BASEURL}/csrf`, process.env.REACT_APP_API_URL)
+    const cartURL = new URL(`${BASEURL}/addtocart`, process.env.REACT_APP_API_URL)
+
+    const res = await axios.get(csrfURL.toString(), {withCredentials: true});
     const csrfToken = res.data.csrfToken;
     
-    const response = await axios.post(`${BASEURL}/addtocart`, {
+    const response = await axios.post(cartURL.toString(), {
                                       _csrf: csrfToken,
                                       alt: cartObj.hasOwnProperty("images") ? cartObj.images[0]['alt'] : cartObj.alt,
                                       bikeID: cartObj.bikeID,
@@ -57,10 +61,13 @@ export const httpRemoveFromCart = createAsyncThunk('cart/httpRemoveFromCart', as
   try {
     const removeItem = obj.hasOwnProperty("removeItem") ? obj.removeItem : 'false'
 
-    const res = await axios.get(`${BASEURL}/csrf`, {withCredentials: true});
+    const csrfURL = new URL(`${BASEURL}/csrf`, process.env.REACT_APP_API_URL)
+    const cartURL = new URL(`${BASEURL}/removefromcart`, process.env.REACT_APP_API_URL)
+
+    const res = await axios.get(csrfURL.toString(), {withCredentials: true});
     const csrfToken = res.data.csrfToken;
     
-    const response = await axios.post(`${BASEURL}/removefromcart`, {
+    const response = await axios.post(cartURL.toString(), {
                                       _csrf: csrfToken,
                                       bikeID: obj.bikeID,
                                       removeItem
@@ -83,10 +90,13 @@ export const httpRemoveFromCart = createAsyncThunk('cart/httpRemoveFromCart', as
 
 export const httpRemoveAllCart = createAsyncThunk('cart/httpRemoveAllCart', async ( _, { rejectWithValue }) => {
   try {
-    const res = await axios.get(`${BASEURL}/csrf`, {withCredentials: true});
+    const csrfURL = new URL(`${BASEURL}/csrf`, process.env.REACT_APP_API_URL)
+    const cartURL = new URL(`${BASEURL}/removeallcart`, process.env.REACT_APP_API_URL)
+
+    const res = await axios.get(csrfURL.toString(), {withCredentials: true});
     const csrfToken = res.data.csrfToken;
     
-    const response = await axios.post(`${BASEURL}/removeallcart`, {
+    const response = await axios.post(cartURL.toString(), {
                                       _csrf: csrfToken
                       },
                       {
@@ -112,10 +122,14 @@ export const httpAddOrder = createAsyncThunk('cart/httpAddOrder', async ( order,
       total
     } = order;
 
-    const res = await axios.get(`${BASEURL}/csrf`, {withCredentials: true});
+    const csrfURL = new URL(`${BASEURL}/csrf`, process.env.REACT_APP_API_URL)
+    const cartURL = new URL(`${BASEURL}/addorder`, process.env.REACT_APP_API_URL)
+    const removeCartURL = new URL(`${BASEURL}/removeallcart`, process.env.REACT_APP_API_URL)
+
+    const res = await axios.get(csrfURL.toString(), {withCredentials: true});
     const csrfToken = res.data.csrfToken;
     
-    await axios.post(`${BASEURL}/addorder`, {
+    await axios.post(cartURL.toString(), {
                                       _csrf: csrfToken,
                                       products,
                                       total
@@ -129,7 +143,7 @@ export const httpAddOrder = createAsyncThunk('cart/httpAddOrder', async ( order,
                           mode: 'cors'
                       });
 
-    const resp = await axios.post(`${BASEURL}/removeallcart`, {
+    const resp = await axios.post(removeCartURL.toString(), {
                             _csrf: csrfToken
                       },
                       {

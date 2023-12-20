@@ -12,12 +12,12 @@ import { useEffect } from 'react';
 import Loader from '../Utility/Loader';
 import useGetRequest from '../../services/useGetRequest';
 
-const url = `${process.env.REACT_APP_API_URL}/bikes?limit=true`;
+const url = `api/bikes?limit=true`;
 const Home = () => {
     const is1130 = useMediaQuery('(max-width:1130px)');
     // console.log(is1130)
-
-    const { isLoading, apiData, serverError } = useGetRequest(url);
+    const apiUrl = new URL(url, process.env.REACT_APP_API_URL)
+    const { isLoading, apiData, serverError } = useGetRequest(apiUrl.toString());
 
     useEffect(() => {
         window.scrollTo(0,0)

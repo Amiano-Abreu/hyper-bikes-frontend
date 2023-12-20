@@ -11,16 +11,17 @@ import BikeCard from "../Home/BikeCard";
 import useGetRequest from "../../services/useGetRequest";
 import Loader from "../Utility/Loader";
 
-const URL = `${process.env.REACT_APP_API_URL}/bikes?limit=true`;
+const previewURL = `api/bikes?limit=true`;
 
 const Preview = ({ onViewAll }) => {
     const isMobile = useMediaQuery('(max-width:1024px)');
 
+    const url = new URL(previewURL, process.env.REACT_APP_API_URL)
     const {
         isLoading,
         apiData,
         serverError
-    } = useGetRequest(URL);
+    } = useGetRequest(url.toString());
     
     return (
         <>

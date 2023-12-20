@@ -404,7 +404,8 @@ const features = [
     }
 ]
 
-const BASEURL = `${process.env.REACT_APP_API_URL}/bike`;
+// const url = new URL("/api/user", process.env.REACT_APP_API_URL)
+// const BASEURL = `${process.env.REACT_APP_API_URL}/bike`;
 
 const BikeDetails = () => {
     const [loading, setLoading] = useState(false);
@@ -418,11 +419,13 @@ const BikeDetails = () => {
     const bike = location.state?.bike;
     // console.log("state bikeDetails ", location.state.bike) // CHECK BOTH CASES ON HOME & BIKES PAGE
 
-    let url;
+    // let url;
     let bikeName;
     let bikeSpecs;
 
-    url = `${BASEURL}/${bike?.bikeID}`;
+    // url = `${BASEURL}/${bike?.bikeID}`;
+    const url = new URL(`/api/bike/${bike?.bikeID}`, process.env.REACT_APP_API_URL)
+
     bikeName = `${bike?.brand} ${bike?.model}`;
     bikeSpecs = {
         engineCapacity: `${bike?.displacement} cc`,
@@ -438,7 +441,7 @@ const BikeDetails = () => {
         isLoading,
         apiData,
         serverError
-    } = useGetRequest(url);
+    } = useGetRequest(url.toString());
 
 
     const isMobile = useMediaQuery('(max-width:640px)')

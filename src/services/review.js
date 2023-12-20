@@ -1,13 +1,16 @@
 import axios from 'axios'
 
-const BASEURL = process.env.REACT_APP_API_URL
+const BASEURL = "api"
 
 export const httpAddReview = async (body) => {
     try {
-        const res = await axios.get(`${BASEURL}/csrf`, {withCredentials: true});
+    const csrfURL = new URL(`${BASEURL}/csrf`, process.env.REACT_APP_API_URL)
+    const reviewURL = new URL(`${BASEURL}/review`, process.env.REACT_APP_API_URL)
+
+        const res = await axios.get(csrfURL.toString(), {withCredentials: true});
         const csrfToken = res.data.csrfToken;
 
-        const response = await axios.post(`${BASEURL}/review`, {
+        const response = await axios.post(reviewURL.toString(), {
                                     _csrf: csrfToken,
                                     ...body
                         },
@@ -42,10 +45,13 @@ export const httpAddReview = async (body) => {
 
 export const httpEditReview = async (body) => {
     try {
-        const res = await axios.get(`${BASEURL}/csrf`, {withCredentials: true});
+    const csrfURL = new URL(`${BASEURL}/csrf`, process.env.REACT_APP_API_URL)
+    const reviewURL = new URL(`${BASEURL}/editreview`, process.env.REACT_APP_API_URL)
+
+        const res = await axios.get(csrfURL.toString(), {withCredentials: true});
         const csrfToken = res.data.csrfToken;
 
-        const response = await axios.post(`${BASEURL}/editreview`, {
+        const response = await axios.post(reviewURL.toString(), {
                                     _csrf: csrfToken,
                                     ...body
                         },
@@ -80,10 +86,13 @@ export const httpEditReview = async (body) => {
 
 export const httpDeleteReview = async (bikeID) => {
     try {
-        const res = await axios.get(`${BASEURL}/csrf`, {withCredentials: true});
+    const csrfURL = new URL(`${BASEURL}/csrf`, process.env.REACT_APP_API_URL)
+    const reviewURL = new URL(`${BASEURL}/deletereview`, process.env.REACT_APP_API_URL)
+
+        const res = await axios.get(csrfURL.toString(), {withCredentials: true});
         const csrfToken = res.data.csrfToken;
 
-        const response = await axios.post(`${BASEURL}/deletereview`, {
+        const response = await axios.post(reviewURL.toString(), {
                                     _csrf: csrfToken,
                                     bikeID
                         },

@@ -45,7 +45,7 @@ import useGetRequest from "../../services/useGetRequest"
 import { useMediaQuery } from '@mui/material';
 import Toaster from "../Utility/Toaster";
 
-const BASEURL = `${process.env.REACT_APP_API_URL}/bikes`;
+const BASEURL = `api/bikes`;
 
 const grid = [
     {
@@ -320,7 +320,7 @@ const Bikes = () => {
             ) {
                 // console.log('filter async')
                 if (selectedBrand) {
-                    return `${BASEURL}/brand/${selectedBrand}`;
+                    return new URL(`${BASEURL}/brand/${selectedBrand}`, process.env.REACT_APP_API_URL);
                 }
                 else if (selectedPrice) {
                     let query;
@@ -332,7 +332,7 @@ const Bikes = () => {
                         query = `above=${selectedPrice.slice(1)}`
                     }
         
-                    return `${BASEURL}/price?${query}`;
+                    return new URL(`${BASEURL}/price?${query}`, process.env.REACT_APP_API_URL);
                 }
                 else if (selectedDisplacement) {
                     let start, end;
@@ -346,11 +346,11 @@ const Bikes = () => {
                     else {
                         start = selectedDisplacement;
                     }
-        
-                    return `${BASEURL}/displacement?start=${start}${end ? `&end=${end}` : ''}`;
+                    
+                    return new URL(`${BASEURL}/displacement?start=${start}${end ? `&end=${end}` : ''}`, process.env.REACT_APP_API_URL);
                 }
                 else if (selectedCategory) {
-                    return `${BASEURL}/category/${selectedCategory}`;
+                    return new URL(`${BASEURL}/category/${selectedCategory}`, process.env.REACT_APP_API_URL);
                 }
             }
             else if (
@@ -358,12 +358,12 @@ const Bikes = () => {
                 viewAll
             ) {
                 // console.log('view all filter async')
-                return `${BASEURL}`;
+                return new URL(`${BASEURL}`, process.env.REACT_APP_API_URL);
             }
         }, [saved, selectedBrand, selectedPrice, selectedDisplacement, selectedCategory, viewAll])
 
         // console.log("radio url ", url)
-    const { isLoading, apiData, serverError } = useGetRequest(`${url}`)
+    const { isLoading, apiData, serverError } = useGetRequest(url?.toString())
 
     // useEffect(() => {
     //     console.log('filter ', saved, selectedFilter, selectedBrand, selectedPrice, selectedDisplacement, selectedCategory)
@@ -674,6 +674,7 @@ const Bikes = () => {
                                                     value={radioItem.toLowerCase()} 
                                                     control={<Radio />} 
                                                     label={radioItem}
+                                                    key={radioItem}
                                                 />
                                             )
                                         }

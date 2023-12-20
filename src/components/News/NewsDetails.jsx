@@ -21,14 +21,15 @@ const NewsDetails = () => {
     let url;
 
     if (news?.newsID) {
-        url = `${process.env.REACT_APP_API_URL}/news/${news?.newsID}`;
+        url = `api/news/${news?.newsID}`;
     }
 
+    const apiUrl = new URL(url, process.env.REACT_APP_API_URL)
     const {
         isLoading,
         apiData,
         serverError
-    } = useGetRequest(url);
+    } = useGetRequest(apiUrl.toString());
 
     // console.log(serverError)
     useEffect(() => {

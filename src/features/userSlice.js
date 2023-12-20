@@ -18,8 +18,8 @@ const initialState = {
 export const getUser = createAsyncThunk('user/getUser', async( _, { rejectWithValue }) => {
 
     try {
-
-        const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/user`, {
+        const url = new URL("/api/user", process.env.REACT_APP_API_URL)
+        const userResponse = await axios.get(url.toString(), {
             withCredentials: true,
             mode: 'cors'
         })
@@ -36,7 +36,8 @@ export const getUser = createAsyncThunk('user/getUser', async( _, { rejectWithVa
 export const loginHandler = createAsyncThunk('user/loginHandler', async( login , { rejectWithValue, dispatch }) => {
 
     try {
-        const loginResponse = await axios.post(`${process.env.REACT_APP_API_URL}/login`, {
+        const loginURL = new URL(`api/login`, process.env.REACT_APP_API_URL)
+        const loginResponse = await axios.post(loginURL.toString(), {
                                     email: login.email,
                                     password: login.password
                                 }, {
@@ -63,10 +64,13 @@ export const loginHandler = createAsyncThunk('user/loginHandler', async( login ,
 export const signUpHandler = createAsyncThunk('user/signUpHandler', async( signUp , { rejectWithValue }) => {
 
     try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/csrf`, {withCredentials: true});
+        const csrfURL = new URL(`api/csrf`, process.env.REACT_APP_API_URL)
+        const signupURL = new URL(`api/signup`, process.env.REACT_APP_API_URL)
+        
+        const response = await axios.get(csrfURL.toString(), {withCredentials: true});
         const csrfToken = response.data.csrfToken;
 
-        const signUpResponse = await axios.post(`${process.env.REACT_APP_API_URL}/signup`, {
+        const signUpResponse = await axios.post(signupURL.toString(), {
                                     _csrf: csrfToken,
                                     firstName: signUp.firstName,
                                     lastName: signUp.lastName,
@@ -97,11 +101,14 @@ export const signUpHandler = createAsyncThunk('user/signUpHandler', async( signU
 })
 
 export const logoutHandler = createAsyncThunk('user/logoutHandler', async( _ , { rejectWithValue }) => {
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/csrf`, {withCredentials: true});
+    const csrfURL = new URL(`api/csrf`, process.env.REACT_APP_API_URL)
+    const logoutURL = new URL(`api/logout`, process.env.REACT_APP_API_URL)
+    
+    const response = await axios.get(csrfURL.toString(), {withCredentials: true});
     const csrfToken = response.data.csrfToken;
 
     try {
-        const logoutResponse = await axios.post(`${process.env.REACT_APP_API_URL}/logout`, {
+        const logoutResponse = await axios.post(logoutURL.toString(), {
                                     _csrf: csrfToken
                                 },
                                 {

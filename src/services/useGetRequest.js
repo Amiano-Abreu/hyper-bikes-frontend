@@ -37,7 +37,7 @@ const useGetRequest = (url) => {
         }
       };
   
-      if( url !== "undefined" ) {
+      if( url !== "undefined" && url?.includes("api") ) {
         // console.log("radio Url ", url)
 
         if(url) {

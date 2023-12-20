@@ -9,16 +9,17 @@ import newsBackgroundImage from '../../assets/Home-Page/news/home-news-backgroun
 
 import useGetRequest from '../../services/useGetRequest';
 
-const BASEURL = `${process.env.REACT_APP_API_URL}/news?limit=true`;
+const BASEURL = `api/news?limit=true`;
 
 const NewsSection = () => {
     const isTablet = useMediaQuery('(max-width:1024px)');
 
+    const url = new URL(BASEURL, process.env.REACT_APP_API_URL)
     const {
         isLoading,
         apiData,
         serverError
-    } = useGetRequest(BASEURL);
+    } = useGetRequest(url.toString());
 
     return (
         <Box

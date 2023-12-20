@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import useGetRequest from '../../services/useGetRequest';
 import Loader from '../Utility/Loader';
 
-const URL = `${process.env.REACT_APP_API_URL}/news`
+const BASEURL = `api/news`
 
 const News = () => {
 
@@ -15,11 +15,12 @@ const News = () => {
         window.scrollTo(0,0)
     }, [])
 
+    const apiUrl = new URL(BASEURL, process.env.REACT_APP_API_URL)
     const {
         isLoading,
         apiData,
         serverError
-    } = useGetRequest(URL);
+    } = useGetRequest(apiUrl.toString());
     return (
         <>
              {

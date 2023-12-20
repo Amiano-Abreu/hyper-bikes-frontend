@@ -1,13 +1,16 @@
 import axios from 'axios'
 
-const BASEURL = process.env.REACT_APP_API_URL;
+const BASEURL = "api";
 
 export const getAllOrders = async () => {
     try {
-        const res = await axios.get(`${BASEURL}/csrf`, {withCredentials: true});
+    const csrfURL = new URL(`${BASEURL}/csrf`, process.env.REACT_APP_API_URL)
+    const orderURL = new URL(`${BASEURL}/orders`, process.env.REACT_APP_API_URL)
+
+        const res = await axios.get(csrfURL.toString(), {withCredentials: true});
         const csrfToken = res.data.csrfToken;
 
-        const response = await axios.post(`${BASEURL}/orders`, {
+        const response = await axios.post(orderURL.toString(), {
                                     _csrf: csrfToken
                         },
                         {
@@ -41,10 +44,13 @@ export const getAllOrders = async () => {
 
 export const cancelOrder = async (orderID) => {
     try {
-        const res = await axios.get(`${BASEURL}/csrf`, {withCredentials: true});
+    const csrfURL = new URL(`${BASEURL}/csrf`, process.env.REACT_APP_API_URL)
+    const orderURL = new URL(`${BASEURL}/cancelorder`, process.env.REACT_APP_API_URL)
+
+        const res = await axios.get(csrfURL.toString(), {withCredentials: true});
         const csrfToken = res.data.csrfToken;
 
-        const response = await axios.post(`${BASEURL}/cancelorder`, {
+        const response = await axios.post(orderURL.toString(), {
                                     _csrf: csrfToken,
                                     orderID
                         },
